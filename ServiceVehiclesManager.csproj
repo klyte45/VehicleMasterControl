@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{87730B2B-F7D2-474D-BDA9-F0FC3067C249}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Klyte.ServiceVehiclesManager</RootNamespace>
+    <AssemblyName>ServiceVehiclesManager</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>ServiceVehiclesManager.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>ServiceVehiclesManager.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Extensors\ServiceSystemDefinition.cs" />
+    <Compile Include="Extensors\SVMServiceVehicleExtension.cs" />
+    <Compile Include="Interfaces\BasicExtensionInterface.cs" />
+    <Compile Include="Interfaces\ExtensionInterfaceDefaultImpl .cs" />
+    <Compile Include="ServiceVehiclesManager.cs" />
+    <Compile Include="SVMController.cs" />
+    <Compile Include="SVMConfigWarehouse.cs" />
+    <Compile Include="UI\i18n\SVMLocaleLoader.cs" />
+    <Compile Include="Utils\ResourceLoader.cs" />
+    <Compile Include="Utils\SVMUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Harmony-master\Harmony\Harmony.csproj">
+      <Project>{69aee16a-b6e7-4642-8081-3928b32455df}</Project>
+      <Name>Harmony</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\UIHelperExtended\UIHelperExtended.csproj">
+      <Project>{25446827-2004-4490-8859-5b3e160e978a}</Project>
+      <Name>UIHelperExtended</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransportLinesManager\TransportLinesManager.csproj">
+      <Project>{3f345c94-6b63-4d8f-8a12-e1ebdae831f3}</Project>
+      <Name>TransportLinesManager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="ColossalManaged">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
+    </Reference>
+    <Reference Include="ICities">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="PopsApiWrapper">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\PopsApiWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Networking">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.Networking.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\..\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ServiceVehiclesManager.ruleset" />
+    <EmbeddedResource Include="UI\i18n\cn.properties" />
+    <EmbeddedResource Include="UI\i18n\de.properties" />
+    <EmbeddedResource Include="UI\i18n\en.properties" />
+    <EmbeddedResource Include="UI\i18n\es.properties" />
+    <EmbeddedResource Include="UI\i18n\fr.properties" />
+    <EmbeddedResource Include="UI\i18n\ko.properties" />
+    <EmbeddedResource Include="UI\i18n\nl.properties" />
+    <EmbeddedResource Include="UI\i18n\pl.properties" />
+    <EmbeddedResource Include="UI\i18n\pt.properties" />
+    <EmbeddedResource Include="UI\i18n\ru.properties" />
+    <None Include="updateVersionTLM.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TLMVersion.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\VersionNotes.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y "$(TargetPath)" "C:\Users\Leandro\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\SVM\"
+xcopy /Y "$(TargetPath)" "$(ProjectDir)\_requiredDLLs\"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>del "C:\Users\Leandro\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\SVM\$(TargetFileName)"
+call $(ProjectDir)updateVersionTLM.bat "$(SolutionDir)_requiredDLLs\$(SolutionName)$(TargetExt)" $(ProjectDir) 
+</PreBuildEvent>
+  </PropertyGroup>
+</Project>
