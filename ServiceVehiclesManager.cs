@@ -28,24 +28,9 @@ namespace Klyte.ServiceVehiclesManager
     public class ServiceVehiclesManagerMod : MonoBehaviour, IUserMod, ILoadingExtension
     {
 
-        public static string minorVersion
-        {
-            get {
-                return majorVersion + "." + typeof(ServiceVehiclesManagerMod).Assembly.GetName().Version.Build;
-            }
-        }
-        public static string majorVersion
-        {
-            get {
-                return typeof(ServiceVehiclesManagerMod).Assembly.GetName().Version.Major + "." + typeof(ServiceVehiclesManagerMod).Assembly.GetName().Version.Minor;
-            }
-        }
-        public static string fullVersion
-        {
-            get {
-                return minorVersion + " r" + typeof(ServiceVehiclesManagerMod).Assembly.GetName().Version.Revision;
-            }
-        }
+        public static string minorVersion => majorVersion + "." + typeof(ServiceVehiclesManagerMod).Assembly.GetName().Version.Build;
+        public static string majorVersion => typeof(ServiceVehiclesManagerMod).Assembly.GetName().Version.Major + "." + typeof(ServiceVehiclesManagerMod).Assembly.GetName().Version.Minor;
+        public static string fullVersion => minorVersion + " r" + typeof(ServiceVehiclesManagerMod).Assembly.GetName().Version.Revision;
         public static string version
         {
             get {
@@ -162,15 +147,11 @@ namespace Klyte.ServiceVehiclesManager
         public void OnSettingsUI(UIHelperBase helperDefault)
         {
             UIHelperExtension helper = new UIHelperExtension((UIHelper)helperDefault);
-            OnLocaleLoadedFirstTime ev = () =>
+            void ev()
             {
                 foreach (Transform child in helper.self.transform)
                 {
-                    try
-                    {
-                        GameObject.Destroy(child.gameObject);
-                    }
-                    catch (Exception e) { }
+                        GameObject.Destroy(child?.gameObject);
                 }
 
                 helper.self.eventVisibilityChanged += delegate (UIComponent component, bool b)
@@ -196,7 +177,7 @@ namespace Klyte.ServiceVehiclesManager
                 });
 
                 SVMUtils.doLog("End Loading Options");
-            };
+            }
             if (IsTLMLoaded())
             {
                 loadSVMLocale(false);
@@ -204,6 +185,7 @@ namespace Klyte.ServiceVehiclesManager
             }
             else
             {
+                eventOnLoadLocaleEnd = null;
                 eventOnLoadLocaleEnd += ev;
             }
         }
@@ -292,7 +274,12 @@ namespace Klyte.ServiceVehiclesManager
             {
                 throw new Exception("SVM requires Transport Lines Manager Reborn active!");
             }
-
+            if (SVMController.taSVM == null)
+            {
+                SVMController.taSVM = CreateTextureAtlas("UI.Images.sprites.png", "ServiceVehicleManagerSprites", GameObject.FindObjectOfType<UIView>().FindUIComponent<UIPanel>("InfoPanel").atlas.material, 64, 64, new string[] {
+                    "ServiceVehiclesManagerIcon","ServiceVehiclesManagerIconSmall","ToolbarIconGroup6Hovered","ToolbarIconGroup6Focused","RemoveUnwantedIcon","ConfigIcon","24hLineIcon", "PerHourIcon"
+                });
+            }
             loadSVMLocale(false);
             m_loaded = true;
         }

@@ -12,17 +12,35 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 {
     internal class ServiceSystemDefinition
     {
-        public static readonly ServiceSystemDefinition DISASTER_CAR = new ServiceSystemDefinition(ItemClass.Service.Disaster, VehicleInfo.VehicleType.Car);
-        public static readonly ServiceSystemDefinition DISASTER_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.Disaster, VehicleInfo.VehicleType.Helicopter);
-        public static readonly ServiceSystemDefinition FIRE_CAR = new ServiceSystemDefinition(ItemClass.Service.FireDepartment, VehicleInfo.VehicleType.Car);
-        public static readonly ServiceSystemDefinition FIRE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.FireDepartment, VehicleInfo.VehicleType.Helicopter);
-        public static readonly ServiceSystemDefinition GARBAGE = new ServiceSystemDefinition(ItemClass.Service.Garbage, VehicleInfo.VehicleType.Car);
-        public static readonly ServiceSystemDefinition HEALTHCARE_CAR = new ServiceSystemDefinition(ItemClass.Service.HealthCare, VehicleInfo.VehicleType.Car);
-        public static readonly ServiceSystemDefinition HEALTHCARE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.HealthCare, VehicleInfo.VehicleType.Helicopter);
-        public static readonly ServiceSystemDefinition POLICE_CAR = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, VehicleInfo.VehicleType.Car);
-        public static readonly ServiceSystemDefinition POLICE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, VehicleInfo.VehicleType.Helicopter);
-        public static readonly ServiceSystemDefinition ROAD_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, VehicleInfo.VehicleType.Car);
-        public static readonly List<ServiceSystemDefinition> availableDefinitions = new List<ServiceSystemDefinition>(new ServiceSystemDefinition[] { DISASTER_CAR, DISASTER_HELICOPTER, FIRE_CAR, FIRE_HELICOPTER, GARBAGE, HEALTHCARE_CAR, HEALTHCARE_HELICOPTER, POLICE_CAR, POLICE_HELICOPTER, ROAD_CAR });
+        public static readonly ServiceSystemDefinition DISASTER_CAR          = new ServiceSystemDefinition(ItemClass.Service.Disaster        , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level2);
+        public static readonly ServiceSystemDefinition DISASTER_HELICOPTER   = new ServiceSystemDefinition(ItemClass.Service.Disaster        , VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level2);
+        public static readonly ServiceSystemDefinition FIRE_CAR              = new ServiceSystemDefinition(ItemClass.Service.FireDepartment  , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition FIRE_HELICOPTER       = new ServiceSystemDefinition(ItemClass.Service.FireDepartment  , VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition GARBAGE               = new ServiceSystemDefinition(ItemClass.Service.Garbage         , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level2);
+        public static readonly ServiceSystemDefinition HEALTHCARE_CAR        = new ServiceSystemDefinition(ItemClass.Service.HealthCare      , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition HEALTHCARE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.HealthCare      , VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
+        public static readonly ServiceSystemDefinition DEATHCARE_CAR         = new ServiceSystemDefinition(ItemClass.Service.HealthCare      , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level2);
+        public static readonly ServiceSystemDefinition POLICE_CAR            = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, VehicleInfo.VehicleType.Car,        ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition POLICE_HELICOPTER     = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
+        public static readonly ServiceSystemDefinition ROAD_CAR              = new ServiceSystemDefinition(ItemClass.Service.Road            , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level2);
+        public static readonly ServiceSystemDefinition WATER_CAR             = new ServiceSystemDefinition(ItemClass.Service.Water           , VehicleInfo.VehicleType.Car,        ItemClass.Level.None  );
+        public static readonly ServiceSystemDefinition PRISION_CAR           = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, VehicleInfo.VehicleType.Car,        ItemClass.Level.Level4);
+        public static readonly Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> availableDefinitions = new Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension>()
+        {
+            [DISASTER_CAR]          = SVMServiceVehicleExtensionDisCar.instance,
+            [DISASTER_HELICOPTER]   = SVMServiceVehicleExtensionDisHel.instance,
+            [FIRE_CAR]              = SVMServiceVehicleExtensionFirCar.instance,
+            [FIRE_HELICOPTER]       = SVMServiceVehicleExtensionFirHel.instance,
+            [GARBAGE]               = SVMServiceVehicleExtensionGarCar.instance,
+            [HEALTHCARE_CAR]        = SVMServiceVehicleExtensionHcrCar.instance,
+            [HEALTHCARE_HELICOPTER] = SVMServiceVehicleExtensionHcrHel.instance,
+            [DEATHCARE_CAR]         = SVMServiceVehicleExtensionDcrCar.instance,
+            [POLICE_CAR]            = SVMServiceVehicleExtensionPolCar.instance,
+            [POLICE_HELICOPTER]     = SVMServiceVehicleExtensionPolHel.instance,
+            [ROAD_CAR]              = SVMServiceVehicleExtensionRoaCar.instance,
+            [WATER_CAR]             = SVMServiceVehicleExtensionWatCar.instance,
+            [PRISION_CAR]           = SVMServiceVehicleExtensionPriCar.instance,
+        };
 
         public ItemClass.Service service
         {
@@ -32,40 +50,30 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         {
             get;
         }
+        public ItemClass.Level level
+        {
+            get;
+        }
+
 
         private ServiceSystemDefinition(
         ItemClass.Service service,
-        VehicleInfo.VehicleType vehicleType)
+        VehicleInfo.VehicleType vehicleType,
+        ItemClass.Level level)
         {
             this.vehicleType = vehicleType;
             this.service = service;
+            this.level = level;
         }
 
         internal ISVMTransportTypeExtension GetTransportExtension()
         {
-            if (this == DISASTER_CAR) { return SVMServiceVehicleExtensionDisCar.instance; }
-            if (this == DISASTER_HELICOPTER) { return SVMServiceVehicleExtensionDisHel.instance; }
-            if (this == GARBAGE) { return SVMServiceVehicleExtensionGarCar.instance; }
-            if (this == FIRE_CAR) { return SVMServiceVehicleExtensionFirCar.instance; }
-            if (this == FIRE_HELICOPTER) { return SVMServiceVehicleExtensionFirHel.instance; }
-            if (this == HEALTHCARE_CAR) { return SVMServiceVehicleExtensionHcrCar.instance; }
-            if (this == HEALTHCARE_HELICOPTER) { return SVMServiceVehicleExtensionHcrHel.instance; }
-            if (this == POLICE_CAR) { return SVMServiceVehicleExtensionPolCar.instance; }
-            if (this == POLICE_HELICOPTER) { return SVMServiceVehicleExtensionPolHel.instance; }
-            if (this == ROAD_CAR) { return SVMServiceVehicleExtensionRoaCar.instance; }
-            return null;
-
+            return availableDefinitions[this];
         }
 
         public bool isFromSystem(VehicleInfo info)
         {
-            return info.m_class.m_service == service && info.m_vehicleType == vehicleType && SVMUtils.HasField(info.GetAI(), "m_passengerCapacity");
-        }
-
-        public bool isFromSystem(DepotAI p)
-        {
-            return (p.m_info.m_class.m_service == service && p.m_transportInfo.m_vehicleType == vehicleType && p.m_maxVehicleCount > 0)
-                || (p.m_secondaryTransportInfo != null && p.m_secondaryTransportInfo.m_vehicleType == vehicleType && p.m_maxVehicleCount2 > 0);
+            return info.m_class.m_service == service && info.m_vehicleType == vehicleType && info.m_class.m_level == level;
         }
 
         public override bool Equals(object obj)
@@ -96,36 +104,22 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             return !(a == b);
         }
 
-        public static ServiceSystemDefinition from(PrefabAI buildingAI)
-        {
-            DepotAI depotAI = buildingAI as DepotAI;
-            if (depotAI == null)
-            {
-                return null;
-            }
-            return from(depotAI.m_transportInfo);
-        }
-
-        public static ServiceSystemDefinition from(TransportInfo info)
-        {
-            if (info == null)
-            {
-                return default(ServiceSystemDefinition);
-            }
-            return availableDefinitions.FirstOrDefault(x => x.service == info.m_class.m_service && x.vehicleType == info.m_vehicleType);
-        }
         public static ServiceSystemDefinition from(VehicleInfo info)
         {
             if (info == null)
             {
                 return default(ServiceSystemDefinition);
             }
-            return availableDefinitions.FirstOrDefault(x => x.service == info.m_class.m_service && x.vehicleType == info.m_vehicleType);
+            return availableDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.vehicleType == info.m_vehicleType && x.level == info.m_class.m_level);
         }
-        public static ServiceSystemDefinition from(uint lineId)
+
+        public static ServiceSystemDefinition from(BuildingInfo info)
         {
-            TransportLine t = Singleton<TransportManager>.instance.m_lines.m_buffer[lineId];
-            return from(t.Info);
+            if (info == null)
+            {
+                return default(ServiceSystemDefinition);
+            }
+            return availableDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.level == info.m_class.m_level);
         }
 
         public SVMConfigWarehouse.ConfigIndex toConfigIndex()
@@ -135,7 +129,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         public override string ToString()
         {
-            return service.ToString() + "|" + vehicleType.ToString();
+            return service.ToString() + "|" + level.ToString() + "|" + vehicleType.ToString();
         }
 
         public override int GetHashCode()

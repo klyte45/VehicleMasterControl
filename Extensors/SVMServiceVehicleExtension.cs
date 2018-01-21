@@ -136,6 +136,9 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMServiceVehicleExtensionPolCar : SVMServiceVehicleExtension<SVMSysDefPolCar, SVMServiceVehicleExtensionPolCar> { }
     internal sealed class SVMServiceVehicleExtensionPolHel : SVMServiceVehicleExtension<SVMSysDefPolHel, SVMServiceVehicleExtensionPolHel> { }
     internal sealed class SVMServiceVehicleExtensionRoaCar : SVMServiceVehicleExtension<SVMSysDefRoaCar, SVMServiceVehicleExtensionRoaCar> { }
+    internal sealed class SVMServiceVehicleExtensionWatCar : SVMServiceVehicleExtension<SVMSysDefRoaCar, SVMServiceVehicleExtensionWatCar> { }
+    internal sealed class SVMServiceVehicleExtensionPriCar : SVMServiceVehicleExtension<SVMSysDefRoaCar, SVMServiceVehicleExtensionPriCar> { }
+    internal sealed class SVMServiceVehicleExtensionDcrCar : SVMServiceVehicleExtension<SVMSysDefRoaCar, SVMServiceVehicleExtensionDcrCar> { }
 
     public sealed class SVMTransportExtensionUtils
     {
