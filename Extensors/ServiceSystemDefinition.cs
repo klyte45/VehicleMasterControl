@@ -16,7 +16,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition DISASTER_HELICOPTER   = new ServiceSystemDefinition(ItemClass.Service.Disaster        , VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition FIRE_CAR              = new ServiceSystemDefinition(ItemClass.Service.FireDepartment  , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition FIRE_HELICOPTER       = new ServiceSystemDefinition(ItemClass.Service.FireDepartment  , VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level1);
-        public static readonly ServiceSystemDefinition GARBAGE               = new ServiceSystemDefinition(ItemClass.Service.Garbage         , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level2);
+        public static readonly ServiceSystemDefinition GARBAGE_CAR               = new ServiceSystemDefinition(ItemClass.Service.Garbage         , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition HEALTHCARE_CAR        = new ServiceSystemDefinition(ItemClass.Service.HealthCare      , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition HEALTHCARE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.HealthCare      , VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
         public static readonly ServiceSystemDefinition DEATHCARE_CAR         = new ServiceSystemDefinition(ItemClass.Service.HealthCare      , VehicleInfo.VehicleType.Car,        ItemClass.Level.Level2);
@@ -31,7 +31,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             [DISASTER_HELICOPTER]   = SVMServiceVehicleExtensionDisHel.instance,
             [FIRE_CAR]              = SVMServiceVehicleExtensionFirCar.instance,
             [FIRE_HELICOPTER]       = SVMServiceVehicleExtensionFirHel.instance,
-            [GARBAGE]               = SVMServiceVehicleExtensionGarCar.instance,
+            [GARBAGE_CAR]               = SVMServiceVehicleExtensionGarCar.instance,
             [HEALTHCARE_CAR]        = SVMServiceVehicleExtensionHcrCar.instance,
             [HEALTHCARE_HELICOPTER] = SVMServiceVehicleExtensionHcrHel.instance,
             [DEATHCARE_CAR]         = SVMServiceVehicleExtensionDcrCar.instance,
@@ -88,7 +88,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             }
             ServiceSystemDefinition other = (ServiceSystemDefinition)obj;
 
-            return this.service == other.service && this.vehicleType == other.vehicleType;
+            return level ==other.level && service==other.service && vehicleType==other.vehicleType;
         }
 
         public static bool operator ==(ServiceSystemDefinition a, ServiceSystemDefinition b)
@@ -124,7 +124,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         public SVMConfigWarehouse.ConfigIndex toConfigIndex()
         {
-            return SVMConfigWarehouse.ConfigIndex.NIL;// SVMConfigWarehouse.getConfigTransportSystemForDefinition(this);
+            return SVMConfigWarehouse.getConfigServiceSystemForDefinition(this);
         }
 
         public override string ToString()
@@ -146,7 +146,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     public sealed class SVMSysDefDisHel : SVMSysDef { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.DISASTER_HELICOPTER; } }
     public sealed class SVMSysDefFirCar : SVMSysDef { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.FIRE_HELICOPTER; } }
     public sealed class SVMSysDefFirHel : SVMSysDef { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.FIRE_CAR; } }
-    public sealed class SVMSysDefGarCar : SVMSysDef { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.GARBAGE; } }
+    public sealed class SVMSysDefGarCar : SVMSysDef { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.GARBAGE_CAR; } }
     public sealed class SVMSysDefHcrCar : SVMSysDef { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.HEALTHCARE_CAR; } }
     public sealed class SVMSysDefHcrHel : SVMSysDef { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.HEALTHCARE_HELICOPTER; } }
     public sealed class SVMSysDefPolCar : SVMSysDef { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.POLICE_CAR; } }

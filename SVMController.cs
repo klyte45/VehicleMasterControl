@@ -1,6 +1,7 @@
 ﻿using System;
 using ColossalFramework;
 using ColossalFramework.UI;
+using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Utils;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace Klyte.ServiceVehiclesManager
         private UIView uiView;
         private bool initialized = false;
         private  UIButton openSVMPanelButton;
+        private SVMServiceBuildingDetailPanel m_listPanel;
 
         public void destroy()
         {
@@ -29,9 +31,7 @@ namespace Klyte.ServiceVehiclesManager
                     return;
 
                 UITabstrip toolStrip = uiView.FindUIComponent<UITabstrip>("MainToolstrip");
-                SVMUtils.createUIElement(ref openSVMPanelButton, transform);
-                //this.openSVMPanelButton.focusedFgSprite = "ToolbarIconGroup6Focused";
-                //this.openSVMPanelButton.hoveredFgSprite = "ToolbarIconGroup6Hovered";
+                SVMUtils.createUIElement(out openSVMPanelButton, transform);
                 this.openSVMPanelButton.size = new Vector2(49f, 49f);
                 this.openSVMPanelButton.name = "ServiceVehiclesManagerButton";
                 this.openSVMPanelButton.tooltip = "Service Vehicles Manager (v" + ServiceVehiclesManagerMod.version + ")";
@@ -49,33 +49,30 @@ namespace Klyte.ServiceVehiclesManager
                     }
                     else
                     {
-                        CloseSVMPanel();
+                        internal_CloseSVMPanel();
                     }
                 };
-
+                m_listPanel = SVMServiceBuildingDetailPanel.Create();
                 initialized = true;
             }
-
         }
 
-        private void CloseSVMPanel()
+        public void CloseSVMPanel()
         {
-            //base.isVisible = false;
-            //this.m_button.Unfocus();
+            openSVMPanelButton.SimulateClick(); 
+        }
+
+        private void internal_CloseSVMPanel()
+        {
+            m_listPanel.GetComponent<UIPanel>().isVisible = false;
+            openSVMPanelButton.Unfocus();
+            openSVMPanelButton.state = UIButton.ButtonState.Normal;
         }
 
         private void OpenSVMPanel()
         {
             ServiceVehiclesManagerMod.instance.showVersionInfoPopup();
-
-            //if (!isVisible)
-            //{
-            //    base.isVisible = true;
-            //    this.m_fastList.DisplayAt(this.m_fastList.listPosition);
-            //    this.m_optionPanel.Show(this.m_fastList.rowsData[this.m_fastList.selectedIndex] as VehicleOptions);
-            //    this.m_followVehicle.isVisible = (this.m_preview.parent.isVisible = true);
-            //    return;
-            //}
+            m_listPanel.GetComponent<UIPanel>().isVisible = true;
         }
     }
 }

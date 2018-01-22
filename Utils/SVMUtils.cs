@@ -1,4 +1,5 @@
-﻿using Klyte.TransportLinesManager.Utils;
+﻿using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.TransportLinesManager.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,20 @@ namespace Klyte.ServiceVehiclesManager.Utils
                 Console.WriteLine("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
             }
 
+        }
+
+        internal static List<string> LoadBasicAssets(ServiceSystemDefinition definition)
+        {
+            List<string> basicAssetsList = new List<string>();            
+            for (uint num = 0u; (ulong)num < (ulong)((long)PrefabCollection<VehicleInfo>.PrefabCount()); num += 1u)
+            {
+                VehicleInfo prefab = PrefabCollection<VehicleInfo>.GetPrefab(num);
+                if (!(prefab == null) && definition.isFromSystem(prefab) && !IsTrailer(prefab))
+                {
+                    basicAssetsList.Add(prefab.name);
+                }
+            }
+            return basicAssetsList;
         }
         #endregion
     }

@@ -23,7 +23,11 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         protected override SVMConfigWarehouse.ConfigIndex ConfigIndexKey
         {
             get {
-                return SVMConfigWarehouse.ConfigIndex.NIL;// SVMConfigWarehouse.getConfigAssetsForAI(definition);
+                if (transform.parent == null && SVMController.instance != null)
+                {
+                    transform.SetParent(SVMController.instance.transform);
+                }
+                return SVMConfigWarehouse.getConfigAssetsForAI(definition);
             }
         }
         protected override bool AllowGlobal { get { return false; } }
@@ -72,7 +76,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         }
         #endregion
 
-        
+
         #region Asset List
         public List<string> GetAssetList(uint prefix)
         {
@@ -120,7 +124,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         }
         public void LoadBasicAssets()
         {
-            //basicAssetsList = SVMUtils.LoadBasicAssets(definition);
+            basicAssetsList = SVMUtils.LoadBasicAssets(definition);
         }
         #endregion
 

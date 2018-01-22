@@ -20,8 +20,9 @@ using ColossalFramework.PlatformServices;
 using Klyte.TransportLinesManager;
 using Klyte.ServiceVehiclesManager.Utils;
 using Klyte.ServiceVehiclesManager.i18n;
+using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 
-[assembly: AssemblyVersion("0.0.0.*")]
+[assembly: AssemblyVersion("0.0.1.*")]
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -68,7 +69,7 @@ namespace Klyte.ServiceVehiclesManager
             {
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
                 var assembly = (from a in assemblies
-                                where a.GetType("Klyte.TransportLinesManager.TransportLinesManagerMod") != null
+                                where a.GetType("Klyte.TransportLinesManager.TLMMod") != null
                                 select a).SingleOrDefault();
                 if (assembly != null)
                 {
@@ -151,7 +152,7 @@ namespace Klyte.ServiceVehiclesManager
             {
                 foreach (Transform child in helper.self.transform)
                 {
-                        GameObject.Destroy(child?.gameObject);
+                    GameObject.Destroy(child?.gameObject);
                 }
 
                 helper.self.eventVisibilityChanged += delegate (UIComponent component, bool b)
@@ -175,6 +176,8 @@ namespace Klyte.ServiceVehiclesManager
                 {
                     showVersionInfoPopup(true);
                 });
+                
+                
 
                 SVMUtils.doLog("End Loading Options");
             }
@@ -277,7 +280,7 @@ namespace Klyte.ServiceVehiclesManager
             if (SVMController.taSVM == null)
             {
                 SVMController.taSVM = CreateTextureAtlas("UI.Images.sprites.png", "ServiceVehicleManagerSprites", GameObject.FindObjectOfType<UIView>().FindUIComponent<UIPanel>("InfoPanel").atlas.material, 64, 64, new string[] {
-                    "ServiceVehiclesManagerIcon","ServiceVehiclesManagerIconSmall","ToolbarIconGroup6Hovered","ToolbarIconGroup6Focused","RemoveUnwantedIcon","ConfigIcon","24hLineIcon", "PerHourIcon"
+                    "ServiceVehiclesManagerIcon","ServiceVehiclesManagerIconSmall","ToolbarIconGroup6Hovered","ToolbarIconGroup6Focused","HelicopterIndicator","ConfigIcon","24hLineIcon", "PerHourIcon"
                 });
             }
             loadSVMLocale(false);
