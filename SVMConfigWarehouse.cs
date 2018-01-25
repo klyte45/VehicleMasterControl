@@ -60,6 +60,8 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.ROAD_CAR: return new Color32(64, 89, 13, 255);
                 case ConfigIndex.WATER_CAR: return new Color32(19, 105, 134, 255);
                 case ConfigIndex.PRISION_CAR: return new Color32(249, 188, 6, 255);
+                case ConfigIndex.CABLECAR_CABLECAR: return new Color32(31, 96, 225, 255);
+                case ConfigIndex.TAXI_CAR: return new Color32(88, 187, 138, 225);
                 default: return new Color();
 
             }
@@ -82,6 +84,8 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.ROAD_CAR: return Locale.Get("VEHICLE_TITLE", "Engineering_Truck");
                 case ConfigIndex.WATER_CAR: return Locale.Get("VEHICLE_TITLE", "Water Pumping Truck");
                 case ConfigIndex.PRISION_CAR: return Locale.Get("VEHICLE_TITLE", "PoliceVan");
+                case ConfigIndex.TAXI_CAR: return Locale.Get("VEHICLE_TITLE", "Taxi");
+                case ConfigIndex.CABLECAR_CABLECAR: return Locale.Get("VEHICLE_TITLE", "Cable Car");
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
 
             }
@@ -103,6 +107,8 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.ROAD_CAR: return "ToolbarIconRoads";
                 case ConfigIndex.WATER_CAR: return "ToolbarIconWaterAndSewage";
                 case ConfigIndex.PRISION_CAR: return "IconPolicyDoubleSentences";
+                case ConfigIndex.TAXI_CAR: return "SubBarPublicTransportTaxi";
+                case ConfigIndex.CABLECAR_CABLECAR: return "SubBarPublicTransportCableCar";
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
             }
         }
@@ -121,6 +127,8 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.ROAD_CAR:
                 case ConfigIndex.WATER_CAR:
                 case ConfigIndex.PRISION_CAR:
+                case ConfigIndex.CABLECAR_CABLECAR:
+                case ConfigIndex.TAXI_CAR:
                     return "";
                 case ConfigIndex.FIRE_HELICOPTER:
                 case ConfigIndex.HEALTHCARE_HELICOPTER:
@@ -134,16 +142,17 @@ namespace Klyte.ServiceVehiclesManager
         public enum ConfigIndex : uint
         {
             NIL = 0,
-            VEHICLE_PART = 0xF00000,
-            SYSTEM_PART = 0x0F8000,
-            LEVEL_PART = 0x007000,
-            SSD_PART = VEHICLE_PART | SYSTEM_PART | LEVEL_PART,
-            TYPE_PART = 0x000F00,
+            VEHICLE_PART = 0x3C000000,
+            SUBSYS_PART = 0x03F00000,
+            SYSTEM_PART = 0x000F8000,
+            LEVEL_PART = 0x00007000,
+            TYPE_PART = 0x00000F00,
             DESC_DATA = 0xFF,
-            CONFIG_GROUP = 0xFF000000,
+            CONFIG_GROUP = 0xC0000000,
+            SSD_PART = VEHICLE_PART | SUBSYS_PART | SYSTEM_PART | LEVEL_PART,
 
-            GLOBAL_CONFIG = 0x1000000,
-            SYSTEM_CONFIG = 0x2000000,
+            GLOBAL_CONFIG = 0x40000000,
+            SYSTEM_CONFIG = 0x80000000,
 
             TYPE_STRING = 0x100,
             TYPE_INT = 0x200,
@@ -153,21 +162,24 @@ namespace Klyte.ServiceVehiclesManager
 
             //AUTO_COLOR_ENABLED                          = GLOBAL_CONFIG | 0x2 | TYPE_BOOL,
 
-            DISASTER_CAR = (1 << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            DISASTER_HELICOPTER = (7 << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            FIRE_CAR = (1 << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            FIRE_HELICOPTER = (7 << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            GARBAGE_CAR = (1 << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            HEALTHCARE_CAR = (1 << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            HEALTHCARE_HELICOPTER = (7 << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level3 + 1) << 12),
-            DEATHCARE_CAR = (1 << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            POLICE_CAR = (1 << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            POLICE_HELICOPTER = (7 << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level3 + 1) << 12),
-            ROAD_CAR = (1 << 20) | (ItemClass.Service.Road << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            WATER_CAR = (1 << 20) | (ItemClass.Service.Water << 15) | ((ItemClass.Level.None + 1) << 12),
-            PRISION_CAR = (1 << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level4 + 1) << 12),
+            DISASTER_CAR          = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            DISASTER_HELICOPTER   = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            FIRE_CAR              = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            FIRE_HELICOPTER       = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            GARBAGE_CAR           = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            HEALTHCARE_CAR        = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            HEALTHCARE_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level3 + 1) << 12),
+            DEATHCARE_CAR         = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            POLICE_CAR            = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            POLICE_HELICOPTER     = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level3 + 1) << 12),
+            ROAD_CAR              = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Road << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            WATER_CAR             = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Water << 15) | ((ItemClass.Level.None + 1) << 12),
+            PRISION_CAR           = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level4 + 1) << 12),
+            TAXI_CAR              = (1 << 26) | (ItemClass.SubService.PublicTransportTaxi << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            CABLECAR_CABLECAR     = (1 << 26) | (ItemClass.SubService.PublicTransportCableCar << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
 
             EXTENSION_CONFIG_DISTRICT = 0x1 | TYPE_STRING | SYSTEM_CONFIG,
+            BASIC_CONFIG_DISTRICT = 0x2 | TYPE_STRING | GLOBAL_CONFIG,
 
             DISASTER_CAR_CONFIG = DISASTER_CAR | EXTENSION_CONFIG_DISTRICT,
             DISASTER_HELICOPTER_CONFIG = DISASTER_HELICOPTER | EXTENSION_CONFIG_DISTRICT,
@@ -182,6 +194,8 @@ namespace Klyte.ServiceVehiclesManager
             ROAD_CAR_CONFIG = ROAD_CAR | EXTENSION_CONFIG_DISTRICT,
             WATER_CAR_CONFIG = WATER_CAR | EXTENSION_CONFIG_DISTRICT,
             PRISION_CAR_CONFIG = PRISION_CAR | EXTENSION_CONFIG_DISTRICT,
+            TAXI_CAR_CONFIG = TAXI_CAR | EXTENSION_CONFIG_DISTRICT,
+            CABLECAR_CABLECAR_CONFIG = CABLECAR_CABLECAR | EXTENSION_CONFIG_DISTRICT,
         }
 
         public static ConfigIndex[] defaultTrueBoolProperties => new ConfigIndex[] {
@@ -203,6 +217,8 @@ namespace Klyte.ServiceVehiclesManager
             if (serviceSystemDefinition == ServiceSystemDefinition.ROAD_CAR) return ConfigIndex.ROAD_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.WATER_CAR) return ConfigIndex.WATER_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.PRISION_CAR) return ConfigIndex.PRISION_CAR;
+            if (serviceSystemDefinition == ServiceSystemDefinition.TAXI_CAR) return ConfigIndex.TAXI_CAR;
+            if (serviceSystemDefinition == ServiceSystemDefinition.CABLECAR_CABLECAR) return ConfigIndex.CABLECAR_CABLECAR;
             return ConfigIndex.NIL;
         }
     }

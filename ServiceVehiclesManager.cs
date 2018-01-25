@@ -21,6 +21,7 @@ using Klyte.TransportLinesManager;
 using Klyte.ServiceVehiclesManager.Utils;
 using Klyte.ServiceVehiclesManager.i18n;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.ServiceVehiclesManager.UI;
 
 [assembly: AssemblyVersion("0.0.1.*")]
 
@@ -176,8 +177,6 @@ namespace Klyte.ServiceVehiclesManager
                 {
                     showVersionInfoPopup(true);
                 });
-                
-                
 
                 SVMUtils.doLog("End Loading Options");
             }
