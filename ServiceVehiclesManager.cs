@@ -283,6 +283,9 @@ namespace Klyte.ServiceVehiclesManager
                 });
             }
             loadSVMLocale(false);
+
+            SVMController.instance.Awake();
+
             m_loaded = true;
         }
 
@@ -336,21 +339,4 @@ namespace Klyte.ServiceVehiclesManager
 
     }
 
-    public class ServiceVehiclesManagerThreadMod : ThreadingExtensionBase
-    {
-        public override void OnCreated(IThreading threading)
-        {
-            SVMController.instance?.destroy();
-        }
-
-        public override void OnUpdate(float realTimeDelta, float simulationTimeDelta)
-        {
-            SVMController.instance?.update();
-        }
-        public override void OnReleased()
-        {
-            SVMController.instance?.destroy();
-        }
-
-    }
 }

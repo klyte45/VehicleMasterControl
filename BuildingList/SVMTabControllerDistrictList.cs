@@ -25,6 +25,8 @@ namespace Klyte.ServiceVehiclesManager.UI
     {
         private UIScrollablePanel mainPanel;
 
+        private UIColorField m_districtColor;
+
         #region Awake
         private void Awake()
         {

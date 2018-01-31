@@ -1,4 +1,5 @@
-﻿using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+﻿using ColossalFramework;
+using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.TransportLinesManager.Utils;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace Klyte.ServiceVehiclesManager.Utils
 
         internal static List<string> LoadBasicAssets(ServiceSystemDefinition definition)
         {
-            List<string> basicAssetsList = new List<string>();            
+            List<string> basicAssetsList = new List<string>();
             for (uint num = 0u; (ulong)num < (ulong)((long)PrefabCollection<VehicleInfo>.PrefabCount()); num += 1u)
             {
                 VehicleInfo prefab = PrefabCollection<VehicleInfo>.GetPrefab(num);
@@ -50,6 +51,30 @@ namespace Klyte.ServiceVehiclesManager.Utils
                 }
             }
             return basicAssetsList;
+        }
+        #endregion
+
+        #region Districts Utils
+        public static Dictionary<string, int> getValidDistricts()
+        {
+            Dictionary<string, int> districts = new Dictionary<string, int>
+            {
+                [$"<{Singleton<SimulationManager>.instance.m_metaData.m_CityName}>"] = 0
+            };
+            for (int i = 1; i <= 0x7F; i++)
+            {
+                if ((Singleton<DistrictManager>.instance.m_districts.m_buffer[i].m_flags & District.Flags.Created) != District.Flags.None)
+                {
+                    String districtName = Singleton<DistrictManager>.instance.GetDistrictName(i);
+                    if (districts.ContainsKey(districtName))
+                    {
+                        districtName += $" (ID:{i})";
+                    }
+                    districts[districtName] = i;
+                }
+            }
+
+            return districts;
         }
         #endregion
     }

@@ -5,6 +5,7 @@ using ICities;
 using Klyte.Extensions;
 using Klyte.Harmony;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.Utils;
 using Klyte.TransportLinesManager.Extensors;
 using Klyte.TransportLinesManager.Extensors.BuildingAIExt;
@@ -35,6 +36,8 @@ namespace Klyte.ServiceVehiclesManager.UI
         private UITabstrip m_StripBuilings;
 
         private UIDropDown m_selectDistrict;
+        private Dictionary<string, int> m_cachedDistricts;
+        private string m_lastSelectedItem;
 
         public static SVMServiceBuildingDetailPanel Create()
         {
@@ -90,7 +93,9 @@ namespace Klyte.ServiceVehiclesManager.UI
             m_StripMain.AddTab("SVMPerDistrict", tabPerDistrict.gameObject, contentContainerPerDistrict.gameObject);
             CreateSsdTabstrip(ref m_StripDistricts, null, contentContainerPerDistrict);
 
-            m_selectDistrict = UIHelperExtension.CloneBasicDropDownLocalized("SVM_DISTRICT_TITLE", new string[0], (x) => { }, -1, contentContainerPerDistrict);
+            m_cachedDistricts = SVMUtils.getValidDistricts();
+
+            m_selectDistrict = UIHelperExtension.CloneBasicDropDownLocalized("SVM_DISTRICT_TITLE", m_cachedDistricts.Keys.OrderBy(x => x).ToArray(), OnDistrictSelect, -1, contentContainerPerDistrict);
             UIPanel container = m_selectDistrict.GetComponentInParent<UIPanel>();
             container.autoLayoutDirection = LayoutDirection.Horizontal;
             container.autoFitChildrenHorizontally = true;
@@ -102,9 +107,39 @@ namespace Klyte.ServiceVehiclesManager.UI
             label.padding.top = 10;
             label.padding.right = 10;
             
+            DistrictManagerOverrides.eventOnDistrictRenamed += reloadDistricts;
+
             m_StripMain.selectedIndex = -1;
             m_StripBuilings.selectedIndex = -1;
             m_StripDistricts.selectedIndex = -1;
+        }
+
+        private void OnDistrictSelect(int x)
+        {
+            try
+            {
+                m_lastSelectedItem = m_selectDistrict.items[x];
+            }
+            catch
+            {
+                if (m_selectDistrict.items.Length > 0)
+                {
+                    m_lastSelectedItem = m_selectDistrict.items[0];
+                }
+                else
+                {
+                    m_lastSelectedItem = null;
+                    m_selectDistrict.selectedIndex = -1;
+                }
+            }
+        }
+
+
+        private void reloadDistricts()
+        {
+            m_cachedDistricts = SVMUtils.getValidDistricts();
+            m_selectDistrict.items = m_cachedDistricts.Keys.OrderBy(x => x).ToArray();
+            m_selectDistrict.selectedValue = m_lastSelectedItem;
         }
 
         private static void CreateSsdTabstrip(ref UITabstrip strip, UIPanel titleLine, UIComponent parent, bool buildings = false)
