@@ -14,29 +14,43 @@ namespace Klyte.ServiceVehiclesManager.Utils
         #region Logging
         public static void doLog(string format, params object[] args)
         {
-            if (ServiceVehiclesManagerMod.instance != null)
+            try
             {
-                if (ServiceVehiclesManagerMod.debugMode)
+                if (ServiceVehiclesManagerMod.instance != null)
                 {
-                    Debug.LogWarningFormat("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
+                    if (ServiceVehiclesManagerMod.debugMode)
+                    {
+                        Debug.LogWarningFormat("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
                 }
             }
-            else
+            catch
             {
-                Console.WriteLine("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
+                Debug.LogErrorFormat("TLMRv" + ServiceVehiclesManagerMod.version + " Erro ao fazer log: {0} (args = {1})", format, args == null ? "[]" : string.Join(",", args.Select(x => x != null ? x.ToString() : "--NULL--").ToArray()));
             }
         }
         public static void doErrorLog(string format, params object[] args)
         {
-            if (ServiceVehiclesManagerMod.instance != null)
+            try
             {
-                Debug.LogErrorFormat("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
-            }
-            else
-            {
-                Console.WriteLine("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
-            }
+                if (ServiceVehiclesManagerMod.instance != null)
+                {
+                    Debug.LogErrorFormat("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
+                }
+                else
+                {
+                    Console.WriteLine("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
+                }
 
+            }
+            catch
+            {
+                Debug.LogErrorFormat("TLMRv" + ServiceVehiclesManagerMod.version + " Erro ao logar ERRO!!!: {0} (args = [{1}])", format, args == null ? "" : string.Join(",", args.Select(x => x != null ? x.ToString() : "--NULL--").ToArray()));
+            }
         }
 
         internal static List<string> LoadBasicAssets(ServiceSystemDefinition definition)

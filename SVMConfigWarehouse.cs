@@ -62,6 +62,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.PRISION_CAR: return new Color32(249, 188, 6, 255);
                 case ConfigIndex.CABLECAR_CABLECAR: return new Color32(31, 96, 225, 255);
                 case ConfigIndex.TAXI_CAR: return new Color32(88, 187, 138, 225);
+                case ConfigIndex.SNOW_CAR: return new Color32(175, 175, 175, 225);
                 default: return new Color();
 
             }
@@ -86,6 +87,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.PRISION_CAR: return Locale.Get("VEHICLE_TITLE", "PoliceVan");
                 case ConfigIndex.TAXI_CAR: return Locale.Get("VEHICLE_TITLE", "Taxi");
                 case ConfigIndex.CABLECAR_CABLECAR: return Locale.Get("VEHICLE_TITLE", "Cable Car");
+                case ConfigIndex.SNOW_CAR: return Locale.Get("VEHICLE_TITLE", "Snowplow");
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
 
             }
@@ -109,7 +111,33 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.PRISION_CAR: return "IconPolicyDoubleSentences";
                 case ConfigIndex.TAXI_CAR: return "SubBarPublicTransportTaxi";
                 case ConfigIndex.CABLECAR_CABLECAR: return "SubBarPublicTransportCableCar";
+                case ConfigIndex.SNOW_CAR: return "InfoIconSnow";
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
+            }
+        }
+        public static bool allowColorChanging(ConfigIndex i)
+        {
+            switch (i & ConfigIndex.SSD_PART)
+            {
+                case ConfigIndex.FIRE_CAR:
+                case ConfigIndex.HEALTHCARE_CAR:
+                case ConfigIndex.POLICE_CAR:
+                case ConfigIndex.ROAD_CAR:
+                case ConfigIndex.SNOW_CAR:
+                case ConfigIndex.PRISION_CAR:
+                case ConfigIndex.TAXI_CAR:
+                    return false;
+                case ConfigIndex.DISASTER_CAR:
+                case ConfigIndex.DISASTER_HELICOPTER:
+                case ConfigIndex.FIRE_HELICOPTER:
+                case ConfigIndex.GARBAGE_CAR:
+                case ConfigIndex.HEALTHCARE_HELICOPTER:
+                case ConfigIndex.DEATHCARE_CAR:
+                case ConfigIndex.POLICE_HELICOPTER:
+                case ConfigIndex.WATER_CAR:
+                case ConfigIndex.CABLECAR_CABLECAR:
+                default:
+                    return true;
             }
         }
 
@@ -129,6 +157,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.PRISION_CAR:
                 case ConfigIndex.CABLECAR_CABLECAR:
                 case ConfigIndex.TAXI_CAR:
+                case ConfigIndex.SNOW_CAR:
                     return "";
                 case ConfigIndex.FIRE_HELICOPTER:
                 case ConfigIndex.HEALTHCARE_HELICOPTER:
@@ -162,21 +191,22 @@ namespace Klyte.ServiceVehiclesManager
 
             //AUTO_COLOR_ENABLED                          = GLOBAL_CONFIG | 0x2 | TYPE_BOOL,
 
-            DISASTER_CAR          = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            DISASTER_HELICOPTER   = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            FIRE_CAR              = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            FIRE_HELICOPTER       = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            GARBAGE_CAR           = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            HEALTHCARE_CAR        = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            DISASTER_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            DISASTER_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            FIRE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            FIRE_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            GARBAGE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            HEALTHCARE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             HEALTHCARE_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level3 + 1) << 12),
-            DEATHCARE_CAR         = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            POLICE_CAR            = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            POLICE_HELICOPTER     = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level3 + 1) << 12),
-            ROAD_CAR              = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Road << 15) | ((ItemClass.Level.Level2 + 1) << 12),
-            WATER_CAR             = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Water << 15) | ((ItemClass.Level.None + 1) << 12),
-            PRISION_CAR           = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level4 + 1) << 12),
-            TAXI_CAR              = (1 << 26) | (ItemClass.SubService.PublicTransportTaxi << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            CABLECAR_CABLECAR     = (1 << 26) | (ItemClass.SubService.PublicTransportCableCar << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            DEATHCARE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            POLICE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            POLICE_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level3 + 1) << 12),
+            ROAD_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Road << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            WATER_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Water << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            PRISION_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level4 + 1) << 12),
+            TAXI_CAR = (1 << 26) | (ItemClass.SubService.PublicTransportTaxi << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            CABLECAR_CABLECAR = (1 << 26) | (ItemClass.SubService.PublicTransportCableCar << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            SNOW_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Road << 15) | ((ItemClass.Level.Level4 + 1) << 12),
 
             EXTENSION_CONFIG_DISTRICT = 0x1 | TYPE_STRING | SYSTEM_CONFIG,
             BASIC_CONFIG_DISTRICT = 0x2 | TYPE_STRING | GLOBAL_CONFIG,
@@ -219,6 +249,7 @@ namespace Klyte.ServiceVehiclesManager
             if (serviceSystemDefinition == ServiceSystemDefinition.PRISION_CAR) return ConfigIndex.PRISION_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.TAXI_CAR) return ConfigIndex.TAXI_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.CABLECAR_CABLECAR) return ConfigIndex.CABLECAR_CABLECAR;
+            if (serviceSystemDefinition == ServiceSystemDefinition.SNOW_CAR) return ConfigIndex.SNOW_CAR;
             return ConfigIndex.NIL;
         }
     }

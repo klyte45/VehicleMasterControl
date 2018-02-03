@@ -15,7 +15,6 @@ namespace Klyte.ServiceVehiclesManager
     {
         internal static UITextureAtlas taSVM;
         private UIView uiView;
-        private bool initialized = false;
         private UIButton openSVMPanelButton;
         private SVMServiceBuildingDetailPanel m_listPanel;
 
@@ -23,7 +22,6 @@ namespace Klyte.ServiceVehiclesManager
         {
             Destroy(uiView);
             Destroy(openSVMPanelButton);
-            initialized = false;
         }
 
         public void Start()
@@ -54,7 +52,7 @@ namespace Klyte.ServiceVehiclesManager
                     internal_CloseSVMPanel();
                 }
             };
-            m_listPanel = SVMServiceBuildingDetailPanel.Create();
+            m_listPanel = SVMServiceBuildingDetailPanel.Get();
 
             var typeTarg = typeof(Redirector<>);
 
@@ -66,10 +64,7 @@ namespace Klyte.ServiceVehiclesManager
             foreach (Type t in instances)
             {
                 gameObject.AddComponent(t);
-            }
-
-
-            initialized = true;
+            }                       
         }
 
         public void Awake()

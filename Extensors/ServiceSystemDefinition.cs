@@ -23,10 +23,11 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition POLICE_CAR = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition POLICE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
         public static readonly ServiceSystemDefinition ROAD_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
-        public static readonly ServiceSystemDefinition WATER_CAR = new ServiceSystemDefinition(ItemClass.Service.Water, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.None);
+        public static readonly ServiceSystemDefinition WATER_CAR = new ServiceSystemDefinition(ItemClass.Service.Water, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition PRISION_CAR = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
         public static readonly ServiceSystemDefinition TAXI_CAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTaxi, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition CABLECAR_CABLECAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportCableCar, VehicleInfo.VehicleType.CableCar, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition SNOW_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
         public static readonly Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> availableDefinitions = new Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension>()
         {
             [DISASTER_CAR] = SVMServiceVehicleExtensionDisCar.instance,
@@ -44,6 +45,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             [PRISION_CAR] = SVMServiceVehicleExtensionPriCar.instance,
             [TAXI_CAR] = SVMServiceVehicleExtensionTaxCar.instance,
             [CABLECAR_CABLECAR] = SVMServiceVehicleExtensionCcrCcr.instance,
+            [SNOW_CAR] = SVMServiceVehicleExtensionSnwCar.instance,
         };
         public static readonly Dictionary<ServiceSystemDefinition, Type> sysDefinitions = new Dictionary<ServiceSystemDefinition, Type>()
         {
@@ -62,6 +64,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             [PRISION_CAR] = typeof(SVMSysDefPriCar),
             [TAXI_CAR] = typeof(SVMSysDefTaxCar),
             [CABLECAR_CABLECAR] = typeof(SVMSysDefCcrCcr),
+            [SNOW_CAR] = typeof(SVMSysDefSnwCar),
         };
 
         public ItemClass.Service service
@@ -195,4 +198,5 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMSysDefPriCar : SVMSysDef<SVMSysDefPriCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.PRISION_CAR; } }
     internal sealed class SVMSysDefTaxCar : SVMSysDef<SVMSysDefTaxCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.TAXI_CAR; } }
     internal sealed class SVMSysDefCcrCcr : SVMSysDef<SVMSysDefCcrCcr> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CABLECAR_CABLECAR; } }
+    internal sealed class SVMSysDefSnwCar : SVMSysDef<SVMSysDefSnwCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.SNOW_CAR; } }
 }

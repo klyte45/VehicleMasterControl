@@ -12,7 +12,7 @@ namespace Klyte.ServiceVehiclesManager.Interfaces
 {
     internal abstract class ExtensionInterfaceDefaultImpl<T, U> : BasicExtensionInterface<T, U> where T : struct, IConvertible where U : ExtensionInterfaceDefaultImpl<T, U>
     {
-        protected abstract SVMConfigWarehouse.ConfigIndex ConfigIndexKey { get; }
+        public abstract SVMConfigWarehouse.ConfigIndex ConfigIndexKey { get; }
         private Dictionary<uint, Dictionary<T, string>> cachedValuesLocal;
         private Dictionary<uint, Dictionary<T, string>> cachedValuesGlobal;
 
