@@ -52,6 +52,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.FIRE_CAR: return new Color32(89, 13, 13, 255);
                 case ConfigIndex.FIRE_HELICOPTER: return new Color32(223, 32, 32, 255);
                 case ConfigIndex.GARBAGE_CAR: return new Color32(67, 31, 10, 255);
+                case ConfigIndex.GARBBIO_CAR: return new Color32(67, 90, 10, 255);
                 case ConfigIndex.HEALTHCARE_CAR: return new Color32(165, 120, 120, 255);
                 case ConfigIndex.HEALTHCARE_HELICOPTER: return new Color32(226, 212, 212, 255);
                 case ConfigIndex.DEATHCARE_CAR: return new Color32(153, 102, 119, 255);
@@ -77,6 +78,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.FIRE_CAR: return Locale.Get("VEHICLE_TITLE", "Fire Truck");
                 case ConfigIndex.FIRE_HELICOPTER: return Locale.Get("VEHICLE_TITLE", "Fire Helicopter");
                 case ConfigIndex.GARBAGE_CAR: return Locale.Get("VEHICLE_TITLE", "Garbage Truck");
+                case ConfigIndex.GARBBIO_CAR: return Locale.Get("VEHICLE_TITLE", "Biofuel Garbage Truck 01");
                 case ConfigIndex.HEALTHCARE_CAR: return Locale.Get("VEHICLE_TITLE", "Ambulance");
                 case ConfigIndex.HEALTHCARE_HELICOPTER: return Locale.Get("VEHICLE_TITLE", "Medical Helicopter");
                 case ConfigIndex.DEATHCARE_CAR: return Locale.Get("VEHICLE_TITLE", "Hearse");
@@ -101,6 +103,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.FIRE_CAR: return "InfoIconFireSafety";
                 case ConfigIndex.FIRE_HELICOPTER: return "InfoIconFireSafety";
                 case ConfigIndex.GARBAGE_CAR: return "InfoIconGarbage";
+                case ConfigIndex.GARBBIO_CAR: return "InfoIconGarbage";
                 case ConfigIndex.HEALTHCARE_CAR: return "ToolbarIconHealthcare";
                 case ConfigIndex.HEALTHCARE_HELICOPTER: return "ToolbarIconHealthcare";
                 case ConfigIndex.DEATHCARE_CAR: return "ToolbarIconHealthcareHovered";
@@ -131,6 +134,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.DISASTER_HELICOPTER:
                 case ConfigIndex.FIRE_HELICOPTER:
                 case ConfigIndex.GARBAGE_CAR:
+                case ConfigIndex.GARBBIO_CAR:
                 case ConfigIndex.HEALTHCARE_HELICOPTER:
                 case ConfigIndex.DEATHCARE_CAR:
                 case ConfigIndex.POLICE_HELICOPTER:
@@ -149,6 +153,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.DISASTER_CAR:
                 case ConfigIndex.FIRE_CAR:
                 case ConfigIndex.GARBAGE_CAR:
+                case ConfigIndex.GARBBIO_CAR:
                 case ConfigIndex.HEALTHCARE_CAR:
                 case ConfigIndex.DEATHCARE_CAR:
                 case ConfigIndex.POLICE_CAR:
@@ -195,7 +200,8 @@ namespace Klyte.ServiceVehiclesManager
             DISASTER_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
             FIRE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             FIRE_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            GARBAGE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.Level2 + 1) << 12),
+            GARBAGE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.None + 1) << 12),
+            GARBBIO_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.Level2 + 1) << 12),
             HEALTHCARE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             HEALTHCARE_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level3 + 1) << 12),
             DEATHCARE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level2 + 1) << 12),
@@ -216,6 +222,7 @@ namespace Klyte.ServiceVehiclesManager
             FIRE_CAR_CONFIG = FIRE_CAR | EXTENSION_CONFIG_DISTRICT,
             FIRE_HELICOPTER_CONFIG = FIRE_HELICOPTER | EXTENSION_CONFIG_DISTRICT,
             GARBAGE_CAR_CONFIG = GARBAGE_CAR | EXTENSION_CONFIG_DISTRICT,
+            GARBBIO_CAR_CONFIG = GARBBIO_CAR | EXTENSION_CONFIG_DISTRICT,
             HEALTHCARE_CAR_CONFIG = HEALTHCARE_CAR | EXTENSION_CONFIG_DISTRICT,
             HEALTHCARE_HELICOPTER_CONFIG = HEALTHCARE_HELICOPTER | EXTENSION_CONFIG_DISTRICT,
             DEATHCARE_CAR_CONFIG = DEATHCARE_CAR | EXTENSION_CONFIG_DISTRICT,
@@ -239,6 +246,7 @@ namespace Klyte.ServiceVehiclesManager
             if (serviceSystemDefinition == ServiceSystemDefinition.FIRE_CAR) return ConfigIndex.FIRE_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.FIRE_HELICOPTER) return ConfigIndex.FIRE_HELICOPTER;
             if (serviceSystemDefinition == ServiceSystemDefinition.GARBAGE_CAR) return ConfigIndex.GARBAGE_CAR;
+            if (serviceSystemDefinition == ServiceSystemDefinition.GARBBIO_CAR) return ConfigIndex.GARBBIO_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.HEALTHCARE_CAR) return ConfigIndex.HEALTHCARE_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.HEALTHCARE_HELICOPTER) return ConfigIndex.HEALTHCARE_HELICOPTER;
             if (serviceSystemDefinition == ServiceSystemDefinition.DEATHCARE_CAR) return ConfigIndex.DEATHCARE_CAR;

@@ -107,12 +107,6 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         {
             return GetBudgetsMultiplier(districtId | DISTRICT_FLAG);
         }
-
-        public uint GetBudgetMultiplierForHourDistrict(uint districtId, int hour)
-        {
-            return GetBudgetMultiplierForHour(districtId | DISTRICT_FLAG, hour);
-        }
-
         public void SetBudgetMultiplierDistrict(uint districtId, uint[] multipliers)
         {
             SetBudgetMultiplier(districtId | DISTRICT_FLAG, multipliers);
@@ -127,7 +121,16 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         public uint GetBudgetMultiplierForHourBuilding(uint builidingId, int hour)
         {
-            return GetBudgetMultiplierForHour(builidingId | BUILDING_FLAG, hour);
+            if (GetIgnoreDistrict(builidingId))
+            {
+                //SVMUtils.doLog("Budget builidingId = {0}", builidingId);
+                return GetBudgetMultiplierForHour(builidingId | BUILDING_FLAG, hour);
+            }
+            else
+            {
+                //SVMUtils.doLog("Budget District Id = {0}", SVMUtils.GetBuildingDistrict(builidingId));
+                return GetBudgetMultiplierForHour(SVMUtils.GetBuildingDistrict(builidingId) | DISTRICT_FLAG, hour);
+            }
         }
 
         public void SetBudgetMultiplierBuilding(uint buildingID, uint[] multipliers)
@@ -310,6 +313,18 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             SafeCleanProperty(codedId, BuildingConfig.COLOR);
         }
 
+        public Color32 GetEffectiveColorBuilding(uint buildingId)
+        {
+            if (GetIgnoreDistrict(buildingId))
+            {
+                return GetColor(buildingId | BUILDING_FLAG);
+            }
+            else
+            {
+                return GetColor(SVMUtils.GetBuildingDistrict(buildingId) | DISTRICT_FLAG);
+            }
+        }
+
         public Color32 GetColorDistrict(uint id)
         {
             return GetColor(id | DISTRICT_FLAG);
@@ -364,12 +379,14 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         Color32 GetColorBuilding(uint id);
         void SetColorBuilding(uint id, Color32 value);
         void CleanColorBuilding(uint id);
+
+
+        Color32 GetEffectiveColorBuilding(uint id);
     }
 
     internal interface ISVMBudgetableExtension : ISVMConfigIndexKeyContainer
     {
         uint[] GetBudgetsMultiplierDistrict(uint prefix);
-        uint GetBudgetMultiplierForHourDistrict(uint prefix, int hour);
         void SetBudgetMultiplierDistrict(uint prefix, uint[] multipliers);
 
         uint[] GetBudgetsMultiplierBuilding(uint prefix);
@@ -401,6 +418,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMServiceVehicleExtensionFirCar : SVMServiceVehicleExtension<SVMSysDefFirCar, SVMServiceVehicleExtensionFirCar> { }
     internal sealed class SVMServiceVehicleExtensionFirHel : SVMServiceVehicleExtension<SVMSysDefFirHel, SVMServiceVehicleExtensionFirHel> { }
     internal sealed class SVMServiceVehicleExtensionGarCar : SVMServiceVehicleExtension<SVMSysDefGarCar, SVMServiceVehicleExtensionGarCar> { }
+    internal sealed class SVMServiceVehicleExtensionGbcCar : SVMServiceVehicleExtension<SVMSysDefGbcCar, SVMServiceVehicleExtensionGbcCar> { }
     internal sealed class SVMServiceVehicleExtensionHcrCar : SVMServiceVehicleExtension<SVMSysDefHcrCar, SVMServiceVehicleExtensionHcrCar> { }
     internal sealed class SVMServiceVehicleExtensionHcrHel : SVMServiceVehicleExtension<SVMSysDefHcrHel, SVMServiceVehicleExtensionHcrHel> { }
     internal sealed class SVMServiceVehicleExtensionPolCar : SVMServiceVehicleExtension<SVMSysDefPolCar, SVMServiceVehicleExtensionPolCar> { }

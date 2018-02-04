@@ -44,6 +44,7 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingListFirCar : SVMTabControllerBuildingList<SVMSysDefFirCar> { }
     internal sealed class SVMTabControllerBuildingListFirHel : SVMTabControllerBuildingList<SVMSysDefFirHel> { }
     internal sealed class SVMTabControllerBuildingListGarCar : SVMTabControllerBuildingList<SVMSysDefGarCar> { }
+    internal sealed class SVMTabControllerBuildingListGbcCar : SVMTabControllerBuildingList<SVMSysDefGbcCar> { }
     internal sealed class SVMTabControllerBuildingListHcrCar : SVMTabControllerBuildingList<SVMSysDefHcrCar> { }
     internal sealed class SVMTabControllerBuildingListHcrHel : SVMTabControllerBuildingList<SVMSysDefHcrHel> { }
     internal sealed class SVMTabControllerBuildingListPolCar : SVMTabControllerBuildingList<SVMSysDefPolCar> { }

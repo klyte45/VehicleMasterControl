@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ColossalFramework;
@@ -55,16 +56,33 @@ namespace Klyte.ServiceVehiclesManager
             m_listPanel = SVMServiceBuildingDetailPanel.Get();
 
             var typeTarg = typeof(Redirector<>);
-
-            var instances = from t in Assembly.GetAssembly(typeof(SVMController)).GetTypes()
-                            let y = t.BaseType
-                            where t.IsClass && !t.IsAbstract && y != null && y.IsGenericType && y.GetGenericTypeDefinition() == typeTarg
-                            select t;
+            List<Type> instances = GetSubtypesRecursive(typeTarg);
 
             foreach (Type t in instances)
             {
                 gameObject.AddComponent(t);
-            }                       
+            }
+        }
+
+        private static List<Type> GetSubtypesRecursive(Type typeTarg)
+        {
+            var classes = from t in Assembly.GetAssembly(typeof(SVMController)).GetTypes()
+                          let y = t.BaseType
+                          where t.IsClass && y != null && y.IsGenericType == typeTarg.IsGenericType && (y.GetGenericTypeDefinition() == typeTarg || y.BaseType == typeTarg)
+                          select t;
+            List<Type> result = new List<Type>();
+            foreach (Type t in classes)
+            {
+                if (t.IsAbstract)
+                {
+                    result.AddRange(GetSubtypesRecursive(t));
+                }
+                else
+                {
+                    result.Add(t);
+                }
+            }
+            return result;
         }
 
         public void Awake()
