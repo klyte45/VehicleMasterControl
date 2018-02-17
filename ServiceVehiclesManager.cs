@@ -54,14 +54,13 @@ namespace Klyte.ServiceVehiclesManager
 
         public static ServiceVehiclesManagerMod instance;
 
-        private UIDropDown configSelector;
         private SavedBool m_debugMode;
         public bool needShowPopup;
         private static bool isLocaleLoaded = false;
 
         public static bool LocaleLoaded => isLocaleLoaded;
 
-        private string currentSelectedConfigEditor => configSelector.selectedIndex == 0 ? currentCityId : SVMConfigWarehouse.GLOBAL_CONFIG_INDEX;
+        private string currentSelectedConfigEditor => currentCityId;
 
         private static bool m_isTLMLoaded = false;
         public static bool IsTLMLoaded()
@@ -83,7 +82,6 @@ namespace Klyte.ServiceVehiclesManager
         public static SavedBool debugMode => instance.m_debugMode;
 
         private SavedString currentSaveVersion => new SavedString("SVMSaveVersion", Settings.gameSettingsFile, "null", true);
-
 
         private SavedInt currentLanguageId => new SavedInt("SVMLanguage", Settings.gameSettingsFile, 0, true);
 

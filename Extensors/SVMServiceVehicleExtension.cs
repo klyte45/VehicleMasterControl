@@ -15,7 +15,7 @@ using Klyte.ServiceVehiclesManager.Utils;
 
 namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 {
-    internal interface ISVMTransportTypeExtension : ISVMAssetSelectorExtension, ISVMBudgetableExtension, ISVMIgnorableDistrictExtensionValue, ISVMColorSelectableExtensionValue { }
+    internal interface ISVMTransportTypeExtension : ISVMAssetSelectorExtension, ISVMIgnorableDistrictExtensionValue, ISVMColorSelectableExtensionValue { }
 
     internal abstract class SVMServiceVehicleExtension<SSD, SG> : ExtensionInterfaceDefaultImpl<BuildingConfig, SG>, ISVMTransportTypeExtension where SSD : SVMSysDef<SSD>, new() where SG : SVMServiceVehicleExtension<SSD, SG>
     {
@@ -58,89 +58,6 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             }
         }
 
-        #region Budget Multiplier
-        private uint[] GetBudgetsMultiplier(uint codedId)
-        {
-            checkId(codedId);
-
-            string value = SafeGet(codedId, BuildingConfig.BUDGET_MULTIPLIER);
-            if (value == null) return new uint[] { 100 };
-            string[] savedMultipliers = value.Split(ItSepLvl3.ToCharArray());
-
-            uint[] result = new uint[savedMultipliers.Length];
-            for (int i = 0; i < result.Length; i++)
-            {
-                if (uint.TryParse(savedMultipliers[i], out uint parsed))
-                {
-                    result[i] = parsed;
-                }
-                else
-                {
-                    return new uint[] { 100 };
-                }
-            }
-            return result;
-        }
-        private uint GetBudgetMultiplierForHour(uint codedId, int hour)
-        {
-            checkId(codedId);
-            uint[] savedMultipliers = GetBudgetsMultiplier(codedId);
-            if (savedMultipliers.Length == 1)
-            {
-                return savedMultipliers[0];
-            }
-            else if (savedMultipliers.Length == 8)
-            {
-                return savedMultipliers[((hour + 23) / 3) % 8];
-            }
-            return 100;
-        }
-        private void SetBudgetMultiplier(uint codedId, uint[] multipliers)
-        {
-            checkId(codedId);
-            SafeSet(codedId, BuildingConfig.BUDGET_MULTIPLIER, string.Join(ItSepLvl3, multipliers.Select(x => x.ToString()).ToArray()));
-        }
-
-
-
-        public uint[] GetBudgetsMultiplierDistrict(uint districtId)
-        {
-            return GetBudgetsMultiplier(districtId | DISTRICT_FLAG);
-        }
-        public void SetBudgetMultiplierDistrict(uint districtId, uint[] multipliers)
-        {
-            SetBudgetMultiplier(districtId | DISTRICT_FLAG, multipliers);
-        }
-
-
-
-        public uint[] GetBudgetsMultiplierBuilding(uint buildingId)
-        {
-            return GetBudgetsMultiplier(buildingId | BUILDING_FLAG);
-        }
-
-        public uint GetBudgetMultiplierForHourBuilding(uint builidingId, int hour)
-        {
-            if (GetIgnoreDistrict(builidingId))
-            {
-                //SVMUtils.doLog("Budget builidingId = {0}", builidingId);
-                return GetBudgetMultiplierForHour(builidingId | BUILDING_FLAG, hour);
-            }
-            else
-            {
-                //SVMUtils.doLog("Budget District Id = {0}", SVMUtils.GetBuildingDistrict(builidingId));
-                return GetBudgetMultiplierForHour(SVMUtils.GetBuildingDistrict(builidingId) | DISTRICT_FLAG, hour);
-            }
-        }
-
-        public void SetBudgetMultiplierBuilding(uint buildingID, uint[] multipliers)
-        {
-            SetBudgetMultiplier(buildingID | BUILDING_FLAG, multipliers);
-        }
-
-
-        #endregion
-
         #region Asset List
         private List<string> GetAssetList(uint codedId)
         {
@@ -148,7 +65,8 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             string value = SafeGet(codedId, BuildingConfig.MODELS);
             if (string.IsNullOrEmpty(value))
             {
-                return new List<string>();
+                if (basicAssetsList == null) LoadBasicAssets();
+                return basicAssetsList;
             }
             else
             {
@@ -384,16 +302,6 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         Color32 GetEffectiveColorBuilding(uint id);
     }
 
-    internal interface ISVMBudgetableExtension : ISVMConfigIndexKeyContainer
-    {
-        uint[] GetBudgetsMultiplierDistrict(uint prefix);
-        void SetBudgetMultiplierDistrict(uint prefix, uint[] multipliers);
-
-        uint[] GetBudgetsMultiplierBuilding(uint prefix);
-        uint GetBudgetMultiplierForHourBuilding(uint prefix, int hour);
-        void SetBudgetMultiplierBuilding(uint prefix, uint[] multipliers);
-    }
-
     internal interface ISVMAssetSelectorExtension : ISVMConfigIndexKeyContainer
     {
         Dictionary<string, string> GetAllBasicAssets();
@@ -489,7 +397,6 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal enum BuildingConfig
     {
         MODELS,
-        BUDGET_MULTIPLIER,
         COLOR,
         IGNORE_DISTRICT
     }
