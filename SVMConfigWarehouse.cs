@@ -145,7 +145,6 @@ namespace Klyte.ServiceVehiclesManager
             }
         }
 
-
         public static string getFgIconServiceSystem(ConfigIndex i)
         {
             switch (i & ConfigIndex.SSD_PART)

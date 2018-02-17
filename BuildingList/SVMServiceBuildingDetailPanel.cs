@@ -229,13 +229,13 @@ namespace Klyte.ServiceVehiclesManager.UI
 
             SVMUtils.createUIElement(out UILabel buildingNameLabel, titleLine.transform, "District");
             buildingNameLabel.autoSize = false;
-            buildingNameLabel.area = new Vector4(175, 10, 200, 18);
+            buildingNameLabel.area = new Vector4(200, 10, 198, 18);
             buildingNameLabel.textAlignment = UIHorizontalAlignment.Center;
             buildingNameLabel.text = Locale.Get("SVM_BUILDING_NAME_LABEL");
 
             SVMUtils.createUIElement(out UILabel vehicleCapacityLabel, titleLine.transform, "District");
             vehicleCapacityLabel.autoSize = false;
-            vehicleCapacityLabel.area = new Vector4(375, 10, 200, 18);
+            vehicleCapacityLabel.area = new Vector4(400, 10, 200, 18);
             vehicleCapacityLabel.textAlignment = UIHorizontalAlignment.Center;
             vehicleCapacityLabel.text = Locale.Get("SVM_VEHICLE_CAPACITY_LABEL");
         }

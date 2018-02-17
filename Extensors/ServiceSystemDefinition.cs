@@ -1,4 +1,5 @@
 ﻿using ColossalFramework;
+using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.Utils;
 using Klyte.TransportLinesManager.Extensors.TransportTypeExt;
 using Klyte.TransportLinesManager.Utils;
@@ -111,6 +112,15 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             return info.m_class.m_service == service && subService == info.m_class.m_subService && info.m_vehicleType == vehicleType && info.m_class.m_level == level;
         }
 
+        public bool isFromSystem(BuildingInfo info)
+        {
+            if (ServiceVehiclesManagerMod.debugMode)
+            {
+                SVMUtils.doLog("[{4}->{5}] info.m_class.m_service == service = {0}; subService == info.m_class.m_subService = {1}; info.m_class.m_level == level = {2}; aiOverride?.AllowVehicleType(vehicleType) = {3} ", info.m_class.m_service == service, subService == info.m_class.m_subService, info.m_class.m_level == level, SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType), info.GetAI().GetType(), this);
+            }
+            return info.m_class.m_service == service && subService == info.m_class.m_subService && info.m_class.m_level == level && (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType) ?? false);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null)
@@ -188,8 +198,8 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     }
     internal sealed class SVMSysDefDisCar : SVMSysDef<SVMSysDefDisCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.DISASTER_CAR; } }
     internal sealed class SVMSysDefDisHel : SVMSysDef<SVMSysDefDisHel> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.DISASTER_HELICOPTER; } }
-    internal sealed class SVMSysDefFirCar : SVMSysDef<SVMSysDefFirCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.FIRE_HELICOPTER; } }
-    internal sealed class SVMSysDefFirHel : SVMSysDef<SVMSysDefFirHel> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.FIRE_CAR; } }
+    internal sealed class SVMSysDefFirCar : SVMSysDef<SVMSysDefFirCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.FIRE_CAR; } }
+    internal sealed class SVMSysDefFirHel : SVMSysDef<SVMSysDefFirHel> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.FIRE_HELICOPTER; } }
     internal sealed class SVMSysDefGarCar : SVMSysDef<SVMSysDefGarCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.GARBAGE_CAR; } }
     internal sealed class SVMSysDefGbcCar : SVMSysDef<SVMSysDefGbcCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.GARBBIO_CAR; } }
     internal sealed class SVMSysDefHcrCar : SVMSysDef<SVMSysDefHcrCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.HEALTHCARE_CAR; } }

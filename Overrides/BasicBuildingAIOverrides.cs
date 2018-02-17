@@ -19,12 +19,29 @@ using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.Overrides
 {
-    internal abstract class BasicBuildingAIOverrides<T, U> : Redirector<T> where T : BasicBuildingAIOverrides<T, U>, new() where U : BuildingAI
+    internal interface IBasicBuildingAIOverrides
+    {
+        string GetVehicleMaxCountField(VehicleInfo.VehicleType veh);
+        Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(BuildingInfo info);
+        bool AllowVehicleType(VehicleInfo.VehicleType type);
+    }
+    internal interface IBasicBuildingAIOverrides<U> : IBasicBuildingAIOverrides where U : PrefabAI
+    {
+        Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(U ai);
+    }
+
+    internal abstract class BasicBuildingAIOverrides<T, U> : Redirector<T>, IBasicBuildingAIOverrides<U> where T : BasicBuildingAIOverrides<T, U>, new() where U : BuildingAI
     {
         #region Overrides
         protected static BasicBuildingAIOverrides<T, U> instance;
 
-        protected abstract Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(U ai);
+        public Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(BuildingInfo info)
+        {
+            return GetManagedReasons((U)info.GetAI());
+        }
+        public abstract Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(U ai);
+        public abstract string GetVehicleMaxCountField(VehicleInfo.VehicleType veh);
+        public abstract bool AllowVehicleType(VehicleInfo.VehicleType type);
 
         public static bool StartTransfer(U __instance, ushort buildingID, ref Building data, TransferManager.TransferReason material, TransferManager.TransferOffer offer)
         {
@@ -34,18 +51,19 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                 return true;
             }
 
-            SVMUtils.doLog("START TRANSFER: {0}", typeof(U));
+            SVMUtils.doLog("START TRANSFER: {0} , {1}", typeof(U), material);
             foreach (var tr in managedReasons)
             {
-                if (!ProcessOffer(buildingID, data, material, offer, tr.Key, tr.Value, __instance))
+                if (instance.ProcessOffer(buildingID, data, material, offer, tr.Key, tr.Value, __instance)) 
                 {
                     return false;
                 }
             }
+            SVMUtils.doLog("END TRANSFER: {0} , {1}", typeof(U), material);
             return true;
         }
 
-        private static bool ProcessOffer(ushort buildingID, Building data, TransferManager.TransferReason material, TransferManager.TransferOffer offer, TransferManager.TransferReason trTarget, Tuple<VehicleInfo.VehicleType, bool, bool> tup, U instance)
+        protected virtual bool ProcessOffer(ushort buildingID, Building data, TransferManager.TransferReason material, TransferManager.TransferOffer offer, TransferManager.TransferReason trTarget, Tuple<VehicleInfo.VehicleType, bool, bool> tup, U instance)
         {
             if (material == trTarget)
             {
@@ -53,21 +71,24 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                 if (def == null)
                 {
                     SVMUtils.doLog("SSD Não definido para: {0} {1} {2} {3}", instance.m_info.m_class.m_service, instance.m_info.m_class.m_subService, instance.m_info.m_class.m_level, tup.First);
-                    return true;
+                    return false;
                 }
+                SVMUtils.doLog("[{1}] SSD = {0}", def, material);
                 VehicleInfo randomVehicleInfo = ServiceSystemDefinition.availableDefinitions[def].GetAModel(buildingID);
+                SVMUtils.doLog("[{1}] Veh = {0}", randomVehicleInfo?.ToString() ?? "<NULL>", material);
                 if (randomVehicleInfo != null)
                 {
                     Array16<Vehicle> vehicles = Singleton<VehicleManager>.instance.m_vehicles;
-                    if (Singleton<VehicleManager>.instance.CreateVehicle(out ushort num, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, data.m_position, material, tup.Second, tup.Third))
+                    instance.CalculateSpawnPosition(buildingID, ref data, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, out Vector3 position, out Vector3 vector2);
+                    if (Singleton<VehicleManager>.instance.CreateVehicle(out ushort num, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, position, material, tup.Second, tup.Third))
                     {
                         randomVehicleInfo.m_vehicleAI.SetSource(num, ref vehicles.m_buffer[(int)num], buildingID);
                         randomVehicleInfo.m_vehicleAI.StartTransfer(num, ref vehicles.m_buffer[(int)num], material, offer);
-                        return false;
+                        return true;
                     }
                 }
             }
-            return true;
+            return false;
         }
         #endregion
 
@@ -82,9 +103,10 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             AddRedirect(from, to);
         }
 
+
         #endregion
     }
-    
+
 
     public class Tuple<T1, T2, T3>
     {
