@@ -134,7 +134,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
             var icon = removeUndesired.AddUIComponent<UISprite>();
             icon.relativePosition = new Vector3(2, 2);
-            //icon.atlas = TLMController.taTLM;
+            icon.atlas = SVMController.taSVM;
             icon.width = 18;
             icon.height = 18;
             icon.spriteName = "RemoveUnwantedIcon";

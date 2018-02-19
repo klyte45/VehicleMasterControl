@@ -30,46 +30,109 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition TAXI_CAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTaxi, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition CABLECAR_CABLECAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportCableCar, VehicleInfo.VehicleType.CableCar, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition SNOW_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
-        public static readonly Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> availableDefinitions = new Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension>()
+        public static readonly ServiceSystemDefinition REG_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition REG_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition REG_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1);
+
+        public static Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> availableDefinitions
         {
-            [DISASTER_CAR] = SVMServiceVehicleExtensionDisCar.instance,
-            [DISASTER_HELICOPTER] = SVMServiceVehicleExtensionDisHel.instance,
-            [FIRE_CAR] = SVMServiceVehicleExtensionFirCar.instance,
-            [FIRE_HELICOPTER] = SVMServiceVehicleExtensionFirHel.instance,
-            [GARBAGE_CAR] = SVMServiceVehicleExtensionGarCar.instance,
-            [GARBBIO_CAR] = SVMServiceVehicleExtensionGbcCar.instance,
-            [HEALTHCARE_CAR] = SVMServiceVehicleExtensionHcrCar.instance,
-            [HEALTHCARE_HELICOPTER] = SVMServiceVehicleExtensionHcrHel.instance,
-            [DEATHCARE_CAR] = SVMServiceVehicleExtensionDcrCar.instance,
-            [POLICE_CAR] = SVMServiceVehicleExtensionPolCar.instance,
-            [POLICE_HELICOPTER] = SVMServiceVehicleExtensionPolHel.instance,
-            [ROAD_CAR] = SVMServiceVehicleExtensionRoaCar.instance,
-            [WATER_CAR] = SVMServiceVehicleExtensionWatCar.instance,
-            [PRISION_CAR] = SVMServiceVehicleExtensionPriCar.instance,
-            [TAXI_CAR] = SVMServiceVehicleExtensionTaxCar.instance,
-            [CABLECAR_CABLECAR] = SVMServiceVehicleExtensionCcrCcr.instance,
-            [SNOW_CAR] = SVMServiceVehicleExtensionSnwCar.instance,
-        };
-        public static readonly Dictionary<ServiceSystemDefinition, Type> sysDefinitions = new Dictionary<ServiceSystemDefinition, Type>()
+            get {
+                if (m_availableDefinitions.Count == 0)
+                {
+                    m_availableDefinitions[GARBAGE_CAR] = SVMServiceVehicleExtensionGarCar.instance;
+                    m_availableDefinitions[DEATHCARE_CAR] = SVMServiceVehicleExtensionDcrCar.instance;
+                    m_availableDefinitions[REG_TRAIN] = SVMServiceVehicleExtensionRegTra.instance;
+                    m_availableDefinitions[REG_PLANE] = SVMServiceVehicleExtensionRegPln.instance;
+                    m_availableDefinitions[REG_SHIP] = SVMServiceVehicleExtensionRegShp.instance;
+                    m_availableDefinitions[FIRE_CAR] = SVMServiceVehicleExtensionFirCar.instance;
+                    m_availableDefinitions[HEALTHCARE_CAR] = SVMServiceVehicleExtensionHcrCar.instance;
+                    m_availableDefinitions[POLICE_CAR] = SVMServiceVehicleExtensionPolCar.instance;
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
+                    {
+                        m_availableDefinitions[PRISION_CAR] = SVMServiceVehicleExtensionPriCar.instance;
+                        m_availableDefinitions[TAXI_CAR] = SVMServiceVehicleExtensionTaxCar.instance;
+                    }
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
+                    {
+                        m_availableDefinitions[ROAD_CAR] = SVMServiceVehicleExtensionRoaCar.instance;
+                        m_availableDefinitions[SNOW_CAR] = SVMServiceVehicleExtensionSnwCar.instance;
+                    }
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
+                    {
+                        m_availableDefinitions[DISASTER_CAR] = SVMServiceVehicleExtensionDisCar.instance;
+                        m_availableDefinitions[DISASTER_HELICOPTER] = SVMServiceVehicleExtensionDisHel.instance;
+                        m_availableDefinitions[FIRE_HELICOPTER] = SVMServiceVehicleExtensionFirHel.instance;
+                        m_availableDefinitions[HEALTHCARE_HELICOPTER] = SVMServiceVehicleExtensionHcrHel.instance;
+                        m_availableDefinitions[POLICE_HELICOPTER] = SVMServiceVehicleExtensionPolHel.instance;
+                        m_availableDefinitions[WATER_CAR] = SVMServiceVehicleExtensionWatCar.instance;
+                    }
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
+                    {
+                        m_availableDefinitions[CABLECAR_CABLECAR] = SVMServiceVehicleExtensionCcrCcr.instance;
+                    }
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
+                    {
+                        m_availableDefinitions[GARBBIO_CAR] = SVMServiceVehicleExtensionGbcCar.instance;
+                    }
+                }
+                return m_availableDefinitions;
+            }
+        }
+        public static readonly Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> m_availableDefinitions = new Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension>();
+        public static Dictionary<ServiceSystemDefinition, Type> sysDefinitions
         {
-            [DISASTER_CAR] = typeof(SVMSysDefDisCar),
-            [DISASTER_HELICOPTER] = typeof(SVMSysDefDisHel),
-            [FIRE_CAR] = typeof(SVMSysDefFirCar),
-            [FIRE_HELICOPTER] = typeof(SVMSysDefFirHel),
-            [GARBAGE_CAR] = typeof(SVMSysDefGarCar),
-            [GARBBIO_CAR] = typeof(SVMSysDefGbcCar),
-            [HEALTHCARE_CAR] = typeof(SVMSysDefHcrCar),
-            [HEALTHCARE_HELICOPTER] = typeof(SVMSysDefHcrHel),
-            [DEATHCARE_CAR] = typeof(SVMSysDefDcrCar),
-            [POLICE_CAR] = typeof(SVMSysDefPolCar),
-            [POLICE_HELICOPTER] = typeof(SVMSysDefPolHel),
-            [ROAD_CAR] = typeof(SVMSysDefRoaCar),
-            [WATER_CAR] = typeof(SVMSysDefWatCar),
-            [PRISION_CAR] = typeof(SVMSysDefPriCar),
-            [TAXI_CAR] = typeof(SVMSysDefTaxCar),
-            [CABLECAR_CABLECAR] = typeof(SVMSysDefCcrCcr),
-            [SNOW_CAR] = typeof(SVMSysDefSnwCar),
-        };
+            get {
+                if (m_sysDefinitions.Count == 0)
+                {
+                    m_sysDefinitions[GARBAGE_CAR] = typeof(SVMSysDefGarCar);
+                    m_sysDefinitions[DEATHCARE_CAR] = typeof(SVMSysDefDcrCar);
+                    m_sysDefinitions[REG_TRAIN] = typeof(SVMSysDefRegTra);
+                    m_sysDefinitions[REG_PLANE] = typeof(SVMSysDefRegPln);
+                    m_sysDefinitions[REG_SHIP] = typeof(SVMSysDefRegShp);
+                    m_sysDefinitions[FIRE_CAR] = typeof(SVMSysDefFirCar);
+                    m_sysDefinitions[HEALTHCARE_CAR] = typeof(SVMSysDefHcrCar);
+                    m_sysDefinitions[POLICE_CAR] = typeof(SVMSysDefPolCar);
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
+                    {
+                        m_sysDefinitions[PRISION_CAR] = typeof(SVMSysDefPriCar);
+                        m_sysDefinitions[TAXI_CAR] = typeof(SVMSysDefTaxCar);
+                    }
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
+                    {
+                        m_sysDefinitions[ROAD_CAR] = typeof(SVMSysDefRoaCar);
+                        m_sysDefinitions[SNOW_CAR] = typeof(SVMSysDefSnwCar);
+                    }
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
+                    {
+                        m_sysDefinitions[WATER_CAR] = typeof(SVMSysDefWatCar);
+                        m_sysDefinitions[DISASTER_CAR] = typeof(SVMSysDefDisCar);
+                        m_sysDefinitions[DISASTER_HELICOPTER] = typeof(SVMSysDefDisHel);
+                        m_sysDefinitions[FIRE_HELICOPTER] = typeof(SVMSysDefFirHel);
+                        m_sysDefinitions[HEALTHCARE_HELICOPTER] = typeof(SVMSysDefHcrHel);
+                        m_sysDefinitions[POLICE_HELICOPTER] = typeof(SVMSysDefPolHel);
+                    }
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
+                    {
+                        m_sysDefinitions[CABLECAR_CABLECAR] = typeof(SVMSysDefCcrCcr);
+                    }
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
+                    {
+                        m_sysDefinitions[GARBBIO_CAR] = typeof(SVMSysDefGbcCar);
+                    }
+                }
+                return m_sysDefinitions;
+            }
+        }
+        private static readonly Dictionary<ServiceSystemDefinition, Type> m_sysDefinitions = new Dictionary<ServiceSystemDefinition, Type>();
 
         public ItemClass.Service service
         {
@@ -105,6 +168,11 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         internal ISVMTransportTypeExtension GetTransportExtension()
         {
             return availableDefinitions[this];
+        }
+
+        internal Type GetDefType()
+        {
+            return sysDefinitions[this];
         }
 
         public bool isFromSystem(VehicleInfo info)
@@ -167,6 +235,15 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             return availableDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && x.level == info.m_class.m_level && x.vehicleType == type);
         }
 
+        public static IEnumerable<ServiceSystemDefinition> from(BuildingInfo info)
+        {
+            if (info == null)
+            {
+                return new List<ServiceSystemDefinition>();
+            }
+            return availableDefinitions.Keys.Where(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && x.level == info.m_class.m_level && (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(x.vehicleType) ?? false));
+        }
+
         public SVMConfigWarehouse.ConfigIndex toConfigIndex()
         {
             return SVMConfigWarehouse.getConfigServiceSystemForDefinition(this);
@@ -213,4 +290,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMSysDefTaxCar : SVMSysDef<SVMSysDefTaxCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.TAXI_CAR; } }
     internal sealed class SVMSysDefCcrCcr : SVMSysDef<SVMSysDefCcrCcr> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CABLECAR_CABLECAR; } }
     internal sealed class SVMSysDefSnwCar : SVMSysDef<SVMSysDefSnwCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.SNOW_CAR; } }
+    internal sealed class SVMSysDefRegTra : SVMSysDef<SVMSysDefRegTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_TRAIN; } }
+    internal sealed class SVMSysDefRegShp : SVMSysDef<SVMSysDefRegShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_SHIP; } }
+    internal sealed class SVMSysDefRegPln : SVMSysDef<SVMSysDefRegPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_PLANE; } }
 }

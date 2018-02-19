@@ -17,30 +17,34 @@ namespace Klyte.ServiceVehiclesManager.Overrides
     {
         public static bool PreGetColor(ref Color __result, ushort vehicleID, ref Vehicle data, InfoManager.InfoMode infoMode)
         {
-            if (infoMode != InfoManager.InfoMode.None && infoMode == InfoManager.InfoMode.TrafficRoutes && Singleton<InfoManager>.instance.CurrentSubMode == InfoManager.SubInfoMode.Default)
+            if (data.m_transportLine == 0)
             {
-                return true;
-            }
+                if (infoMode != InfoManager.InfoMode.None)
+                {
+                    return true;
+                }
 
-            ServiceSystemDefinition def = ServiceSystemDefinition.from(data.Info);
-            if (def == default(ServiceSystemDefinition))
-            {
-                return true;
-            }
-            ushort buildingId = data.m_sourceBuilding;
-            if (buildingId == 0)
-            {
-                return true;
-            }
+                ServiceSystemDefinition def = ServiceSystemDefinition.from(data.Info);
+                if (def == default(ServiceSystemDefinition))
+                {
+                    return true;
+                }
+                ushort buildingId = data.m_sourceBuilding;
+                if (buildingId == 0)
+                {
+                    return true;
+                }
 
-            Color c = def.GetTransportExtension().GetEffectiveColorBuilding(buildingId);
-            if (c == Color.clear)
-            {
-                return true;
+                Color c = def.GetTransportExtension().GetEffectiveColorBuilding(buildingId);
+                if (c == Color.clear)
+                {
+                    return true;
+                }
+                __result = c;
+                return false;
             }
-            __result = c;
-            return false;
-        }
+            return true;
+        }       
 
         public override void Awake()
         {
@@ -48,8 +52,15 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             MethodInfo preGetColor = typeof(VehicleAIOverrides).GetMethod("PreGetColor", allFlags);
             MethodInfo origMethod = typeof(VehicleAI).GetMethod("GetColor", new Type[] { typeof(ushort), typeof(Vehicle).MakeByRefType(), typeof(InfoManager.InfoMode) });
 
+            MethodInfo origMethodTrain = typeof(PassengerTrainAI).GetMethod("GetColor", new Type[] { typeof(ushort), typeof(Vehicle).MakeByRefType(), typeof(InfoManager.InfoMode) });
+            MethodInfo origMethodPlane = typeof(PassengerPlaneAI).GetMethod("GetColor", new Type[] { typeof(ushort), typeof(Vehicle).MakeByRefType(), typeof(InfoManager.InfoMode) });
+            MethodInfo origMethodShip = typeof(PassengerShipAI).GetMethod("GetColor", new Type[] { typeof(ushort), typeof(Vehicle).MakeByRefType(), typeof(InfoManager.InfoMode) });
+
             SVMUtils.doLog("Loading VehicleAIOverrides ({0}=>{1})", origMethod, preGetColor);
             AddRedirect(origMethod, preGetColor);
+            AddRedirect(origMethodTrain, preGetColor);
+            AddRedirect(origMethodPlane, preGetColor);
+            AddRedirect(origMethodShip, preGetColor);
             #endregion
         }
     }

@@ -1,5 +1,6 @@
 ﻿using ColossalFramework;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.TransportLinesManager.Utils;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,13 @@ namespace Klyte.ServiceVehiclesManager.Utils
             }
         }
 
+        public static int GetMaxVehiclesBuilding(ushort buildingID, VehicleInfo.VehicleType type) 
+        {
+            Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
+            var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
+            return (SVMUtils.GetPrivateField<int>(b.Info.GetAI(), ext.GetVehicleMaxCountField(type)) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
+        }
+
         public static int GetProductionRate(ref Building b)
         {
             int budget = Singleton<EconomyManager>.instance.GetBudget(b.Info.m_class);
@@ -55,7 +63,7 @@ namespace Klyte.ServiceVehiclesManager.Utils
             var bm = Singleton<BuildingManager>.instance;
             var buildings = bm.GetServiceBuildings(ssd.service);
 
-            SVMUtils.doLog("getAllBuildingsFromCity ({0}) buildings = {1} (s={2})", ssd, buildings.ToArray(), buildings.m_size); 
+            SVMUtils.doLog("getAllBuildingsFromCity ({0}) buildings = {1} (s={2})", ssd, buildings.ToArray(), buildings.m_size);
 
             foreach (ushort i in buildings)
             {

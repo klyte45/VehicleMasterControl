@@ -1,11 +1,11 @@
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SVMCW = Klyte.ServiceVehiclesManager.SVMConfigWarehouse;
 
-namespace Klyte.ServiceVehiclesManager.LineList
+namespace Klyte.ServiceVehiclesManager.UI
 {
     using ColossalFramework;
     using ColossalFramework.Globalization;
@@ -104,8 +104,9 @@ namespace Klyte.ServiceVehiclesManager.LineList
                 int outbound = 0;
                 var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
                 SVMBuildingUtils.CalculateOwnVehicles(buildingId, ref b, ext.GetManagedReasons(b.Info).Keys, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                int maxCount = SVMBuildingUtils.GetMaxVehiclesBuilding(buildingId, SVMSysDef<T>.instance.GetSSD().vehicleType);
                 m_totalVehicles.prefix = count.ToString();
-                m_totalVehicles.suffix = (SVMUtils.GetPrivateField<int>(b.Info.GetAI(), ext.GetVehicleMaxCountField(SVMSysDef<T>.instance.GetSSD().vehicleType)) * SVMBuildingUtils.GetProductionRate(ref b)/100).ToString();
+                m_totalVehicles.suffix = maxCount > 0x3FFF ? "∞" : maxCount.ToString();
             }
         }
 
@@ -142,7 +143,7 @@ namespace Klyte.ServiceVehiclesManager.LineList
             GameObject.Destroy(base.Find<UIPanel>("WarningIncomplete"));
 
             this.m_buildingName = base.Find<UILabel>("LineName");
-            this.m_buildingName.area = new Vector4(200,2,198,35);
+            this.m_buildingName.area = new Vector4(200, 2, 198, 35);
             this.m_buildingNameField = this.m_buildingName.Find<UITextField>("LineNameField");
             this.m_buildingNameField.maxLength = 256;
             this.m_buildingNameField.eventTextChanged += new PropertyChangedEventHandler<string>(this.OnRename);
@@ -204,8 +205,8 @@ namespace Klyte.ServiceVehiclesManager.LineList
                 {
                     Vector3 position = Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)this.m_buildingID].m_position;
                     InstanceID instanceID = default(InstanceID);
-                    instanceID.Building = this.m_buildingID;
-                    //SVMController.instance.depotInfoPanel.openDepotInfo(m_buildingID, secondary);
+                    instanceID.Building = m_buildingID;
+                    SVMBuildingInfoPanel.instance.openInfo(m_buildingID);
                     ToolsModifierControl.cameraController.SetTarget(instanceID, position, true);
                 }
             };
@@ -276,4 +277,7 @@ namespace Klyte.ServiceVehiclesManager.LineList
     internal sealed class SVMBuildingInfoItemTaxCar : SVMBuildingInfoItem<SVMSysDefTaxCar> { }
     internal sealed class SVMBuildingInfoItemCcrCcr : SVMBuildingInfoItem<SVMSysDefCcrCcr> { }
     internal sealed class SVMBuildingInfoItemSnwCar : SVMBuildingInfoItem<SVMSysDefSnwCar> { }
+    internal sealed class SVMBuildingInfoItemRegTra : SVMBuildingInfoItem<SVMSysDefRegTra> { }
+    internal sealed class SVMBuildingInfoItemRegShp : SVMBuildingInfoItem<SVMSysDefRegShp> { }
+    internal sealed class SVMBuildingInfoItemRegPln : SVMBuildingInfoItem<SVMSysDefRegPln> { }
 }

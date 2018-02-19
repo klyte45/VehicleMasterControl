@@ -27,7 +27,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
     }
     internal interface IBasicBuildingAIOverrides<U> : IBasicBuildingAIOverrides where U : PrefabAI
     {
-        Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(U ai);
+        Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(U ai, TransferManager.TransferOffer offer);
     }
 
     internal abstract class BasicBuildingAIOverrides<T, U> : Redirector<T>, IBasicBuildingAIOverrides<U> where T : BasicBuildingAIOverrides<T, U>, new() where U : BuildingAI
@@ -37,15 +37,21 @@ namespace Klyte.ServiceVehiclesManager.Overrides
 
         public Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(BuildingInfo info)
         {
-            return GetManagedReasons((U)info.GetAI());
+            return GetManagedReasons((U)info.GetAI(), default(TransferManager.TransferOffer));
         }
-        public abstract Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(U ai);
+        public abstract Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(U ai, TransferManager.TransferOffer offer);
         public abstract string GetVehicleMaxCountField(VehicleInfo.VehicleType veh);
         public abstract bool AllowVehicleType(VehicleInfo.VehicleType type);
 
+
+        public static bool StartTransferDepot(U __instance, ushort buildingID, ref Building data, TransferManager.TransferReason reason, TransferManager.TransferOffer offer)
+        {
+            return StartTransfer(__instance, buildingID, ref data, reason, offer);
+        }
+
         public static bool StartTransfer(U __instance, ushort buildingID, ref Building data, TransferManager.TransferReason material, TransferManager.TransferOffer offer)
         {
-            var managedReasons = instance?.GetManagedReasons(__instance);
+            var managedReasons = instance?.GetManagedReasons(__instance, offer);
             if (!managedReasons?.Keys.Contains(material) ?? true)
             {
                 return true;
@@ -54,7 +60,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             SVMUtils.doLog("START TRANSFER: {0} , {1}", typeof(U), material);
             foreach (var tr in managedReasons)
             {
-                if (instance.ProcessOffer(buildingID, data, material, offer, tr.Key, tr.Value, __instance)) 
+                if (instance.ProcessOffer(buildingID, data, material, offer, tr.Key, tr.Value, __instance))
                 {
                     return false;
                 }
@@ -98,7 +104,14 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         {
             instance = this;
             var from = typeof(U).GetMethod("StartTransfer", allFlags);
-            var to = typeof(BasicBuildingAIOverrides<T, U>).GetMethod("StartTransfer", allFlags);
+            if (from == null)
+            {
+                if (typeof(DepotAI).IsAssignableFrom(typeof(U)))
+                {
+                    from = typeof(DepotAI).GetMethod("StartTransfer", allFlags);
+                }
+            }
+            var to = typeof(BasicBuildingAIOverrides<T, U>).GetMethod(typeof(DepotAI).IsAssignableFrom(typeof(U)) ? "StartTransferDepot" : "StartTransfer", allFlags);
             SVMUtils.doLog("Loading Hooks: {0} ({1}=>{2})", typeof(U), from, to);
             AddRedirect(from, to);
         }

@@ -5,7 +5,7 @@ using ICities;
 using Klyte.Extensions;
 using Klyte.Harmony;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.LineList;
+using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.Utils;
 using Klyte.TransportLinesManager.Extensors;
@@ -73,6 +73,9 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingHooksTaxCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksTaxCar, SVMSysDefTaxCar> { }
     internal sealed class SVMTabControllerBuildingHooksCcrCcr : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksCcrCcr, SVMSysDefCcrCcr> { }
     internal sealed class SVMTabControllerBuildingHooksSnwCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksSnwCar, SVMSysDefSnwCar> { }
+    internal sealed class SVMTabControllerBuildingHooksRegTra : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRegTra, SVMSysDefRegTra> { }
+    internal sealed class SVMTabControllerBuildingHooksRegShp : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRegShp, SVMSysDefRegShp> { }
+    internal sealed class SVMTabControllerBuildingHooksRegPln : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRegPln, SVMSysDefRegPln> { }
 
 
 
@@ -174,5 +177,8 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingListTaxCar : SVMTabControllerBuildingList<SVMSysDefTaxCar> { }
     internal sealed class SVMTabControllerBuildingListCcrCcr : SVMTabControllerBuildingList<SVMSysDefCcrCcr> { }
     internal sealed class SVMTabControllerBuildingListSnwCar : SVMTabControllerBuildingList<SVMSysDefSnwCar> { }
+    internal sealed class SVMTabControllerBuildingListRegTra : SVMTabControllerBuildingList<SVMSysDefRegTra> { }
+    internal sealed class SVMTabControllerBuildingListRegShp : SVMTabControllerBuildingList<SVMSysDefRegShp> { }
+    internal sealed class SVMTabControllerBuildingListRegPln : SVMTabControllerBuildingList<SVMSysDefRegPln> { }
 
 }

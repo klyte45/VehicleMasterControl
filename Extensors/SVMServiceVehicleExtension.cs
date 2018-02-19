@@ -12,10 +12,14 @@ using Klyte.TransportLinesManager.Interfaces;
 using Klyte.TransportLinesManager.Extensors.TransportLineExt;
 using Klyte.ServiceVehiclesManager.Interfaces;
 using Klyte.ServiceVehiclesManager.Utils;
+using System.Collections;
+using ColossalFramework.Threading;
 
 namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 {
-    internal interface ISVMTransportTypeExtension : ISVMAssetSelectorExtension, ISVMIgnorableDistrictExtensionValue, ISVMColorSelectableExtensionValue { }
+    internal interface ISVMTransportTypeExtension : ISVMAssetSelectorExtension, ISVMIgnorableDistrictExtensionValue, ISVMColorSelectableExtensionValue
+    {
+    }
 
     internal abstract class SVMServiceVehicleExtension<SSD, SG> : ExtensionInterfaceDefaultImpl<BuildingConfig, SG>, ISVMTransportTypeExtension where SSD : SVMSysDef<SSD>, new() where SG : SVMServiceVehicleExtension<SSD, SG>
     {
@@ -65,19 +69,12 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             string value = SafeGet(codedId, BuildingConfig.MODELS);
             if (string.IsNullOrEmpty(value))
             {
-                if (basicAssetsList == null) LoadBasicAssets();
-                return basicAssetsList;
+                return new List<string>();
             }
             else
             {
                 return value.Split(ItSepLvl3.ToCharArray()).ToList();
             }
-        }
-        private Dictionary<string, string> GetSelectedBasicAssets(uint codedId)
-        {
-            checkId(codedId);
-            if (basicAssetsList == null) LoadBasicAssets();
-            return GetAssetList(codedId).Where(x => PrefabCollection<VehicleInfo>.FindLoaded(x) != null).ToDictionary(x => x, x => Locale.Get("VEHICLE_TITLE", x));
         }
         private void AddAsset(uint codedId, string assetId)
         {
@@ -85,7 +82,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             var temp = GetAssetList(codedId);
             if (temp.Contains(assetId)) return;
             temp.Add(assetId);
-            SafeSet(codedId, BuildingConfig.MODELS, string.Join(ItSepLvl3, temp.ToArray()));
+            SafeSet(codedId, BuildingConfig.MODELS, string.Join(ItSepLvl3, temp.Intersect(basicAssetsList).ToArray()));
         }
         private void RemoveAsset(uint codedId, string assetId)
         {
@@ -93,7 +90,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             var temp = GetAssetList(codedId);
             if (!temp.Contains(assetId)) return;
             temp.RemoveAll(x => x == assetId);
-            SafeSet(codedId, BuildingConfig.MODELS, string.Join(ItSepLvl3, temp.ToArray()));
+            SafeSet(codedId, BuildingConfig.MODELS, string.Join(ItSepLvl3, temp.Intersect(basicAssetsList).ToArray()));
         }
         private void UseDefaultAssets(uint codedId)
         {
@@ -103,15 +100,41 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         public VehicleInfo GetAModel(uint buildingId)
         {
+            SVMUtils.doLog("[{0}] GetAModel", typeof(SSD).Name);
+            List<string> assetList = GetEffectiveAssetList(buildingId);
+            return SVMUtils.GetRandomModel(assetList);
+        }
+
+        private List<string> GetEffectiveAssetList(uint buildingId)
+        {
             uint codedId = buildingId | BUILDING_FLAG;
-            if (buildingId > 0)
+            List<string> assetList;
+            if (buildingId > 0 && GetIgnoreDistrict(codedId))
             {
-                if (GetIgnoreDistrict(codedId))
-                {
-                    return SVMUtils.GetRandomModel(GetAssetList(codedId));
-                }
+                assetList = GetAssetList(codedId);
+                SVMUtils.doLog("[{0}] GetAModel - assetList (Building) = {1}", typeof(SSD).Name, string.Join(",", assetList.ToArray()));
             }
-            return SVMUtils.GetRandomModel(GetAssetList(DISTRICT_FLAG | SVMUtils.GetBuildingDistrict(buildingId)));
+            else
+            {
+                assetList = GetAssetList(DISTRICT_FLAG | SVMUtils.GetBuildingDistrict(buildingId));
+                if (assetList == null || assetList.Count == 0)
+                {
+                    assetList = GetAssetList(DISTRICT_FLAG);
+                }
+                SVMUtils.doLog("[{0}] GetAModel - assetList (District) = {1}", typeof(SSD).Name, string.Join(",", assetList.ToArray()));
+            }
+            if ((assetList?.Count ?? 0) == 0)
+            {
+                if (basicAssetsList == null) LoadBasicAssets();
+                assetList = basicAssetsList;
+            }
+            SVMUtils.doLog("[{0}] GetAModel - assetList (effective) = {1}", typeof(SSD).Name, string.Join(",", assetList.ToArray()));
+            return assetList;
+        }
+
+        public bool IsModelCompatible(uint buildingId, VehicleInfo vehicleInfo)
+        {
+            return GetEffectiveAssetList(buildingId).Contains(vehicleInfo.name);
         }
         public Dictionary<string, string> GetAllBasicAssets()
         {
@@ -121,11 +144,6 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         private void LoadBasicAssets()
         {
             basicAssetsList = SVMUtils.LoadBasicAssets(definition);
-        }
-
-        public Dictionary<string, string> GetSelectedBasicAssetsDistrict(uint district)
-        {
-            return GetSelectedBasicAssets(district | DISTRICT_FLAG);
         }
 
         public List<string> GetAssetListDistrict(uint district)
@@ -149,14 +167,9 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         }
 
 
-        public Dictionary<string, string> GetSelectedBasicAssetsBuilding(uint buildingId)
+        public List<string> GetAssetListBuilding(uint building)
         {
-            return GetSelectedBasicAssets(buildingId | BUILDING_FLAG);
-        }
-
-        public List<string> GetAssetListBuilding(uint buildingId)
-        {
-            return GetAssetList(buildingId | BUILDING_FLAG);
+            return GetAssetList(building | BUILDING_FLAG);
         }
 
         public void AddAssetBuilding(uint buildingId, string assetId)
@@ -208,7 +221,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
                     }
                 }
             }
-            return Color.clear;
+            return new Color32(0, 0, 0, 1);
         }
 
         private void SetColor(uint codedId, Color32 value)
@@ -235,17 +248,36 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         {
             if (GetIgnoreDistrict(buildingId))
             {
-                return GetColor(buildingId | BUILDING_FLAG);
+                Color32 c = GetColor(buildingId | BUILDING_FLAG);
+                if (c.a != 255)
+                {
+                    c = Color.clear;
+                }
+                return c;
             }
             else
             {
-                return GetColor(SVMUtils.GetBuildingDistrict(buildingId) | DISTRICT_FLAG);
+                Color32 c = GetColor(SVMUtils.GetBuildingDistrict(buildingId) | DISTRICT_FLAG);
+                if (c.a != 255)
+                {
+                    c = GetColor(DISTRICT_FLAG);
+                }
+                if (c.a != 255)
+                {
+                    c = Color.clear;
+                }
+                return c;
             }
         }
 
         public Color32 GetColorDistrict(uint id)
         {
-            return GetColor(id | DISTRICT_FLAG);
+            var c = GetColor(id | DISTRICT_FLAG);
+            if (c.a != 255)
+            {
+                c = Color.clear;
+            }
+            return c;
         }
 
         public void SetColorDistrict(uint id, Color32 value)
@@ -260,7 +292,12 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         public Color32 GetColorBuilding(uint id)
         {
-            return GetColor(id | BUILDING_FLAG);
+            var c = GetColor(id | BUILDING_FLAG);
+            if (c.a != 255)
+            {
+                c = Color.clear;
+            }
+            return c;
         }
 
         public void SetColorBuilding(uint id, Color32 value)
@@ -272,6 +309,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         {
             CleanColor(id | BUILDING_FLAG);
         }
+
 
         #endregion
     }
@@ -306,14 +344,13 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     {
         Dictionary<string, string> GetAllBasicAssets();
         VehicleInfo GetAModel(uint buildingId);
+        bool IsModelCompatible(uint buildingId, VehicleInfo vehicleInfo);
 
-        Dictionary<string, string> GetSelectedBasicAssetsDistrict(uint rel);
         List<string> GetAssetListDistrict(uint district);
         void AddAssetDistrict(uint district, string assetId);
         void RemoveAssetDistrict(uint district, string assetId);
         void UseDefaultAssetsDistrict(uint district);
 
-        Dictionary<string, string> GetSelectedBasicAssetsBuilding(uint rel);
         List<string> GetAssetListBuilding(uint district);
         void AddAssetBuilding(uint rel, string assetId);
         void RemoveAssetBuilding(uint rel, string assetId);
@@ -338,60 +375,46 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMServiceVehicleExtensionTaxCar : SVMServiceVehicleExtension<SVMSysDefTaxCar, SVMServiceVehicleExtensionTaxCar> { }
     internal sealed class SVMServiceVehicleExtensionCcrCcr : SVMServiceVehicleExtension<SVMSysDefCcrCcr, SVMServiceVehicleExtensionCcrCcr> { }
     internal sealed class SVMServiceVehicleExtensionSnwCar : SVMServiceVehicleExtension<SVMSysDefSnwCar, SVMServiceVehicleExtensionSnwCar> { }
+    internal sealed class SVMServiceVehicleExtensionRegTra : SVMServiceVehicleExtension<SVMSysDefRegTra, SVMServiceVehicleExtensionRegTra> { }
+    internal sealed class SVMServiceVehicleExtensionRegShp : SVMServiceVehicleExtension<SVMSysDefRegShp, SVMServiceVehicleExtensionRegShp> { }
+    internal sealed class SVMServiceVehicleExtensionRegPln : SVMServiceVehicleExtension<SVMSysDefRegPln, SVMServiceVehicleExtensionRegPln> { }
 
     public sealed class SVMTransportExtensionUtils
     {
 
         public static void RemoveAllUnwantedVehicles()
         {
-            //for (ushort codedId = 1; codedId < Singleton<BuildingManager>.instance.m_buildings.m_size; codedId++)
-            //{
-            //    if ((Singleton<BuildingManager>.instance.m_buildings.m_buffer[codedId].Info. & TransportLine.Flags.Created) != TransportLine.Flags.None)
-            //    {
-            //        uint idx;
-            //        IAssetSelectorExtension extension;
-            //        if (TLMTransportLineExtension.instance.GetUseCustomConfig(codedId))
-            //        {
-            //            idx = codedId;
-            //            extension = TLMTransportLineExtension.instance;
-            //        }
-            //        else
-            //        {
-            //            idx = TLMLineUtils.getPrefix(codedId);
-            //            var def = TransportSystemDefinition.from(codedId);
-            //            extension = def.GetTransportExtension();
-            //        }
-
-            //        TransportLine tl = Singleton<TransportManager>.instance.m_lines.m_buffer[codedId];
-            //        var modelList = extension.GetAssetList(idx);
-            //        VehicleManager vm = Singleton<VehicleManager>.instance;
-            //        VehicleInfo info = vm.m_vehicles.m_buffer[Singleton<TransportManager>.instance.m_lines.m_buffer[codedId].GetVehicle(0)].Info;
-
-            //         SVMUtils.doLog("removeAllUnwantedVehicles: models found: {0}", modelList == null ? "?!?" : modelList.Count.ToString());
-
-            //        if (modelList.Count > 0)
-            //        {
-            //            Dictionary<ushort, VehicleInfo> vehiclesToRemove = new Dictionary<ushort, VehicleInfo>();
-            //            for (int i = 0; i < tl.CountVehicles(codedId); i++)
-            //            {
-            //                var vehicle = tl.GetVehicle(i);
-            //                if (vehicle != 0)
-            //                {
-            //                    VehicleInfo info2 = vm.m_vehicles.m_buffer[(int)vehicle].Info;
-            //                    if (!modelList.Contains(info2.name))
-            //                    {
-            //                        vehiclesToRemove[vehicle] = info2;
-            //                    }
-            //                }
-            //            }
-            //            foreach (var item in vehiclesToRemove)
-            //            {
-            //                item.Value.m_vehicleAI.SetTransportLine(item.Key, ref vm.m_vehicles.m_buffer[item.Key], 0);
-            //            }
-            //        }
-            //    }
-            //}
+            new EnumerableActionThread(new Func<ThreadBase, IEnumerator>(SVMTransportExtensionUtils.RemoveAllUnwantedVehicles));
         }
+        public static IEnumerator RemoveAllUnwantedVehicles(ThreadBase t)
+        {
+            ushort num = 0;
+            while ((uint)num < Singleton<VehicleManager>.instance.m_vehicles.m_size)
+            {
+                var vehicle = Singleton<VehicleManager>.instance.m_vehicles.m_buffer[(int)num];
+                var vehicleInfo = vehicle.Info;
+                if (vehicleInfo != null)
+                {
+                    var buildingInfo = Singleton<BuildingManager>.instance.m_buildings.m_buffer[vehicle.m_sourceBuilding].Info;
+                    var buildingSsd = ServiceSystemDefinition.from(buildingInfo, vehicleInfo.m_vehicleType);
+                    if (buildingSsd != null)
+                    {
+                        if (!buildingSsd.GetTransportExtension().IsModelCompatible(vehicle.m_sourceBuilding, vehicleInfo))
+                        {
+                            Singleton<VehicleManager>.instance.ReleaseVehicle(num);
+                        }
+                    }
+
+                }
+                if (num % 256 == 255)
+                {
+                    yield return num;
+                }
+                num++;
+            }
+            yield break;
+        }
+
     }
 
     internal enum BuildingConfig

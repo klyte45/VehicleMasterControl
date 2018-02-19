@@ -16,21 +16,14 @@ namespace Klyte.ServiceVehiclesManager.Utils
         {
             try
             {
-                if (ServiceVehiclesManagerMod.instance != null)
-                {
-                    if (ServiceVehiclesManagerMod.debugMode)
-                    {
-                        Debug.LogWarningFormat("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
-                    }
-                }
-                else
+                if (ServiceVehiclesManagerMod.debugMode)
                 {
                     Console.WriteLine("SVMv" + ServiceVehiclesManagerMod.version + " " + format, args);
                 }
             }
             catch
             {
-                Debug.LogErrorFormat("TLMRv" + ServiceVehiclesManagerMod.version + " Erro ao fazer log: {0} (args = {1})", format, args == null ? "[]" : string.Join(",", args.Select(x => x != null ? x.ToString() : "--NULL--").ToArray()));
+                Debug.LogErrorFormat("SVMv" + ServiceVehiclesManagerMod.version + " Erro ao fazer log: {0} (args = {1})", format, args == null ? "[]" : string.Join(",", args.Select(x => x != null ? x.ToString() : "--NULL--").ToArray()));
             }
         }
         public static void doErrorLog(string format, params object[] args)
@@ -49,7 +42,7 @@ namespace Klyte.ServiceVehiclesManager.Utils
             }
             catch
             {
-                Debug.LogErrorFormat("TLMRv" + ServiceVehiclesManagerMod.version + " Erro ao logar ERRO!!!: {0} (args = [{1}])", format, args == null ? "" : string.Join(",", args.Select(x => x != null ? x.ToString() : "--NULL--").ToArray()));
+                Debug.LogErrorFormat("SVMv" + ServiceVehiclesManagerMod.version + " Erro ao logar ERRO!!!: {0} (args = [{1}])", format, args == null ? "" : string.Join(",", args.Select(x => x != null ? x.ToString() : "--NULL--").ToArray()));
             }
         }
 

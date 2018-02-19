@@ -53,7 +53,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             [TransferManager.TransferReason.Collapsed] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
             [TransferManager.TransferReason.Collapsed2] = Tuple.New(VehicleInfo.VehicleType.Helicopter, true, false),
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(DisasterResponseBuildingAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(DisasterResponseBuildingAI ai, TransferManager.TransferOffer offer) => reasons;
 
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh)
         {
@@ -77,7 +77,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             [TransferManager.TransferReason.Dead] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
             [TransferManager.TransferReason.DeadMove] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(CemeteryAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(CemeteryAI ai, TransferManager.TransferOffer offer) => reasons;
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_hearseCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Car;
     }
@@ -88,14 +88,14 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         {
             [TransferManager.TransferReason.Fire] = Tuple.New(VehicleInfo.VehicleType.Car, true, false)
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(FireStationAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(FireStationAI ai, TransferManager.TransferOffer offer) => reasons;
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_fireTruckCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Car;
     }
 
     internal sealed class HelicopterDepotAIOverrides : BasicBuildingAIOverrides<HelicopterDepotAIOverrides, HelicopterDepotAI>
     {
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(HelicopterDepotAI ai)
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(HelicopterDepotAI ai, TransferManager.TransferOffer offer)
         {
             var r1 = (TransferManager.TransferReason)SVMUtils.ExecuteReflectionMethod(ai, "GetTransferReason1");
             var r2 = (TransferManager.TransferReason)SVMUtils.ExecuteReflectionMethod(ai, "GetTransferReason2");
@@ -124,7 +124,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         {
             [TransferManager.TransferReason.Sick] = Tuple.New(VehicleInfo.VehicleType.Car, true, false)
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(HospitalAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(HospitalAI ai, TransferManager.TransferOffer offer) => reasons;
 
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_ambulanceCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Car;
@@ -136,7 +136,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         {
             [TransferManager.TransferReason.RoadMaintenance] = Tuple.New(VehicleInfo.VehicleType.Car, true, false)
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(MaintenanceDepotAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(MaintenanceDepotAI ai, TransferManager.TransferOffer offer) => reasons;
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_maintenanceTruckCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Car;
     }
@@ -148,7 +148,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             [TransferManager.TransferReason.Crime] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
             [TransferManager.TransferReason.CriminalMove] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(PoliceStationAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(PoliceStationAI ai, TransferManager.TransferOffer offer) => reasons;
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_policeCarCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Car;
     }
@@ -160,7 +160,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             [TransferManager.TransferReason.Snow] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
             [TransferManager.TransferReason.SnowMove] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(SnowDumpAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(SnowDumpAI ai, TransferManager.TransferOffer offer) => reasons;
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_snowTruckCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Car;
     }
@@ -172,7 +172,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             [TransferManager.TransferReason.FloodWater] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
         };
         private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsNull = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(WaterFacilityAI ai)
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(WaterFacilityAI ai, TransferManager.TransferOffer offer)
         {
             if (ai.m_sewageOutlet != 0 && ai.m_sewageStorage != 0 && ai.m_pumpingVehicles != 0)
             {
@@ -197,7 +197,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         };
 
         public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Car;
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(LandfillSiteAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(LandfillSiteAI ai, TransferManager.TransferOffer offer) => reasons;
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_garbageTruckCount";
     }
 
@@ -209,7 +209,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         };
 
         public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Car;
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(DepotAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(DepotAI ai, TransferManager.TransferOffer offer) => reasons;
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_maxVehicleCount";
 
     }
@@ -222,7 +222,46 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         };
 
         public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.CableCar;
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(CableCarStationAI ai) => reasons;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(CableCarStationAI ai, TransferManager.TransferOffer offer) => reasons;
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_maxVehicleCount";
+
+    }
+    internal sealed class TransportStationAIOverrides : BasicBuildingAIOverrides<TransportStationAIOverrides, TransportStationAI>
+    {
+        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        {
+            [TransferManager.TransferReason.PassengerTrain] = Tuple.New(VehicleInfo.VehicleType.Train, false, true),
+            [TransferManager.TransferReason.PassengerPlane] = Tuple.New(VehicleInfo.VehicleType.Plane, false, true),
+        };
+
+        public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Train || type == VehicleInfo.VehicleType.Plane;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(TransportStationAI ai, TransferManager.TransferOffer offer)
+        {
+            if (offer.TransportLine != 0)
+            {
+                return new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
+            }
+            return reasons;
+        }
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_maxVehicleCount";
+
+    }
+    internal sealed class HarborAIOverrides : BasicBuildingAIOverrides<HarborAIOverrides, HarborAI>
+    {
+        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        {
+            [TransferManager.TransferReason.PassengerShip] = Tuple.New(VehicleInfo.VehicleType.Ship, false, true),
+        };
+
+        public override bool AllowVehicleType(VehicleInfo.VehicleType type) => type == VehicleInfo.VehicleType.Ship;
+        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(HarborAI ai, TransferManager.TransferOffer offer)
+        {
+            if (offer.TransportLine != 0)
+            {
+                return new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
+            }
+            return reasons;
+        }
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_maxVehicleCount";
 
     }

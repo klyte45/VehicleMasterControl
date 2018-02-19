@@ -14,6 +14,7 @@ namespace Klyte.ServiceVehiclesManager.i18n
         private const string idxSeparator = ">";
         private const string localeKeySeparator = "|";
         private const string commentChar = "#";
+        private const string ignorePrefixChar = "%";
         private static string language = "";
         private static string[] locales = new string[] { "en", "pt", "ko", "de", "cn", "pl", "nl" };
 
@@ -74,6 +75,7 @@ namespace Klyte.ServiceVehiclesManager.i18n
             {
                 if (myString.StartsWith(commentChar)) continue;
                 if (!myString.Contains(kvSeparator)) continue;
+                bool noPrefix = myString.StartsWith(ignorePrefixChar);
                 var array = myString.Split(kvSeparator.ToCharArray(), 2);
                 string value = array[1];
                 int idx = 0;
@@ -96,7 +98,7 @@ namespace Klyte.ServiceVehiclesManager.i18n
 
                 k = new Locale.Key()
                 {
-                    m_Identifier = "SVM_" + array[0],
+                    m_Identifier = noPrefix ? array[0].Substring(1) : "SVM_" + array[0],
                     m_Key = localeKey,
                     m_Index = idx
                 };

@@ -37,13 +37,14 @@ namespace Klyte.ServiceVehiclesManager.UI
         {
             SVMServiceBuildingDetailPanel.eventOnDistrictSelectionChanged += onDistrictChanged;
 
-            allowColorChange = SVMConfigWarehouse.allowColorChanging(extension.ConfigIndexKey);
 
             mainPanel = GetComponentInChildren<UIScrollablePanel>();
             mainPanel.autoLayout = false;
             m_uiHelper = new UIHelperExtension(mainPanel);
 
             SVMUtils.createUIElement(out UILabel lbl, mainPanel.transform, "DistrictColorLabel", new Vector4(5, 5, 250, 40));
+           
+            allowColorChange = SVMConfigWarehouse.allowColorChanging(extension.ConfigIndexKey);
             if (allowColorChange)
             {
                 SVMUtils.LimitWidth(lbl, 250);
@@ -139,5 +140,8 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerDistrictListTaxCar : SVMTabControllerDistrictList<SVMSysDefTaxCar> { }
     internal sealed class SVMTabControllerDistrictListCcrCcr : SVMTabControllerDistrictList<SVMSysDefCcrCcr> { }
     internal sealed class SVMTabControllerDistrictListSnwCar : SVMTabControllerDistrictList<SVMSysDefSnwCar> { }
+    internal sealed class SVMTabControllerDistrictListRegTra : SVMTabControllerDistrictList<SVMSysDefRegTra> { }
+    internal sealed class SVMTabControllerDistrictListRegShp : SVMTabControllerDistrictList<SVMSysDefRegShp> { }
+    internal sealed class SVMTabControllerDistrictListRegPln : SVMTabControllerDistrictList<SVMSysDefRegPln> { }
 
 }

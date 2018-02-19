@@ -5,6 +5,7 @@ using ICities;
 using Klyte.Extensions;
 using Klyte.Harmony;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.UI.ExtraUI;
 using Klyte.ServiceVehiclesManager.Utils;
@@ -28,7 +29,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         private const int NUM_SERVICES = 0;
         private static SVMServiceBuildingDetailPanel instance;
 
-        private UIPanel controlContainer;
+        public UIPanel controlContainer { get; private set; }
         private UIPanel mainPanel;
         private UIPanel m_titleLineBuildings;
 
@@ -117,6 +118,16 @@ namespace Klyte.ServiceVehiclesManager.UI
             m_StripDistricts.selectedIndex = -1;
         }
 
+        internal void OpenAt(ServiceSystemDefinition ssd)
+        {
+            m_StripMain.selectedIndex = 0;
+            if (ssd != null)
+            {
+                m_StripBuilings.selectedIndex = m_StripBuilings.Find<UIComponent>(ssd.GetDefType().Name)?.zOrder ?? 0;
+            }
+            SVMController.instance.OpenSVMPanel();
+        }
+
         private void OnDistrictSelect(int x)
         {
             String oldSel = m_lastSelectedItem;
@@ -177,11 +188,11 @@ namespace Klyte.ServiceVehiclesManager.UI
                 GameObject tab = Instantiate(tabTemplate.gameObject);
                 GameObject body = Instantiate(scrollTemplate.gameObject);
                 var configIdx = kv.Key.toConfigIndex();
-                String name = SVMConfigWarehouse.getNameForServiceSystem(configIdx);
+                String name = kv.Value.Name;
                 String bgIcon = SVMConfigWarehouse.getIconServiceSystem(configIdx);
                 String fgIcon = SVMConfigWarehouse.getFgIconServiceSystem(configIdx);
                 UIButton tabButton = tab.GetComponent<UIButton>();
-                tabButton.tooltip = name;
+                tabButton.tooltip = SVMConfigWarehouse.getNameForServiceSystem(configIdx);
                 tabButton.normalFgSprite = bgIcon;
                 if (!string.IsNullOrEmpty(fgIcon))
                 {

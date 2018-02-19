@@ -23,7 +23,7 @@ using Klyte.ServiceVehiclesManager.i18n;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI;
 
-[assembly: AssemblyVersion("0.0.1.*")]
+[assembly: AssemblyVersion("1.0.0.*")]
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -79,7 +79,7 @@ namespace Klyte.ServiceVehiclesManager
             return m_isTLMLoaded;
         }
 
-        public static SavedBool debugMode => instance.m_debugMode;
+        public static bool debugMode => instance.m_debugMode.value;
 
         private SavedString currentSaveVersion => new SavedString("SVMSaveVersion", Settings.gameSettingsFile, "null", true);
 
@@ -99,7 +99,7 @@ namespace Klyte.ServiceVehiclesManager
 
         public string Name => "Services Vehicles Manager " + version;
 
-        public string Description => "TLMR's Extension for managing the service vehicles. Requires TLMR active.";
+        public string Description => "TLMR's Extension for managing the service vehicles. Requires TLMR.";
 
         public void OnCreated(ILoading loading)
         {
@@ -277,7 +277,7 @@ namespace Klyte.ServiceVehiclesManager
             if (SVMController.taSVM == null)
             {
                 SVMController.taSVM = CreateTextureAtlas("UI.Images.sprites.png", "ServiceVehicleManagerSprites", GameObject.FindObjectOfType<UIView>().FindUIComponent<UIPanel>("InfoPanel").atlas.material, 64, 64, new string[] {
-                    "ServiceVehiclesManagerIcon","ServiceVehiclesManagerIconSmall","ToolbarIconGroup6Hovered","ToolbarIconGroup6Focused","HelicopterIndicator","ConfigIcon","24hLineIcon", "PerHourIcon"
+                    "ServiceVehiclesManagerIcon","ServiceVehiclesManagerIconSmall","ToolbarIconGroup6Hovered","ToolbarIconGroup6Focused","HelicopterIndicator","RemoveUnwantedIcon","24hLineIcon", "PerHourIcon"
                 });
             }
             loadSVMLocale(false);

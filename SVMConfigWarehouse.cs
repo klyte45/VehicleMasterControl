@@ -43,32 +43,6 @@ namespace Klyte.ServiceVehiclesManager
             }
         }
 
-        public static Color32 getColorForTransportType(ConfigIndex i)
-        {
-            switch (i & ConfigIndex.SSD_PART)
-            {
-                case ConfigIndex.DISASTER_CAR: return new Color32(85, 85, 12, 255);
-                case ConfigIndex.DISASTER_HELICOPTER: return new Color32(223, 223, 32, 255);
-                case ConfigIndex.FIRE_CAR: return new Color32(89, 13, 13, 255);
-                case ConfigIndex.FIRE_HELICOPTER: return new Color32(223, 32, 32, 255);
-                case ConfigIndex.GARBAGE_CAR: return new Color32(67, 31, 10, 255);
-                case ConfigIndex.GARBBIO_CAR: return new Color32(67, 90, 10, 255);
-                case ConfigIndex.HEALTHCARE_CAR: return new Color32(165, 120, 120, 255);
-                case ConfigIndex.HEALTHCARE_HELICOPTER: return new Color32(226, 212, 212, 255);
-                case ConfigIndex.DEATHCARE_CAR: return new Color32(153, 102, 119, 255);
-                case ConfigIndex.POLICE_CAR: return new Color32(46, 56, 53, 255);
-                case ConfigIndex.POLICE_HELICOPTER: return new Color32(115, 140, 132, 255);
-                case ConfigIndex.ROAD_CAR: return new Color32(64, 89, 13, 255);
-                case ConfigIndex.WATER_CAR: return new Color32(19, 105, 134, 255);
-                case ConfigIndex.PRISION_CAR: return new Color32(249, 188, 6, 255);
-                case ConfigIndex.CABLECAR_CABLECAR: return new Color32(31, 96, 225, 255);
-                case ConfigIndex.TAXI_CAR: return new Color32(88, 187, 138, 225);
-                case ConfigIndex.SNOW_CAR: return new Color32(175, 175, 175, 225);
-                default: return new Color();
-
-            }
-        }
-
         public static string getNameForServiceSystem(ConfigIndex i)
         {
             switch (i & ConfigIndex.SSD_PART)
@@ -90,6 +64,9 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.TAXI_CAR: return Locale.Get("VEHICLE_TITLE", "Taxi");
                 case ConfigIndex.CABLECAR_CABLECAR: return Locale.Get("VEHICLE_TITLE", "Cable Car");
                 case ConfigIndex.SNOW_CAR: return Locale.Get("VEHICLE_TITLE", "Snowplow");
+                case ConfigIndex.REG_TRAIN: return Locale.Get("VEHICLE_TITLE", "Train Engine");
+                case ConfigIndex.REG_SHIP: return Locale.Get("VEHICLE_TITLE", "Ship Passenger");
+                case ConfigIndex.REG_PLANE: return Locale.Get("VEHICLE_TITLE", "Aircraft Passenger");
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
 
             }
@@ -115,6 +92,9 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.TAXI_CAR: return "SubBarPublicTransportTaxi";
                 case ConfigIndex.CABLECAR_CABLECAR: return "SubBarPublicTransportCableCar";
                 case ConfigIndex.SNOW_CAR: return "InfoIconSnow";
+                case ConfigIndex.REG_TRAIN: return "SubBarPublicTransportTrain";
+                case ConfigIndex.REG_SHIP: return "SubBarPublicTransportShip";
+                case ConfigIndex.REG_PLANE: return "SubBarPublicTransportPlane";
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
             }
         }
@@ -140,6 +120,9 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.POLICE_HELICOPTER:
                 case ConfigIndex.WATER_CAR:
                 case ConfigIndex.CABLECAR_CABLECAR:
+                case ConfigIndex.REG_TRAIN:
+                case ConfigIndex.REG_SHIP:
+                case ConfigIndex.REG_PLANE:
                 default:
                     return true;
             }
@@ -162,6 +145,9 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.CABLECAR_CABLECAR:
                 case ConfigIndex.TAXI_CAR:
                 case ConfigIndex.SNOW_CAR:
+                case ConfigIndex.REG_TRAIN:
+                case ConfigIndex.REG_SHIP:
+                case ConfigIndex.REG_PLANE:
                     return "";
                 case ConfigIndex.FIRE_HELICOPTER:
                 case ConfigIndex.HEALTHCARE_HELICOPTER:
@@ -199,7 +185,7 @@ namespace Klyte.ServiceVehiclesManager
             DISASTER_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
             FIRE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             FIRE_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.FireDepartment << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            GARBAGE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.None + 1) << 12),
+            GARBAGE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             GARBBIO_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Garbage << 15) | ((ItemClass.Level.Level2 + 1) << 12),
             HEALTHCARE_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             HEALTHCARE_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.HealthCare << 15) | ((ItemClass.Level.Level3 + 1) << 12),
@@ -210,8 +196,11 @@ namespace Klyte.ServiceVehiclesManager
             WATER_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Water << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             PRISION_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.PoliceDepartment << 15) | ((ItemClass.Level.Level4 + 1) << 12),
             TAXI_CAR = (1 << 26) | (ItemClass.SubService.PublicTransportTaxi << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
-            CABLECAR_CABLECAR = (1 << 26) | (ItemClass.SubService.PublicTransportCableCar << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            CABLECAR_CABLECAR = (13 << 26) | (ItemClass.SubService.PublicTransportCableCar << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             SNOW_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Road << 15) | ((ItemClass.Level.Level4 + 1) << 12),
+            REG_TRAIN = (3 << 26) | (ItemClass.SubService.PublicTransportTrain << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            REG_SHIP = (4 << 26) | (ItemClass.SubService.PublicTransportShip << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            REG_PLANE = (5 << 26) | (ItemClass.SubService.PublicTransportPlane << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
 
             EXTENSION_CONFIG_DISTRICT = 0x1 | TYPE_STRING | SYSTEM_CONFIG,
             BASIC_CONFIG_DISTRICT = 0x2 | TYPE_STRING | GLOBAL_CONFIG,
@@ -232,6 +221,7 @@ namespace Klyte.ServiceVehiclesManager
             PRISION_CAR_CONFIG = PRISION_CAR | EXTENSION_CONFIG_DISTRICT,
             TAXI_CAR_CONFIG = TAXI_CAR | EXTENSION_CONFIG_DISTRICT,
             CABLECAR_CABLECAR_CONFIG = CABLECAR_CABLECAR | EXTENSION_CONFIG_DISTRICT,
+            REGTRAIN_TRAIN_CONFIG = REG_TRAIN | EXTENSION_CONFIG_DISTRICT,
         }
 
         public static ConfigIndex[] defaultTrueBoolProperties => new ConfigIndex[] {
@@ -257,6 +247,9 @@ namespace Klyte.ServiceVehiclesManager
             if (serviceSystemDefinition == ServiceSystemDefinition.TAXI_CAR) return ConfigIndex.TAXI_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.CABLECAR_CABLECAR) return ConfigIndex.CABLECAR_CABLECAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.SNOW_CAR) return ConfigIndex.SNOW_CAR;
+            if (serviceSystemDefinition == ServiceSystemDefinition.REG_TRAIN) return ConfigIndex.REG_TRAIN;
+            if (serviceSystemDefinition == ServiceSystemDefinition.REG_PLANE) return ConfigIndex.REG_PLANE;
+            if (serviceSystemDefinition == ServiceSystemDefinition.REG_SHIP) return ConfigIndex.REG_SHIP;
             return ConfigIndex.NIL;
         }
     }
