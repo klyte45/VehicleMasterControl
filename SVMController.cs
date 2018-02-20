@@ -92,6 +92,7 @@ namespace Klyte.ServiceVehiclesManager
         public void Awake()
         {
             initNearLinesOnWorldInfoPanel();
+            ServiceVehiclesManagerMod.instance.showVersionInfoPopup();
         }
 
         private void ToggleSVMPanel()
@@ -102,7 +103,6 @@ namespace Klyte.ServiceVehiclesManager
         {
             if (!m_listPanel.GetComponent<UIPanel>().isVisible)
             {
-                ServiceVehiclesManagerMod.instance.showVersionInfoPopup();
                 openSVMPanelButton.SimulateClick();
             }
         }

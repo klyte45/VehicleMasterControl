@@ -1,3 +1,9 @@
-﻿SVMv1
+﻿SVMv1.0.2
+    - Fixed preview on non-colourable vehicle types at building window (like police, hospital...)
+
+SVMv1.0.1
+    - Fixed "Remove all unwanted" funcionality
+
+SVMv1
    Initial version.
    

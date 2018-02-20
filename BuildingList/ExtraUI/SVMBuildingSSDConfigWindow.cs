@@ -376,7 +376,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
                 return;
             }
             m_previewPanel.isVisible = true;
-            m_previewRenderer.RenderVehicle(m_lastInfo, m_color.selectedColor == Color.clear ? Color.HSVToRGB(Math.Abs(m_previewRenderer.cameraRotation) / 360f, .5f, .5f) : m_color.selectedColor, true);
+            m_previewRenderer.RenderVehicle(m_lastInfo, (m_color?.selectedColor ?? Color.clear) == Color.clear ? Color.HSVToRGB(Math.Abs(m_previewRenderer.cameraRotation) / 360f, .5f, .5f) : m_color.selectedColor, true);
         }
     }
     internal sealed class SVMBuildingSSDConfigWindowDisCar : SVMBuildingSSDConfigWindow<SVMSysDefDisCar> { }

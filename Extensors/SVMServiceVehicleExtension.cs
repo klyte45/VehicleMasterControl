@@ -393,7 +393,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 var vehicle = Singleton<VehicleManager>.instance.m_vehicles.m_buffer[(int)num];
                 var vehicleInfo = vehicle.Info;
-                if (vehicleInfo != null)
+                if (vehicleInfo != null && !SVMUtils.IsTrailer(vehicleInfo) && vehicle.m_transportLine == 0 && vehicle.m_sourceBuilding > 0)
                 {
                     var buildingInfo = Singleton<BuildingManager>.instance.m_buildings.m_buffer[vehicle.m_sourceBuilding].Info;
                     var buildingSsd = ServiceSystemDefinition.from(buildingInfo, vehicleInfo.m_vehicleType);
