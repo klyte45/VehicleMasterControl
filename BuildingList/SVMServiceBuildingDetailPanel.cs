@@ -20,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using Klyte.TransportLinesManager.Overrides;
 
 namespace Klyte.ServiceVehiclesManager.UI
 {

@@ -154,62 +154,11 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
         private void CreateScrollPanel()
         {
-            SVMUtils.createUIElement(out m_scrollablePanel, m_mainPanel.transform);
-            m_scrollablePanel.width = m_mainPanel.width - 20f;
-            m_scrollablePanel.height = m_mainPanel.height - 90f;
-            m_scrollablePanel.autoLayoutDirection = LayoutDirection.Vertical;
-            m_scrollablePanel.autoLayoutStart = LayoutStart.TopLeft;
-            m_scrollablePanel.autoLayoutPadding = new RectOffset(0, 0, 0, 0);
-            m_scrollablePanel.autoLayout = true;
-            m_scrollablePanel.clipChildren = true;
-            m_scrollablePanel.relativePosition = new Vector3(5, 45);
-
-            SVMUtils.createUIElement(out UIPanel trackballPanel, m_mainPanel.transform);
-            trackballPanel.width = 10f;
-            trackballPanel.height = m_scrollablePanel.height;
-            trackballPanel.autoLayoutDirection = LayoutDirection.Horizontal;
-            trackballPanel.autoLayoutStart = LayoutStart.TopLeft;
-            trackballPanel.autoLayoutPadding = new RectOffset(0, 0, 0, 0);
-            trackballPanel.autoLayout = true;
-            trackballPanel.relativePosition = new Vector3(m_mainPanel.width - 15, 45);
-
-
-            SVMUtils.createUIElement(out m_scrollbar, trackballPanel.transform);
-            m_scrollbar.width = 10f;
-            m_scrollbar.height = m_scrollbar.parent.height;
-            m_scrollbar.orientation = UIOrientation.Vertical;
-            m_scrollbar.pivot = UIPivotPoint.BottomLeft;
-            m_scrollbar.AlignTo(trackballPanel, UIAlignAnchor.TopRight);
-            m_scrollbar.minValue = 0f;
-            m_scrollbar.value = 0f;
-            m_scrollbar.incrementAmount = 25f;
-
-            SVMUtils.createUIElement(out UISlicedSprite scrollBg, m_scrollbar.transform);
-            scrollBg.relativePosition = Vector2.zero;
-            scrollBg.autoSize = true;
-            scrollBg.size = scrollBg.parent.size;
-            scrollBg.fillDirection = UIFillDirection.Vertical;
-            scrollBg.spriteName = "ScrollbarTrack";
-            m_scrollbar.trackObject = scrollBg;
-
-            SVMUtils.createUIElement(out UISlicedSprite scrollFg, scrollBg.transform);
-            scrollFg.relativePosition = Vector2.zero;
-            scrollFg.fillDirection = UIFillDirection.Vertical;
-            scrollFg.autoSize = true;
-            scrollFg.width = scrollFg.parent.width - 4f;
-            scrollFg.spriteName = "ScrollbarThumb";
-            m_scrollbar.thumbObject = scrollFg;
-            m_scrollablePanel.verticalScrollbar = m_scrollbar;
-            m_scrollablePanel.eventMouseWheel += delegate (UIComponent component, UIMouseEventParameter param)
-            {
-                m_scrollablePanel.scrollPosition += new Vector2(0f, Mathf.Sign(param.wheelDelta) * -1f * m_scrollbar.incrementAmount);
-            };
+            m_uiHelper = SVMUtils.CreateScrollPanel(m_mainPanel, out m_scrollablePanel, out m_scrollbar, m_mainPanel.width - 20f, m_mainPanel.height - 90f, new Vector3(5, 45));
             m_scrollablePanel.eventMouseLeave += (x, y) =>
             {
                 m_previewPanel.isVisible = false;
             };
-
-            m_uiHelper = new UIHelperExtension(m_scrollablePanel);
         }
 
         private void BindParentChanges()
