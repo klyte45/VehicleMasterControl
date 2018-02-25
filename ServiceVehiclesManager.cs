@@ -8,22 +8,18 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using ColossalFramework.DataBinding;
-using Klyte.TransportLinesManager.LineList;
-using Klyte.TransportLinesManager.MapDrawer;
 using ColossalFramework.Globalization;
-using Klyte.TransportLinesManager.i18n;
-using Klyte.TransportLinesManager.Utils;
-using Klyte.TransportLinesManager.Extensors;
-using Klyte.TransportLinesManager.Overrides;
-using Klyte.TransportLinesManager.Extensors.BuildingAIExt;
+using Klyte.Commons.Utils;
+using Klyte.Commons.Extensors;
+using Klyte.Commons.Overrides;
 using ColossalFramework.PlatformServices;
-using Klyte.TransportLinesManager;
+using Klyte.Commons;
 using Klyte.ServiceVehiclesManager.Utils;
 using Klyte.ServiceVehiclesManager.i18n;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI;
 
-[assembly: AssemblyVersion("1.0.2.*")]
+[assembly: AssemblyVersion("1.0.3.*")]
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -62,21 +58,21 @@ namespace Klyte.ServiceVehiclesManager
 
         private string currentSelectedConfigEditor => currentCityId;
 
-        private static bool m_isTLMLoaded = false;
-        public static bool IsTLMLoaded()
+        private static bool m_isKlyteCommonsLoaded = false;
+        public static bool IsKlyteCommonsEnabled()
         {
-            if (!m_isTLMLoaded)
+            if (!m_isKlyteCommonsLoaded)
             {
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
                 var assembly = (from a in assemblies
-                                where a.GetType("Klyte.TransportLinesManager.TLMMod") != null
+                                where a.GetType("Klyte.Commons.KlyteCommonsMod") != null
                                 select a).SingleOrDefault();
                 if (assembly != null)
                 {
-                    m_isTLMLoaded = true;
+                    m_isKlyteCommonsLoaded = true;
                 }
             }
-            return m_isTLMLoaded;
+            return m_isKlyteCommonsLoaded;
         }
 
         public static bool debugMode => instance.m_debugMode.value;
@@ -99,7 +95,7 @@ namespace Klyte.ServiceVehiclesManager
 
         public string Name => "Services Vehicles Manager " + version;
 
-        public string Description => "TLMR's Extension for managing the service vehicles. Requires TLMR.";
+        public string Description => "Extension for managing the service vehicles. Requires Klyte Commons.";
 
         public void OnCreated(ILoading loading)
         {
@@ -178,7 +174,7 @@ namespace Klyte.ServiceVehiclesManager
 
                 SVMUtils.doLog("End Loading Options");
             }
-            if (IsTLMLoaded())
+            if (IsKlyteCommonsEnabled())
             {
                 loadSVMLocale(false);
                 ev();
@@ -246,7 +242,7 @@ namespace Klyte.ServiceVehiclesManager
         }
         public void loadSVMLocale(bool force)
         {
-            if (SingletonLite<LocaleManager>.exists && IsTLMLoaded())
+            if (SingletonLite<LocaleManager>.exists && IsKlyteCommonsEnabled())
             {
                 SVMLocaleUtils.loadLocale(currentLanguageId.value == 0 ? SingletonLite<LocaleManager>.instance.language : SVMLocaleUtils.getSelectedLocaleByIndex(currentLanguageId.value), force);
                 if (!isLocaleLoaded)
@@ -270,9 +266,9 @@ namespace Klyte.ServiceVehiclesManager
                 SVMUtils.doLog("NOT GAME ({0})", mode);
                 return;
             }
-            if (!IsTLMLoaded())
+            if (!IsKlyteCommonsEnabled())
             {
-                throw new Exception("SVM requires Transport Lines Manager Reborn active!");
+                throw new Exception("SVM requires Klyte Commons active!");
             }
             if (SVMController.taSVM == null)
             {

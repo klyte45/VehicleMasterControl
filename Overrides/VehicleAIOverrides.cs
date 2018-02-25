@@ -1,9 +1,9 @@
 ﻿using ColossalFramework;
 using Klyte.ServiceVehiclesManager.Utils;
-using Klyte.TransportLinesManager.Extensors;
+using Klyte.Commons.Extensors;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI.ExtraUI;
-using Klyte.TransportLinesManager.Utils;
+using Klyte.Commons.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;

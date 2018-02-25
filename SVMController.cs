@@ -7,8 +7,8 @@ using ColossalFramework.UI;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Utils;
-using Klyte.TransportLinesManager.Extensors;
-using Klyte.TransportLinesManager.Utils;
+using Klyte.Commons.Extensors;
+using Klyte.Commons.Utils;
 using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager
