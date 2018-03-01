@@ -1,4 +1,8 @@
-﻿SVMv1.0.2
+﻿SVMv1.0.4
+    - Fixed FindIt! compatibility
+SVMv1.0.3
+    - Added Klyte Commons as dependency
+SVMv1.0.2
     - Fixed preview on non-colourable vehicle types at building window (like police, hospital...)
 
 SVMv1.0.1

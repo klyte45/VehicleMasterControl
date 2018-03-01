@@ -16,7 +16,6 @@ namespace Klyte.ServiceVehiclesManager
     internal class SVMController : Singleton<SVMController>
     {
         internal static UITextureAtlas taSVM;
-        private UIView uiView;
         private UIButton openSVMPanelButton;
         private SVMServiceBuildingDetailPanel m_listPanel;
         private UIPanel buildingInfoParent;
@@ -28,12 +27,8 @@ namespace Klyte.ServiceVehiclesManager
 
         public void Start()
         {
-            uiView = FindObjectOfType<UIView>();
-            if (!uiView)
-                return;
-
-            UITabstrip toolStrip = uiView.FindUIComponent<UITabstrip>("MainToolstrip");
-            SVMUtils.createUIElement(out openSVMPanelButton, null);
+            UITabstrip toolStrip = ToolsModifierControl.mainToolbar.GetComponentInChildren<UITabstrip>();
+            openSVMPanelButton = toolStrip.AddTab();
             this.openSVMPanelButton.size = new Vector2(49f, 49f);
             this.openSVMPanelButton.name = "ServiceVehiclesManagerButton";
             this.openSVMPanelButton.tooltip = "Service Vehicles Manager (v" + ServiceVehiclesManagerMod.version + ")";
