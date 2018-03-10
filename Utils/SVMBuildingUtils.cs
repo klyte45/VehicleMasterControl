@@ -48,7 +48,12 @@ namespace Klyte.ServiceVehiclesManager.Utils
         {
             Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
             var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
-            return (SVMUtils.GetPrivateField<int>(b.Info.GetAI(), ext.GetVehicleMaxCountField(type)) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
+            var maxField = ext.GetVehicleMaxCountField(type);
+            if(maxField == null)
+            {
+                return 0xFFFFFF;
+            }
+            return (SVMUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
         }
 
         public static int GetProductionRate(ref Building b)
@@ -61,7 +66,14 @@ namespace Klyte.ServiceVehiclesManager.Utils
         {
             List<ushort> saida = new List<ushort>();
             var bm = Singleton<BuildingManager>.instance;
-            var buildings = bm.GetServiceBuildings(ssd.service);
+            FastList<ushort> buildings;
+            if (ssd.outsideConnection)
+            {
+                buildings = bm.GetOutsideConnections();
+            }
+            else {
+                buildings = bm.GetServiceBuildings(ssd.service);
+            }
 
             SVMUtils.doLog("getAllBuildingsFromCity ({0}) buildings = {1} (s={2})", ssd, buildings.ToArray(), buildings.m_size);
 

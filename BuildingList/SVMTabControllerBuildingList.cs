@@ -73,6 +73,11 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingHooksRegTra : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRegTra, SVMSysDefRegTra> { }
     internal sealed class SVMTabControllerBuildingHooksRegShp : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRegShp, SVMSysDefRegShp> { }
     internal sealed class SVMTabControllerBuildingHooksRegPln : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRegPln, SVMSysDefRegPln> { }
+    internal sealed class SVMTabControllerBuildingHooksCrgTra : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksCrgTra, SVMSysDefCrgTra> { }
+    internal sealed class SVMTabControllerBuildingHooksCrgShp : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksCrgShp, SVMSysDefCrgShp> { }
+    internal sealed class SVMTabControllerBuildingHooksOutTra : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutTra, SVMSysDefOutTra> { }
+    internal sealed class SVMTabControllerBuildingHooksOutShp : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutShp, SVMSysDefOutShp> { }
+    internal sealed class SVMTabControllerBuildingHooksOutPln : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutPln, SVMSysDefOutPln> { }
 
 
 
@@ -135,11 +140,13 @@ namespace Klyte.ServiceVehiclesManager.UI
                 {
                     Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
                     var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
-                    var maxVehicle = SVMUtils.GetPrivateField<int>(b.Info.GetAI(), ext.GetVehicleMaxCountField(SVMSysDef<T>.instance.GetSSD().vehicleType));
-                    if (maxVehicle > 0)
+                    var maxCountField = ext.GetVehicleMaxCountField(SVMSysDef<T>.instance.GetSSD().vehicleType);
+                    var maxVehicle = SVMUtils.GetPrivateField<int>(b.Info.GetAI(), maxCountField);
+                    if (maxCountField == null || maxVehicle > 0)
                     {
                         AddToList(buildingID, ref count);
                     }
+
                 }
                 RemoveExtraLines(count);
 
@@ -177,5 +184,10 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingListRegTra : SVMTabControllerBuildingList<SVMSysDefRegTra> { }
     internal sealed class SVMTabControllerBuildingListRegShp : SVMTabControllerBuildingList<SVMSysDefRegShp> { }
     internal sealed class SVMTabControllerBuildingListRegPln : SVMTabControllerBuildingList<SVMSysDefRegPln> { }
+    internal sealed class SVMTabControllerBuildingListCrgTra : SVMTabControllerBuildingList<SVMSysDefCrgTra> { }
+    internal sealed class SVMTabControllerBuildingListCrgShp : SVMTabControllerBuildingList<SVMSysDefCrgShp> { }
+    internal sealed class SVMTabControllerBuildingListOutTra : SVMTabControllerBuildingList<SVMSysDefOutTra> { }
+    internal sealed class SVMTabControllerBuildingListOutShp : SVMTabControllerBuildingList<SVMSysDefOutShp> { }
+    internal sealed class SVMTabControllerBuildingListOutPln : SVMTabControllerBuildingList<SVMSysDefOutPln> { }
 
 }

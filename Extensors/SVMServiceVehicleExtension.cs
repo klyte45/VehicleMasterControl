@@ -377,6 +377,11 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMServiceVehicleExtensionRegTra : SVMServiceVehicleExtension<SVMSysDefRegTra, SVMServiceVehicleExtensionRegTra> { }
     internal sealed class SVMServiceVehicleExtensionRegShp : SVMServiceVehicleExtension<SVMSysDefRegShp, SVMServiceVehicleExtensionRegShp> { }
     internal sealed class SVMServiceVehicleExtensionRegPln : SVMServiceVehicleExtension<SVMSysDefRegPln, SVMServiceVehicleExtensionRegPln> { }
+    internal sealed class SVMServiceVehicleExtensionCrgTra : SVMServiceVehicleExtension<SVMSysDefCrgTra, SVMServiceVehicleExtensionCrgTra> { }
+    internal sealed class SVMServiceVehicleExtensionCrgShp : SVMServiceVehicleExtension<SVMSysDefCrgShp, SVMServiceVehicleExtensionCrgShp> { }
+    internal sealed class SVMServiceVehicleExtensionOutTra : SVMServiceVehicleExtension<SVMSysDefOutTra, SVMServiceVehicleExtensionOutTra> { }
+    internal sealed class SVMServiceVehicleExtensionOutShp : SVMServiceVehicleExtension<SVMSysDefOutShp, SVMServiceVehicleExtensionOutShp> { }
+    internal sealed class SVMServiceVehicleExtensionOutPln : SVMServiceVehicleExtension<SVMSysDefOutPln, SVMServiceVehicleExtensionOutPln> { }
 
     public sealed class SVMTransportExtensionUtils
     {

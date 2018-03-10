@@ -21,10 +21,12 @@ namespace Klyte.ServiceVehiclesManager.Overrides
     {
         string GetVehicleMaxCountField(VehicleInfo.VehicleType veh);
         Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(BuildingInfo info);
-        bool AllowVehicleType(VehicleInfo.VehicleType type);
+        bool AllowVehicleType(VehicleInfo.VehicleType type, PrefabAI ai);
+        bool AcceptsAI(PrefabAI ai);
     }
     internal interface IBasicBuildingAIOverrides<U> : IBasicBuildingAIOverrides where U : PrefabAI
     {
+        bool AllowVehicleType(VehicleInfo.VehicleType veh, U ai);
         Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(U ai, TransferManager.TransferOffer offer);
     }
 
@@ -38,8 +40,10 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             return GetManagedReasons((U)info.GetAI(), default(TransferManager.TransferOffer));
         }
         public abstract Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(U ai, TransferManager.TransferOffer offer);
+        public abstract bool AllowVehicleType(VehicleInfo.VehicleType type, U ai);
         public abstract string GetVehicleMaxCountField(VehicleInfo.VehicleType veh);
-        public abstract bool AllowVehicleType(VehicleInfo.VehicleType type);
+        public bool AllowVehicleType(VehicleInfo.VehicleType veh, PrefabAI ai) => AllowVehicleType(veh, (U)ai);
+        public virtual bool AcceptsAI(PrefabAI ai) => true;
 
 
         public static bool StartTransferDepot(U __instance, ushort buildingID, ref Building data, TransferManager.TransferReason reason, TransferManager.TransferOffer offer)
@@ -113,7 +117,6 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             SVMUtils.doLog("Loading Hooks: {0} ({1}=>{2})", typeof(U), from, to);
             AddRedirect(from, to);
         }
-
 
         #endregion
     }

@@ -32,6 +32,13 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition REG_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition REG_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition REG_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition CARG_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level4);
+        public static readonly ServiceSystemDefinition CARG_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level4);
+
+        public static readonly ServiceSystemDefinition OUT_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1, true);
+        public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
+        public static readonly ServiceSystemDefinition OUT_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1, true);
+
 
         public static Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> availableDefinitions
         {
@@ -41,11 +48,19 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
                     m_availableDefinitions[GARBAGE_CAR] = SVMServiceVehicleExtensionGarCar.instance;
                     m_availableDefinitions[DEATHCARE_CAR] = SVMServiceVehicleExtensionDcrCar.instance;
                     m_availableDefinitions[REG_TRAIN] = SVMServiceVehicleExtensionRegTra.instance;
-                    m_availableDefinitions[REG_PLANE] = SVMServiceVehicleExtensionRegPln.instance;
                     m_availableDefinitions[REG_SHIP] = SVMServiceVehicleExtensionRegShp.instance;
+                    m_availableDefinitions[REG_PLANE] = SVMServiceVehicleExtensionRegPln.instance;
                     m_availableDefinitions[FIRE_CAR] = SVMServiceVehicleExtensionFirCar.instance;
                     m_availableDefinitions[HEALTHCARE_CAR] = SVMServiceVehicleExtensionHcrCar.instance;
                     m_availableDefinitions[POLICE_CAR] = SVMServiceVehicleExtensionPolCar.instance;
+
+
+                    m_availableDefinitions[CARG_TRAIN] = SVMServiceVehicleExtensionCrgTra.instance;
+                    m_availableDefinitions[CARG_SHIP] = SVMServiceVehicleExtensionCrgShp.instance;
+
+                    m_availableDefinitions[OUT_TRAIN] = SVMServiceVehicleExtensionOutTra.instance;
+                    m_availableDefinitions[OUT_SHIP] = SVMServiceVehicleExtensionOutShp.instance;
+                    m_availableDefinitions[OUT_PLANE] = SVMServiceVehicleExtensionOutPln.instance;
 
                     if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
                     {
@@ -90,12 +105,19 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
                 {
                     m_sysDefinitions[GARBAGE_CAR] = typeof(SVMSysDefGarCar);
                     m_sysDefinitions[DEATHCARE_CAR] = typeof(SVMSysDefDcrCar);
-                    m_sysDefinitions[REG_TRAIN] = typeof(SVMSysDefRegTra);
                     m_sysDefinitions[REG_PLANE] = typeof(SVMSysDefRegPln);
+                    m_sysDefinitions[REG_TRAIN] = typeof(SVMSysDefRegTra);
                     m_sysDefinitions[REG_SHIP] = typeof(SVMSysDefRegShp);
                     m_sysDefinitions[FIRE_CAR] = typeof(SVMSysDefFirCar);
                     m_sysDefinitions[HEALTHCARE_CAR] = typeof(SVMSysDefHcrCar);
                     m_sysDefinitions[POLICE_CAR] = typeof(SVMSysDefPolCar);
+                    m_sysDefinitions[CARG_TRAIN] = typeof(SVMSysDefCrgTra);
+                    m_sysDefinitions[CARG_SHIP] = typeof(SVMSysDefCrgShp);
+
+                    m_sysDefinitions[OUT_PLANE] = typeof(SVMSysDefOutPln);
+                    m_sysDefinitions[OUT_TRAIN] = typeof(SVMSysDefOutTra);
+                    m_sysDefinitions[OUT_SHIP] = typeof(SVMSysDefOutShp);
+
                     if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
                     {
                         m_sysDefinitions[PRISION_CAR] = typeof(SVMSysDefPriCar);
@@ -150,18 +172,24 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         {
             get;
         }
+        public bool outsideConnection
+        {
+            get;
+        }
 
 
         private ServiceSystemDefinition(
         ItemClass.Service service,
         ItemClass.SubService subService,
         VehicleInfo.VehicleType vehicleType,
-        ItemClass.Level level)
+        ItemClass.Level level,
+        bool outsideConnection = false)
         {
             this.vehicleType = vehicleType;
             this.service = service;
             this.level = level;
             this.subService = subService;
+            this.outsideConnection = outsideConnection;
         }
 
         internal ISVMTransportTypeExtension GetTransportExtension()
@@ -183,9 +211,9 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         {
             if (ServiceVehiclesManagerMod.debugMode)
             {
-                SVMUtils.doLog("[{4}->{5}] info.m_class.m_service == service = {0}; subService == info.m_class.m_subService = {1}; info.m_class.m_level == level = {2}; aiOverride?.AllowVehicleType(vehicleType) = {3} ", info.m_class.m_service == service, subService == info.m_class.m_subService, info.m_class.m_level == level, SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType), info.GetAI().GetType(), this);
+                SVMUtils.doLog("[{4}->{5}] info.m_class.m_service == service = {0}; subService == info.m_class.m_subService = {1}; info.m_class.m_level == level = {2}; aiOverride?.AllowVehicleType(vehicleType) = {3} ", info.m_class.m_service == service, subService == info.m_class.m_subService, info.m_class.m_level == level, SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType, info.GetAI()), info.GetAI().GetType(), this);
             }
-            return info.m_class.m_service == service && subService == info.m_class.m_subService && info.m_class.m_level == level && (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType) ?? false);
+            return info.m_class.m_service == service && subService == info.m_class.m_subService && (info.m_class.m_level == level || outsideConnection) && info.GetAI() is OutsideConnectionAI == outsideConnection && (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType, info.GetAI()) ?? false);
         }
 
         public override bool Equals(object obj)
@@ -200,7 +228,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             }
             ServiceSystemDefinition other = (ServiceSystemDefinition)obj;
 
-            return level == other.level && service == other.service && subService == other.subService && vehicleType == other.vehicleType;
+            return level == other.level && service == other.service && subService == other.subService && vehicleType == other.vehicleType && outsideConnection == other.outsideConnection;
         }
 
         public static bool operator ==(ServiceSystemDefinition a, ServiceSystemDefinition b)
@@ -222,7 +250,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 return default(ServiceSystemDefinition);
             }
-            return availableDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && x.vehicleType == info.m_vehicleType && x.level == info.m_class.m_level);
+            return availableDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && x.vehicleType == info.m_vehicleType && x.level == info.m_class.m_level && !x.outsideConnection);
         }
 
         public static ServiceSystemDefinition from(BuildingInfo info, VehicleInfo.VehicleType type)
@@ -231,7 +259,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 return default(ServiceSystemDefinition);
             }
-            return availableDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && x.level == info.m_class.m_level && x.vehicleType == type);
+            return availableDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && (x.level == info.m_class.m_level || x.outsideConnection) && x.vehicleType == type && x.outsideConnection == info.GetAI() is OutsideConnectionAI);
         }
 
         public static IEnumerable<ServiceSystemDefinition> from(BuildingInfo info)
@@ -240,7 +268,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 return new List<ServiceSystemDefinition>();
             }
-            return availableDefinitions.Keys.Where(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && x.level == info.m_class.m_level && (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(x.vehicleType) ?? false));
+            return availableDefinitions.Keys.Where(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && (x.level == info.m_class.m_level || x.outsideConnection) && x.outsideConnection == info.GetAI() is OutsideConnectionAI && (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(x.vehicleType, info.GetAI()) ?? false));
         }
 
         public SVMConfigWarehouse.ConfigIndex toConfigIndex()
@@ -250,7 +278,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         public override string ToString()
         {
-            return service.ToString() + "|" + subService.ToString() + "|" + level.ToString() + "|" + vehicleType.ToString();
+            return service.ToString() + "|" + subService.ToString() + "|" + level.ToString() + "|" + vehicleType.ToString() + "|" + outsideConnection;
         }
 
         public override int GetHashCode()
@@ -289,7 +317,12 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMSysDefTaxCar : SVMSysDef<SVMSysDefTaxCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.TAXI_CAR; } }
     internal sealed class SVMSysDefCcrCcr : SVMSysDef<SVMSysDefCcrCcr> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CABLECAR_CABLECAR; } }
     internal sealed class SVMSysDefSnwCar : SVMSysDef<SVMSysDefSnwCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.SNOW_CAR; } }
-    internal sealed class SVMSysDefRegTra : SVMSysDef<SVMSysDefRegTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_TRAIN; } }
     internal sealed class SVMSysDefRegShp : SVMSysDef<SVMSysDefRegShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_SHIP; } }
+    internal sealed class SVMSysDefRegTra : SVMSysDef<SVMSysDefRegTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_TRAIN; } }
     internal sealed class SVMSysDefRegPln : SVMSysDef<SVMSysDefRegPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_PLANE; } }
+    internal sealed class SVMSysDefCrgTra : SVMSysDef<SVMSysDefCrgTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CARG_TRAIN; } }
+    internal sealed class SVMSysDefCrgShp : SVMSysDef<SVMSysDefCrgShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CARG_SHIP; } }
+    internal sealed class SVMSysDefOutShp : SVMSysDef<SVMSysDefOutShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_SHIP; } }
+    internal sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_TRAIN; } }
+    internal sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_PLANE; } }
 }

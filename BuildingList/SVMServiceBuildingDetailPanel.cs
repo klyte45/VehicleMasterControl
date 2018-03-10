@@ -35,6 +35,9 @@ namespace Klyte.ServiceVehiclesManager.UI
         private UITabstrip m_StripDistricts;
         private UITabstrip m_StripBuilings;
 
+        private Dictionary<CategoryTab, UITabstrip> m_StripDistrictsStrips = new Dictionary<CategoryTab, UITabstrip>();
+        private Dictionary<CategoryTab, UITabstrip> m_StripBuilingsStrips = new Dictionary<CategoryTab, UITabstrip>();
+
         private UIDropDown m_selectDistrict;
         private Dictionary<string, int> m_cachedDistricts;
         private string m_lastSelectedItem;
@@ -61,7 +64,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             controlContainer.isVisible = false;
             controlContainer.name = "SVMPanel";
 
-            SVMUtils.createUIElement(out mainPanel, controlContainer.transform, "SVMListPanel", new Vector4(395, 58, 875, 510));
+            SVMUtils.createUIElement(out mainPanel, controlContainer.transform, "SVMListPanel", new Vector4(395, 58, 875, 550));
             mainPanel.backgroundSprite = "MenuPanel2";
 
             CreateTitleBar();
@@ -78,11 +81,11 @@ namespace Klyte.ServiceVehiclesManager.UI
 
             SVMUtils.createUIElement(out UIPanel contentContainerPerBuilding, null);
             contentContainerPerBuilding.name = "Container";
-            contentContainerPerBuilding.area = new Vector4(0, 0, mainPanel.width, mainPanel.height - 80);
+            contentContainerPerBuilding.area = new Vector4(0, 40, mainPanel.width, mainPanel.height - 80);
 
             m_StripMain.AddTab("SVMPerBuilding", tabPerBuilding.gameObject, contentContainerPerBuilding.gameObject);
             CreateTitleRowBuilding(ref m_titleLineBuildings, contentContainerPerBuilding);
-            CreateSsdTabstrip(ref m_StripBuilings, m_titleLineBuildings, contentContainerPerBuilding, true);
+            CreateSsdTabstrip(ref m_StripBuilings, ref m_StripBuilingsStrips, m_titleLineBuildings, contentContainerPerBuilding, true);
 
             UIButton tabPerDistrict = CreateTabTemplate();
             tabPerDistrict.normalFgSprite = "ToolbarIconDistrict";
@@ -90,10 +93,10 @@ namespace Klyte.ServiceVehiclesManager.UI
 
             SVMUtils.createUIElement(out UIPanel contentContainerPerDistrict, mainPanel.transform);
             contentContainerPerDistrict.name = "Container2";
-            contentContainerPerDistrict.area = new Vector4(0, 0, mainPanel.width, mainPanel.height - 80);
+            contentContainerPerDistrict.area = new Vector4(0, 40, mainPanel.width, mainPanel.height - 80);
 
             m_StripMain.AddTab("SVMPerDistrict", tabPerDistrict.gameObject, contentContainerPerDistrict.gameObject);
-            CreateSsdTabstrip(ref m_StripDistricts, null, contentContainerPerDistrict);
+            CreateSsdTabstrip(ref m_StripDistricts, ref m_StripDistrictsStrips, null, contentContainerPerDistrict);
 
             m_cachedDistricts = SVMUtils.getValidDistricts();
 
@@ -168,25 +171,45 @@ namespace Klyte.ServiceVehiclesManager.UI
             return m_cachedDistricts[m_lastSelectedItem];
         }
 
-        private static void CreateSsdTabstrip(ref UITabstrip strip, UIPanel titleLine, UIComponent parent, bool buildings = false)
+        private static void CreateSsdTabstrip(ref UITabstrip strip, ref Dictionary<CategoryTab, UITabstrip> substrips, UIPanel titleLine, UIComponent parent, bool buildings = false)
         {
             SVMUtils.createUIElement(out strip, parent.transform, "SVMTabstrip", new Vector4(5, 0, parent.width - 10, 40));
 
             var effectiveOffsetY = strip.height + (titleLine?.height ?? 0);
 
-            SVMUtils.createUIElement(out UITabContainer tabContainer, parent.transform, "SVMTabContainer", new Vector4(5, effectiveOffsetY + 5, parent.width - 10, parent.height - effectiveOffsetY - 10));
+            SVMUtils.createUIElement(out UITabContainer tabContainer, parent.transform, "SVMTabContainer", new Vector4(0, 40, parent.width, parent.height - 40));
             strip.tabPages = tabContainer;
 
             UIButton tabTemplate = CreateTabTemplate();
 
-            UIComponent scrollTemplate = CreateContentTemplate(parent.width - 10, parent.height - effectiveOffsetY - 10);
+            UIComponent bodyContent = CreateContentTemplate(parent.width - 10, parent.height - effectiveOffsetY - 50);
+            SVMUtils.createUIElement(out UIPanel bodySuper, null);
+            bodySuper.name = "Container";
+            bodySuper.area = new Vector4(0, 40, parent.width, parent.height - 50);
 
+            Dictionary<CategoryTab, UIComponent> tabsCategories = new Dictionary<CategoryTab, UIComponent>();
+
+            foreach (var catTab in Enum.GetValues(typeof(CategoryTab)).Cast<CategoryTab>())
+            {
+                GameObject tabCategory = Instantiate(tabTemplate.gameObject);
+                GameObject contentCategory = Instantiate(bodySuper.gameObject);
+                UIButton tabButtonSuper = tabCategory.GetComponent<UIButton>();
+                tabButtonSuper.tooltip = catTab.getCategoryName();
+                tabButtonSuper.normalFgSprite = catTab.getCategoryIcon();
+                tabsCategories[catTab] = strip.AddTab(catTab.ToString(), tabCategory, contentCategory);
+                tabsCategories[catTab].isVisible = false;
+                SVMUtils.createUIElement(out UITabstrip subStrip, contentCategory.transform, "SVMTabstripCat" + catTab, new Vector4(5, 0, bodySuper.width - 10, 40));
+                SVMUtils.createUIElement(out UITabContainer tabSubContainer, contentCategory.transform, "SVMTabContainer" + catTab, new Vector4(5, effectiveOffsetY, bodySuper.width - 10, bodySuper.height - effectiveOffsetY));
+                subStrip.tabPages = tabSubContainer;
+                substrips[catTab] = subStrip;
+            }
             foreach (var kv in ServiceSystemDefinition.sysDefinitions)
             {
                 GameObject tab = Instantiate(tabTemplate.gameObject);
-                GameObject body = Instantiate(scrollTemplate.gameObject);
+                GameObject body = Instantiate(bodyContent.gameObject);
                 var configIdx = kv.Key.toConfigIndex();
                 String name = kv.Value.Name;
+                SVMUtils.doLog($"configIdx = {configIdx};kv.Key = {kv.Key}; kv.Value= {kv.Value} ");
                 String bgIcon = SVMConfigWarehouse.getIconServiceSystem(configIdx);
                 String fgIcon = SVMConfigWarehouse.getFgIconServiceSystem(configIdx);
                 UIButton tabButton = tab.GetComponent<UIButton>();
@@ -206,10 +229,20 @@ namespace Klyte.ServiceVehiclesManager.UI
                 }
                 else
                 {
-                    Type targetType = KlyteUtils.GetImplementationForGenericType(typeof(SVMTabControllerDistrictList<>), kv.Value);
-                    components = new Type[] { targetType };
+                    try
+                    {
+                        Type targetType = KlyteUtils.GetImplementationForGenericType(typeof(SVMTabControllerDistrictList<>), kv.Value);
+                        components = new Type[] { targetType };
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
                 }
-                strip.AddTab(name, tab, body, components);
+                CategoryTab catTab = SVMConfigWarehouse.getCategory(configIdx);
+                substrips[catTab].AddTab(name, tab, body, components);
+                tabsCategories[catTab].isVisible = true;
             }
         }
 
@@ -228,7 +261,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private static void CreateTitleRowBuilding(ref UIPanel titleLine, UIComponent parent)
         {
-            SVMUtils.createUIElement(out titleLine, parent.transform, "SVMtitleline", new Vector4(5, 40, parent.width - 10, 40));
+            SVMUtils.createUIElement(out titleLine, parent.transform, "SVMtitleline", new Vector4(5, 80, parent.width - 10, 40));
 
             SVMUtils.createUIElement(out UILabel districtNameLabel, titleLine.transform, "District");
             districtNameLabel.autoSize = false;
@@ -341,5 +374,60 @@ namespace Klyte.ServiceVehiclesManager.UI
         }
     }
 
+    public enum CategoryTab
+    {
+        OutsideConnection,
+        PublicTransport,
+        EmergencyVehicles,
+        SecurityVehicles,
+        HealthcareVehicles,
+        OtherServices
+    }
+
+    public static class CategoryTabExtension
+    {
+        public static string getCategoryName(this CategoryTab tab)
+        {
+            switch (tab)
+            {
+                case CategoryTab.EmergencyVehicles:
+                    return Locale.Get("MAIN_TOOL_ND", "FireDepartment");
+                case CategoryTab.OutsideConnection:
+                    return Locale.Get("AREA_CONNECTIONS");
+                case CategoryTab.PublicTransport:
+                    return Locale.Get("ASSETIMPORTER_CATEGORY", "PublicTransport");
+                case CategoryTab.SecurityVehicles:
+                    return Locale.Get("ASSETIMPORTER_CATEGORY", "Police");
+                case CategoryTab.HealthcareVehicles:
+                    return Locale.Get("ASSETIMPORTER_CATEGORY", "Healthcare");
+                case CategoryTab.OtherServices:
+                    return Locale.Get("ROUTECHECKBOX6");
+                default:
+                    throw new Exception($"Not supported: {tab}");
+            }
+
+        }
+        public static string getCategoryIcon(this CategoryTab tab)
+        {
+            switch (tab)
+            {
+                case CategoryTab.EmergencyVehicles:
+                    return "SubBarFireDepartmentDisaster";
+                case CategoryTab.OutsideConnection:
+                    return "IconRightArrow";
+                case CategoryTab.PublicTransport:
+                    return "ToolbarIconPublicTransport";
+                case CategoryTab.SecurityVehicles:
+                    return "ToolbarIconPolice";
+                case CategoryTab.HealthcareVehicles:
+                    return "ToolbarIconHealthcare";
+                case CategoryTab.OtherServices:
+                    return "ToolbarIconHelp";
+                default:
+                    throw new Exception($"Not supported: {tab}");
+            }
+
+        }
+    }
 
 }

@@ -261,8 +261,9 @@ namespace Klyte.ServiceVehiclesManager.UI
                 int outbound = 0;
                 var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
                 SVMBuildingUtils.CalculateOwnVehicles(m_buildingIdSelecionado.Building, ref b, ext.GetManagedReasons(b.Info).Keys, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
-                int maxVehicles = (SVMUtils.GetPrivateField<int>(b.Info.GetAI(), ext.GetVehicleMaxCountField(ssd.vehicleType)) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
-                string maxVehiclesStr = maxVehicles > 0x3FFF ? "∞" : maxVehicles.ToString();
+                var maxField = ext.GetVehicleMaxCountField(ssd.vehicleType);
+                int maxVehicles = (SVMUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
+                string maxVehiclesStr = maxField == null || maxVehicles > 0x3FFF ? "∞" : maxVehicles.ToString();
                 textVehicles.Add($"{count}/{maxVehiclesStr} ({Locale.Get("SVM_VEHICLE_TYPE", ssd.vehicleType.ToString())})");
             }
             vehiclesInUseLabel.text = string.Join(" | ", textVehicles.ToArray());

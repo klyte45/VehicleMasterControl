@@ -19,7 +19,7 @@ using Klyte.ServiceVehiclesManager.i18n;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI;
 
-[assembly: AssemblyVersion("1.0.4.*")]
+[assembly: AssemblyVersion("1.1.0.*")]
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -260,7 +260,7 @@ namespace Klyte.ServiceVehiclesManager
         public void OnLevelLoaded(LoadMode mode)
         {
             SVMUtils.doLog("LEVEL LOAD");
-            if (mode != LoadMode.LoadGame && mode != LoadMode.NewGame)
+            if (mode != LoadMode.LoadGame && mode != LoadMode.NewGame && mode != LoadMode.NewGameFromScenario)
             {
                 m_loaded = false;
                 SVMUtils.doLog("NOT GAME ({0})", mode);
@@ -273,7 +273,7 @@ namespace Klyte.ServiceVehiclesManager
             if (SVMController.taSVM == null)
             {
                 SVMController.taSVM = CreateTextureAtlas("UI.Images.sprites.png", "ServiceVehicleManagerSprites", GameObject.FindObjectOfType<UIView>().FindUIComponent<UIPanel>("InfoPanel").atlas.material, 64, 64, new string[] {
-                    "ServiceVehiclesManagerIcon","ServiceVehiclesManagerIconSmall","ToolbarIconGroup6Hovered","ToolbarIconGroup6Focused","HelicopterIndicator","RemoveUnwantedIcon","24hLineIcon", "PerHourIcon"
+                    "ServiceVehiclesManagerIcon","ServiceVehiclesManagerIconSmall","ToolbarIconGroup6Hovered","ToolbarIconGroup6Focused","HelicopterIndicator","RemoveUnwantedIcon","CargoIndicator", "OutsideIndicator", "BioIndicator"
                 });
             }
             loadSVMLocale(false);

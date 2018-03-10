@@ -207,6 +207,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                     InstanceID instanceID = default(InstanceID);
                     instanceID.Building = m_buildingID;
                     SVMBuildingInfoPanel.instance.openInfo(m_buildingID);
+                    ToolsModifierControl.cameraController.m_unlimitedCamera = true;
                     ToolsModifierControl.cameraController.SetTarget(instanceID, position, true);
                 }
             };
@@ -280,4 +281,9 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMBuildingInfoItemRegTra : SVMBuildingInfoItem<SVMSysDefRegTra> { }
     internal sealed class SVMBuildingInfoItemRegShp : SVMBuildingInfoItem<SVMSysDefRegShp> { }
     internal sealed class SVMBuildingInfoItemRegPln : SVMBuildingInfoItem<SVMSysDefRegPln> { }
+    internal sealed class SVMBuildingInfoItemCrgTra : SVMBuildingInfoItem<SVMSysDefCrgTra> { }
+    internal sealed class SVMBuildingInfoItemCrgShp : SVMBuildingInfoItem<SVMSysDefCrgShp> { }
+    internal sealed class SVMBuildingInfoItemOutTra : SVMBuildingInfoItem<SVMSysDefOutTra> { }
+    internal sealed class SVMBuildingInfoItemOutShp : SVMBuildingInfoItem<SVMSysDefOutShp> { }
+    internal sealed class SVMBuildingInfoItemOutPln : SVMBuildingInfoItem<SVMSysDefOutPln> { }
 }

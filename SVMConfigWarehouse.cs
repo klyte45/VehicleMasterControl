@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using UnityEngine;
+using Klyte.ServiceVehiclesManager.UI;
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -65,7 +66,12 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.SNOW_CAR: return Locale.Get("VEHICLE_TITLE", "Snowplow");
                 case ConfigIndex.REG_TRAIN: return Locale.Get("VEHICLE_TITLE", "Train Engine");
                 case ConfigIndex.REG_SHIP: return Locale.Get("VEHICLE_TITLE", "Ship Passenger");
+                case ConfigIndex.CARG_TRAIN: return Locale.Get("VEHICLE_TITLE", "Train Cargo Engine");
+                case ConfigIndex.CARG_SHIP: return Locale.Get("VEHICLE_TITLE", "Ship Cargo");
                 case ConfigIndex.REG_PLANE: return Locale.Get("VEHICLE_TITLE", "Aircraft Passenger");
+                case ConfigIndex.OUT_TRAIN: return Locale.Get("AREA_YES_TRAINCONNECTION");
+                case ConfigIndex.OUT_SHIP: return Locale.Get("AREA_YES_SHIPCONNECTION");
+                case ConfigIndex.OUT_PLANE: return Locale.Get("AREA_YES_PLANECONNECTION");
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
 
             }
@@ -91,8 +97,13 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.TAXI_CAR: return "SubBarPublicTransportTaxi";
                 case ConfigIndex.CABLECAR_CABLECAR: return "SubBarPublicTransportCableCar";
                 case ConfigIndex.SNOW_CAR: return "InfoIconSnow";
-                case ConfigIndex.REG_TRAIN: return "SubBarPublicTransportTrain";
-                case ConfigIndex.REG_SHIP: return "SubBarPublicTransportShip";
+                case ConfigIndex.REG_TRAIN:
+                case ConfigIndex.OUT_TRAIN:
+                case ConfigIndex.CARG_TRAIN: return "SubBarPublicTransportTrain";
+                case ConfigIndex.REG_SHIP:
+                case ConfigIndex.OUT_SHIP:
+                case ConfigIndex.CARG_SHIP: return "SubBarPublicTransportShip";
+                case ConfigIndex.OUT_PLANE:
                 case ConfigIndex.REG_PLANE: return "SubBarPublicTransportPlane";
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
             }
@@ -121,7 +132,12 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.CABLECAR_CABLECAR:
                 case ConfigIndex.REG_TRAIN:
                 case ConfigIndex.REG_SHIP:
+                case ConfigIndex.CARG_TRAIN:
+                case ConfigIndex.CARG_SHIP:
                 case ConfigIndex.REG_PLANE:
+                case ConfigIndex.OUT_TRAIN:
+                case ConfigIndex.OUT_SHIP:
+                case ConfigIndex.OUT_PLANE:
                 default:
                     return true;
             }
@@ -131,10 +147,15 @@ namespace Klyte.ServiceVehiclesManager
         {
             switch (i & ConfigIndex.SSD_PART)
             {
+                case ConfigIndex.OUT_TRAIN:
+                case ConfigIndex.OUT_SHIP:
+                case ConfigIndex.OUT_PLANE:
+                    return "OutsideIndicator";
+                case ConfigIndex.GARBBIO_CAR:
+                    return "BioIndicator";
                 case ConfigIndex.DISASTER_CAR:
                 case ConfigIndex.FIRE_CAR:
                 case ConfigIndex.GARBAGE_CAR:
-                case ConfigIndex.GARBBIO_CAR:
                 case ConfigIndex.HEALTHCARE_CAR:
                 case ConfigIndex.DEATHCARE_CAR:
                 case ConfigIndex.POLICE_CAR:
@@ -153,13 +174,56 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.POLICE_HELICOPTER:
                 case ConfigIndex.DISASTER_HELICOPTER:
                     return "HelicopterIndicator";
+                case ConfigIndex.CARG_TRAIN:
+                case ConfigIndex.CARG_SHIP:
+                    return "CargoIndicator";
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
             }
         }
 
-        public enum ConfigIndex : uint
+        public static CategoryTab getCategory(ConfigIndex i)
+        {
+            switch (i & ConfigIndex.SSD_PART)
+            {
+                case ConfigIndex.OUT_TRAIN:
+                case ConfigIndex.OUT_SHIP:
+                case ConfigIndex.OUT_PLANE:
+                    return CategoryTab.OutsideConnection;
+                case ConfigIndex.DISASTER_CAR:
+                case ConfigIndex.FIRE_CAR:
+                case ConfigIndex.FIRE_HELICOPTER:
+                case ConfigIndex.DISASTER_HELICOPTER:
+                    return CategoryTab.EmergencyVehicles;
+                case ConfigIndex.HEALTHCARE_CAR:
+                case ConfigIndex.DEATHCARE_CAR:
+                case ConfigIndex.HEALTHCARE_HELICOPTER:
+                    return CategoryTab.HealthcareVehicles;
+                case ConfigIndex.POLICE_CAR:
+                case ConfigIndex.PRISION_CAR:
+                case ConfigIndex.POLICE_HELICOPTER:
+                    return CategoryTab.SecurityVehicles;
+                case ConfigIndex.TAXI_CAR:
+                case ConfigIndex.REG_TRAIN:
+                case ConfigIndex.REG_SHIP:
+                case ConfigIndex.REG_PLANE:
+                case ConfigIndex.CABLECAR_CABLECAR:
+                case ConfigIndex.CARG_TRAIN:
+                case ConfigIndex.CARG_SHIP:
+                    return CategoryTab.PublicTransport;
+                case ConfigIndex.ROAD_CAR:
+                case ConfigIndex.WATER_CAR:
+                case ConfigIndex.SNOW_CAR:
+                case ConfigIndex.GARBAGE_CAR:
+                case ConfigIndex.GARBBIO_CAR:
+                default:
+                    return CategoryTab.OtherServices;
+            }
+        }
+
+        public enum ConfigIndex : ulong
         {
             NIL = 0,
+            OUTSIDE_PART = 0x40000000,
             VEHICLE_PART = 0x3C000000,
             SUBSYS_PART = 0x03F00000,
             SYSTEM_PART = 0x000F8000,
@@ -167,18 +231,16 @@ namespace Klyte.ServiceVehiclesManager
             TYPE_PART = 0x00000F00,
             DESC_DATA = 0xFF,
             CONFIG_GROUP = 0xC0000000,
-            SSD_PART = VEHICLE_PART | SUBSYS_PART | SYSTEM_PART | LEVEL_PART,
+            SSD_PART = OUTSIDE_PART | VEHICLE_PART | SUBSYS_PART | SYSTEM_PART | LEVEL_PART,
 
-            GLOBAL_CONFIG = 0x40000000,
-            SYSTEM_CONFIG = 0x80000000,
+            GLOBAL_CONFIG = 0x100000000,
+            SYSTEM_CONFIG = 0x200000000,
 
             TYPE_STRING = 0x100,
             TYPE_INT = 0x200,
             TYPE_BOOL = 0x300,
             TYPE_LIST = 0x400,
             TYPE_DICTIONARY = 0x500,
-
-            //AUTO_COLOR_ENABLED                          = GLOBAL_CONFIG | 0x2 | TYPE_BOOL,
 
             DISASTER_CAR = (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
             DISASTER_HELICOPTER = (7 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Disaster << 15) | ((ItemClass.Level.Level2 + 1) << 12),
@@ -200,6 +262,11 @@ namespace Klyte.ServiceVehiclesManager
             REG_TRAIN = (3 << 26) | (ItemClass.SubService.PublicTransportTrain << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             REG_SHIP = (4 << 26) | (ItemClass.SubService.PublicTransportShip << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             REG_PLANE = (5 << 26) | (ItemClass.SubService.PublicTransportPlane << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            CARG_TRAIN = (3 << 26) | (ItemClass.SubService.PublicTransportTrain << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level4 + 1) << 12),
+            CARG_SHIP = (4 << 26) | (ItemClass.SubService.PublicTransportShip << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level4 + 1) << 12),
+            OUT_TRAIN = OUTSIDE_PART | (3 << 26) | (ItemClass.SubService.PublicTransportTrain << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            OUT_SHIP = OUTSIDE_PART | (4 << 26) | (ItemClass.SubService.PublicTransportShip << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            OUT_PLANE = OUTSIDE_PART | (5 << 26) | (ItemClass.SubService.PublicTransportPlane << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
 
             EXTENSION_CONFIG_DISTRICT = 0x1 | TYPE_STRING | SYSTEM_CONFIG,
             BASIC_CONFIG_DISTRICT = 0x2 | TYPE_STRING | GLOBAL_CONFIG,
@@ -221,6 +288,13 @@ namespace Klyte.ServiceVehiclesManager
             TAXI_CAR_CONFIG = TAXI_CAR | EXTENSION_CONFIG_DISTRICT,
             CABLECAR_CABLECAR_CONFIG = CABLECAR_CABLECAR | EXTENSION_CONFIG_DISTRICT,
             REGTRAIN_TRAIN_CONFIG = REG_TRAIN | EXTENSION_CONFIG_DISTRICT,
+            REGSHIP_TRAIN_CONFIG = REG_SHIP | EXTENSION_CONFIG_DISTRICT,
+            REGPLANE_TRAIN_CONFIG = REG_PLANE | EXTENSION_CONFIG_DISTRICT,
+            OUTTRAIN_TRAIN_CONFIG = OUT_TRAIN | EXTENSION_CONFIG_DISTRICT,
+            OUTSHIP_TRAIN_CONFIG = OUT_SHIP | EXTENSION_CONFIG_DISTRICT,
+            OUTPLANE_TRAIN_CONFIG = OUT_PLANE | EXTENSION_CONFIG_DISTRICT,
+            CARG_TRAIN_CONFIG = CARG_TRAIN | EXTENSION_CONFIG_DISTRICT,
+            CARG_SHIP_CONFIG = CARG_SHIP | EXTENSION_CONFIG_DISTRICT,
         }
 
         public static ConfigIndex[] defaultTrueBoolProperties => new ConfigIndex[] {
@@ -229,6 +303,9 @@ namespace Klyte.ServiceVehiclesManager
 
         internal static ConfigIndex getConfigServiceSystemForDefinition(ServiceSystemDefinition serviceSystemDefinition)
         {
+            if (serviceSystemDefinition == ServiceSystemDefinition.OUT_TRAIN) return ConfigIndex.OUT_TRAIN;
+            if (serviceSystemDefinition == ServiceSystemDefinition.OUT_PLANE) return ConfigIndex.OUT_PLANE;
+            if (serviceSystemDefinition == ServiceSystemDefinition.OUT_SHIP) return ConfigIndex.OUT_SHIP;
             if (serviceSystemDefinition == ServiceSystemDefinition.DISASTER_CAR) return ConfigIndex.DISASTER_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.DISASTER_HELICOPTER) return ConfigIndex.DISASTER_HELICOPTER;
             if (serviceSystemDefinition == ServiceSystemDefinition.FIRE_CAR) return ConfigIndex.FIRE_CAR;
@@ -249,6 +326,8 @@ namespace Klyte.ServiceVehiclesManager
             if (serviceSystemDefinition == ServiceSystemDefinition.REG_TRAIN) return ConfigIndex.REG_TRAIN;
             if (serviceSystemDefinition == ServiceSystemDefinition.REG_PLANE) return ConfigIndex.REG_PLANE;
             if (serviceSystemDefinition == ServiceSystemDefinition.REG_SHIP) return ConfigIndex.REG_SHIP;
+            if (serviceSystemDefinition == ServiceSystemDefinition.CARG_TRAIN) return ConfigIndex.CARG_TRAIN;
+            if (serviceSystemDefinition == ServiceSystemDefinition.CARG_SHIP) return ConfigIndex.CARG_SHIP;
             return ConfigIndex.NIL;
         }
     }

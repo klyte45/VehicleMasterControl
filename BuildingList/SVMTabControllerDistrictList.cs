@@ -143,5 +143,7 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerDistrictListRegTra : SVMTabControllerDistrictList<SVMSysDefRegTra> { }
     internal sealed class SVMTabControllerDistrictListRegShp : SVMTabControllerDistrictList<SVMSysDefRegShp> { }
     internal sealed class SVMTabControllerDistrictListRegPln : SVMTabControllerDistrictList<SVMSysDefRegPln> { }
+    internal sealed class SVMTabControllerDistrictListCrgTra : SVMTabControllerDistrictList<SVMSysDefCrgTra> { }
+    internal sealed class SVMTabControllerDistrictListCrgShp : SVMTabControllerDistrictList<SVMSysDefCrgShp> { }
 
 }
