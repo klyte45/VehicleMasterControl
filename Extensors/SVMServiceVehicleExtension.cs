@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using Klyte.Commons.Interfaces;
-using Klyte.ServiceVehiclesManager.Interfaces;
 using Klyte.ServiceVehiclesManager.Utils;
 using System.Collections;
 using ColossalFramework.Threading;
@@ -20,7 +19,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     {
     }
 
-    internal abstract class SVMServiceVehicleExtension<SSD, SG> : ExtensionInterfaceDefaultImpl<BuildingConfig, SG>, ISVMTransportTypeExtension where SSD : SVMSysDef<SSD>, new() where SG : SVMServiceVehicleExtension<SSD, SG>
+    internal abstract class SVMServiceVehicleExtension<SSD, SG> : ExtensionInterfaceDictionaryImpl<SVMConfigWarehouse, SVMConfigWarehouse.ConfigIndex, BuildingConfig, SG>, ISVMTransportTypeExtension where SSD : SVMSysDef<SSD>, new() where SG : SVMServiceVehicleExtension<SSD, SG>
     {
         private const uint DISTRICT_FLAG = 0x100000;
         private const uint BUILDING_FLAG = 0x200000;
@@ -382,6 +381,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMServiceVehicleExtensionOutTra : SVMServiceVehicleExtension<SVMSysDefOutTra, SVMServiceVehicleExtensionOutTra> { }
     internal sealed class SVMServiceVehicleExtensionOutShp : SVMServiceVehicleExtension<SVMSysDefOutShp, SVMServiceVehicleExtensionOutShp> { }
     internal sealed class SVMServiceVehicleExtensionOutPln : SVMServiceVehicleExtension<SVMSysDefOutPln, SVMServiceVehicleExtensionOutPln> { }
+    internal sealed class SVMServiceVehicleExtensionOutCar : SVMServiceVehicleExtension<SVMSysDefOutPln, SVMServiceVehicleExtensionOutCar> { }
 
     public sealed class SVMTransportExtensionUtils
     {

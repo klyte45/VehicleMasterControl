@@ -31,6 +31,8 @@ namespace Klyte.ServiceVehiclesManager.UI
         private UIPanel mainPanel;
         private UIPanel m_titleLineBuildings;
 
+        private UILabel m_directionLabel;
+
         private UITabstrip m_StripMain;
         private UITabstrip m_StripDistricts;
         private UITabstrip m_StripBuilings;
@@ -171,7 +173,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             return m_cachedDistricts[m_lastSelectedItem];
         }
 
-        private static void CreateSsdTabstrip(ref UITabstrip strip, ref Dictionary<CategoryTab, UITabstrip> substrips, UIPanel titleLine, UIComponent parent, bool buildings = false)
+        private void CreateSsdTabstrip(ref UITabstrip strip, ref Dictionary<CategoryTab, UITabstrip> substrips, UIPanel titleLine, UIComponent parent, bool buildings = false)
         {
             SVMUtils.createUIElement(out strip, parent.transform, "SVMTabstrip", new Vector4(5, 0, parent.width - 10, 40));
 
@@ -222,16 +224,17 @@ namespace Klyte.ServiceVehiclesManager.UI
                     sprite.atlas = SVMController.taSVM;
                 }
                 Type[] components;
+                Type targetType;
                 if (buildings)
                 {
-                    Type targetType = KlyteUtils.GetImplementationForGenericType(typeof(SVMTabControllerBuildingList<>), kv.Value);
+                    targetType = KlyteUtils.GetImplementationForGenericType(typeof(SVMTabControllerBuildingList<>), kv.Value);
                     components = new Type[] { targetType };
                 }
                 else
                 {
                     try
                     {
-                        Type targetType = KlyteUtils.GetImplementationForGenericType(typeof(SVMTabControllerDistrictList<>), kv.Value);
+                        targetType = KlyteUtils.GetImplementationForGenericType(typeof(SVMTabControllerDistrictList<>), kv.Value);
                         components = new Type[] { targetType };
                     }
                     catch
@@ -242,6 +245,14 @@ namespace Klyte.ServiceVehiclesManager.UI
                 }
                 CategoryTab catTab = SVMConfigWarehouse.getCategory(configIdx);
                 substrips[catTab].AddTab(name, tab, body, components);
+
+                body.GetComponent<UIComponent>().eventVisibilityChanged += (x, y) =>
+                {
+                    if (y)
+                    {
+                        m_directionLabel.isVisible = kv.Key.outsideConnection;
+                    }
+                };
                 tabsCategories[catTab].isVisible = true;
             }
         }
@@ -259,27 +270,34 @@ namespace Klyte.ServiceVehiclesManager.UI
             return tabTemplate;
         }
 
-        private static void CreateTitleRowBuilding(ref UIPanel titleLine, UIComponent parent)
+        private void CreateTitleRowBuilding(ref UIPanel titleLine, UIComponent parent)
         {
             SVMUtils.createUIElement(out titleLine, parent.transform, "SVMtitleline", new Vector4(5, 80, parent.width - 10, 40));
 
-            SVMUtils.createUIElement(out UILabel districtNameLabel, titleLine.transform, "District");
+            SVMUtils.createUIElement(out UILabel districtNameLabel, titleLine.transform, "districtNameLabel");
             districtNameLabel.autoSize = false;
             districtNameLabel.area = new Vector4(0, 10, 175, 18);
             districtNameLabel.textAlignment = UIHorizontalAlignment.Center;
             districtNameLabel.text = Locale.Get("TUTORIAL_ADVISER_TITLE", "District");
 
-            SVMUtils.createUIElement(out UILabel buildingNameLabel, titleLine.transform, "District");
+            SVMUtils.createUIElement(out UILabel buildingNameLabel, titleLine.transform, "buildingNameLabel");
             buildingNameLabel.autoSize = false;
             buildingNameLabel.area = new Vector4(200, 10, 198, 18);
             buildingNameLabel.textAlignment = UIHorizontalAlignment.Center;
             buildingNameLabel.text = Locale.Get("SVM_BUILDING_NAME_LABEL");
 
-            SVMUtils.createUIElement(out UILabel vehicleCapacityLabel, titleLine.transform, "District");
+            SVMUtils.createUIElement(out UILabel vehicleCapacityLabel, titleLine.transform, "vehicleCapacityLabel");
             vehicleCapacityLabel.autoSize = false;
             vehicleCapacityLabel.area = new Vector4(400, 10, 200, 18);
             vehicleCapacityLabel.textAlignment = UIHorizontalAlignment.Center;
             vehicleCapacityLabel.text = Locale.Get("SVM_VEHICLE_CAPACITY_LABEL");
+
+            SVMUtils.createUIElement(out m_directionLabel, titleLine.transform, "directionLabel");
+            m_directionLabel.autoSize = false;
+            m_directionLabel.area = new Vector4(600, 10, 200, 18);
+            m_directionLabel.textAlignment = UIHorizontalAlignment.Center;
+            m_directionLabel.text = Locale.Get("SVM_DIRECTION_LABEL");
+
         }
 
         private void CreateTitleBar()

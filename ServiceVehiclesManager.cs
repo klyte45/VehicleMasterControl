@@ -171,7 +171,13 @@ namespace Klyte.ServiceVehiclesManager
                 {
                     showVersionInfoPopup(true);
                 });
-
+                //string testString = "";
+                //for (int i = 0; i < 360; i++)
+                //{
+                //    var angle = Vector2.zero.GetAngleToPoint(new Vector2(Mathf.Sin(i * Mathf.Deg2Rad), Mathf.Cos(i * Mathf.Deg2Rad)));
+                //    testString += $"{i:n0}° => {angle:n1} ({Mathf.Sin(i * Mathf.Deg2Rad):n3}, {Mathf.Cos(i * Mathf.Deg2Rad):n3})\n";
+                //}
+                //group9.AddLabel("TST:\n" + testString);
                 SVMUtils.doLog("End Loading Options");
             }
             if (IsKlyteCommonsEnabled())

@@ -72,6 +72,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.OUT_TRAIN: return Locale.Get("AREA_YES_TRAINCONNECTION");
                 case ConfigIndex.OUT_SHIP: return Locale.Get("AREA_YES_SHIPCONNECTION");
                 case ConfigIndex.OUT_PLANE: return Locale.Get("AREA_YES_PLANECONNECTION");
+                case ConfigIndex.OUT_ROAD: return Locale.Get("AREA_YES_HIGHWAYCONNECTION");
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
 
             }
@@ -91,6 +92,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.DEATHCARE_CAR: return "ToolbarIconHealthcareHovered";
                 case ConfigIndex.POLICE_CAR: return "ToolbarIconPolice";
                 case ConfigIndex.POLICE_HELICOPTER: return "ToolbarIconPolice";
+                case ConfigIndex.OUT_ROAD:
                 case ConfigIndex.ROAD_CAR: return "ToolbarIconRoads";
                 case ConfigIndex.WATER_CAR: return "ToolbarIconWaterAndSewage";
                 case ConfigIndex.PRISION_CAR: return "IconPolicyDoubleSentences";
@@ -150,6 +152,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.OUT_TRAIN:
                 case ConfigIndex.OUT_SHIP:
                 case ConfigIndex.OUT_PLANE:
+                case ConfigIndex.OUT_ROAD:
                     return "OutsideIndicator";
                 case ConfigIndex.GARBBIO_CAR:
                     return "BioIndicator";
@@ -188,6 +191,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.OUT_TRAIN:
                 case ConfigIndex.OUT_SHIP:
                 case ConfigIndex.OUT_PLANE:
+                case ConfigIndex.OUT_ROAD:
                     return CategoryTab.OutsideConnection;
                 case ConfigIndex.DISASTER_CAR:
                 case ConfigIndex.FIRE_CAR:
@@ -267,6 +271,7 @@ namespace Klyte.ServiceVehiclesManager
             OUT_TRAIN = OUTSIDE_PART | (3 << 26) | (ItemClass.SubService.PublicTransportTrain << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             OUT_SHIP = OUTSIDE_PART | (4 << 26) | (ItemClass.SubService.PublicTransportShip << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             OUT_PLANE = OUTSIDE_PART | (5 << 26) | (ItemClass.SubService.PublicTransportPlane << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
+            OUT_ROAD = OUTSIDE_PART | (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Road << 15) | ((ItemClass.Level.Level5 + 1) << 12),
 
             EXTENSION_CONFIG_DISTRICT = 0x1 | TYPE_STRING | SYSTEM_CONFIG,
             BASIC_CONFIG_DISTRICT = 0x2 | TYPE_STRING | GLOBAL_CONFIG,
@@ -293,6 +298,7 @@ namespace Klyte.ServiceVehiclesManager
             OUTTRAIN_TRAIN_CONFIG = OUT_TRAIN | EXTENSION_CONFIG_DISTRICT,
             OUTSHIP_TRAIN_CONFIG = OUT_SHIP | EXTENSION_CONFIG_DISTRICT,
             OUTPLANE_TRAIN_CONFIG = OUT_PLANE | EXTENSION_CONFIG_DISTRICT,
+            OUTROAD_TRAIN_CONFIG = OUT_ROAD | EXTENSION_CONFIG_DISTRICT,
             CARG_TRAIN_CONFIG = CARG_TRAIN | EXTENSION_CONFIG_DISTRICT,
             CARG_SHIP_CONFIG = CARG_SHIP | EXTENSION_CONFIG_DISTRICT,
         }
@@ -306,6 +312,7 @@ namespace Klyte.ServiceVehiclesManager
             if (serviceSystemDefinition == ServiceSystemDefinition.OUT_TRAIN) return ConfigIndex.OUT_TRAIN;
             if (serviceSystemDefinition == ServiceSystemDefinition.OUT_PLANE) return ConfigIndex.OUT_PLANE;
             if (serviceSystemDefinition == ServiceSystemDefinition.OUT_SHIP) return ConfigIndex.OUT_SHIP;
+            if (serviceSystemDefinition == ServiceSystemDefinition.OUT_ROAD) return ConfigIndex.OUT_ROAD;
             if (serviceSystemDefinition == ServiceSystemDefinition.DISASTER_CAR) return ConfigIndex.DISASTER_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.DISASTER_HELICOPTER) return ConfigIndex.DISASTER_HELICOPTER;
             if (serviceSystemDefinition == ServiceSystemDefinition.FIRE_CAR) return ConfigIndex.FIRE_CAR;

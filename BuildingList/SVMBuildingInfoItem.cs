@@ -9,9 +9,11 @@ namespace Klyte.ServiceVehiclesManager.UI
 {
     using ColossalFramework;
     using ColossalFramework.Globalization;
+    using ColossalFramework.Math;
     using ColossalFramework.UI;
     using Extensions;
     using Extensors;
+    using Klyte.Commons.Utils;
     using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
     using Klyte.ServiceVehiclesManager.Overrides;
     using System;
@@ -26,6 +28,8 @@ namespace Klyte.ServiceVehiclesManager.UI
         private bool m_secondary;
 
         private UILabel m_districtName;
+
+        private UILabel m_directionLabel;
 
         private UILabel m_buildingName;
 
@@ -107,6 +111,13 @@ namespace Klyte.ServiceVehiclesManager.UI
                 int maxCount = SVMBuildingUtils.GetMaxVehiclesBuilding(buildingId, SVMSysDef<T>.instance.GetSSD().vehicleType);
                 m_totalVehicles.prefix = count.ToString();
                 m_totalVehicles.suffix = maxCount > 0x3FFF ? "∞" : maxCount.ToString();
+                if (Singleton<T>.instance.GetSSD().outsideConnection)
+                {
+                    float angle = Vector2.zero.GetAngleToPoint(VectorUtils.XZ(b.m_position));
+                    m_directionLabel.prefix = $"{angle:n1}°";
+                    m_directionLabel.text = " - ";
+                    m_directionLabel.suffix = CardinalPoint.getCardinalPoint(angle).ToString();
+                }
             }
         }
 
@@ -188,8 +199,21 @@ namespace Klyte.ServiceVehiclesManager.UI
             m_districtName.autoHeight = true;
 
 
+            m_directionLabel = base.Find<UILabel>("LinePassengers");
+            if (Singleton<T>.instance.GetSSD().outsideConnection)
+            {
+                m_directionLabel.size = new Vector2(200, 18);
+                m_directionLabel.relativePosition = new Vector3(600, 10);
+                m_directionLabel.wordWrap = true;
+                m_directionLabel.autoHeight = true;
+            }
+            else
+            {
+                GameObject.Destroy(m_directionLabel.gameObject);
+            }
 
-            GameObject.Destroy(base.Find<UILabel>("LinePassengers").gameObject);
+
+
             this.m_totalVehicles = base.Find<UILabel>("LineVehicles");
             m_totalVehicles.text = "/";
 
@@ -286,4 +310,5 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMBuildingInfoItemOutTra : SVMBuildingInfoItem<SVMSysDefOutTra> { }
     internal sealed class SVMBuildingInfoItemOutShp : SVMBuildingInfoItem<SVMSysDefOutShp> { }
     internal sealed class SVMBuildingInfoItemOutPln : SVMBuildingInfoItem<SVMSysDefOutPln> { }
+    internal sealed class SVMBuildingInfoItemOutCar : SVMBuildingInfoItem<SVMSysDefOutCar> { }
 }

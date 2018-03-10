@@ -351,4 +351,5 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
     internal sealed class SVMBuildingSSDConfigWindowOutTra : SVMBuildingSSDConfigWindow<SVMSysDefOutTra> { }
     internal sealed class SVMBuildingSSDConfigWindowOutShp : SVMBuildingSSDConfigWindow<SVMSysDefOutShp> { }
     internal sealed class SVMBuildingSSDConfigWindowOutPln : SVMBuildingSSDConfigWindow<SVMSysDefOutPln> { }
+    internal sealed class SVMBuildingSSDConfigWindowOutCar : SVMBuildingSSDConfigWindow<SVMSysDefOutCar> { }
 }

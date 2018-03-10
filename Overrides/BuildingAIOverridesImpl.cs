@@ -536,9 +536,10 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             [TransferManager.TransferReason.DummyTrain] = Tuple.New(VehicleInfo.VehicleType.Train, false, true),
             [TransferManager.TransferReason.DummyShip] = Tuple.New(VehicleInfo.VehicleType.Ship, false, true),
             [TransferManager.TransferReason.DummyPlane] = Tuple.New(VehicleInfo.VehicleType.Plane, false, true),
+            [TransferManager.TransferReason.DummyCar] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
         };
 
-        public override bool AllowVehicleType(VehicleInfo.VehicleType type, OutsideConnectionAI ai) => type == VehicleInfo.VehicleType.Train || type == VehicleInfo.VehicleType.Ship || type == VehicleInfo.VehicleType.Plane;
+        public override bool AllowVehicleType(VehicleInfo.VehicleType type, OutsideConnectionAI ai) => type == VehicleInfo.VehicleType.Train || type == VehicleInfo.VehicleType.Car || type == VehicleInfo.VehicleType.Ship || type == VehicleInfo.VehicleType.Plane;
         public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(OutsideConnectionAI ai, TransferManager.TransferOffer offer)
         {
             if (offer.TransportLine != 0)

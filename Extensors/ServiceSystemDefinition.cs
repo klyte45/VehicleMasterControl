@@ -38,6 +38,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition OUT_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1, true);
         public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
         public static readonly ServiceSystemDefinition OUT_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1, true);
+        public static readonly ServiceSystemDefinition OUT_ROAD = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5, true);
 
 
         public static Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> availableDefinitions
@@ -61,6 +62,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
                     m_availableDefinitions[OUT_TRAIN] = SVMServiceVehicleExtensionOutTra.instance;
                     m_availableDefinitions[OUT_SHIP] = SVMServiceVehicleExtensionOutShp.instance;
                     m_availableDefinitions[OUT_PLANE] = SVMServiceVehicleExtensionOutPln.instance;
+                    m_availableDefinitions[OUT_ROAD] = SVMServiceVehicleExtensionOutCar.instance;
 
                     if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
                     {
@@ -117,6 +119,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
                     m_sysDefinitions[OUT_PLANE] = typeof(SVMSysDefOutPln);
                     m_sysDefinitions[OUT_TRAIN] = typeof(SVMSysDefOutTra);
                     m_sysDefinitions[OUT_SHIP] = typeof(SVMSysDefOutShp);
+                    m_sysDefinitions[OUT_ROAD] = typeof(SVMSysDefOutCar);
 
                     if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
                     {
@@ -325,4 +328,5 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMSysDefOutShp : SVMSysDef<SVMSysDefOutShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_SHIP; } }
     internal sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_TRAIN; } }
     internal sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_PLANE; } }
+    internal sealed class SVMSysDefOutCar : SVMSysDef<SVMSysDefOutCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_ROAD; } }
 }

@@ -1,3 +1,4 @@
 ﻿SVMv1.1
    - Cargo vehicles added
    - Fixed outside connections' spawn models
+   - Added outside connections buildings (allow set fixed names to neighborhood)

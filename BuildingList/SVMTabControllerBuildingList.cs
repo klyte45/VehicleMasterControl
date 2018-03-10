@@ -78,6 +78,7 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingHooksOutTra : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutTra, SVMSysDefOutTra> { }
     internal sealed class SVMTabControllerBuildingHooksOutShp : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutShp, SVMSysDefOutShp> { }
     internal sealed class SVMTabControllerBuildingHooksOutPln : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutPln, SVMSysDefOutPln> { }
+    internal sealed class SVMTabControllerBuildingHooksOutCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutCar, SVMSysDefOutCar> { }
 
 
 
@@ -189,5 +190,6 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingListOutTra : SVMTabControllerBuildingList<SVMSysDefOutTra> { }
     internal sealed class SVMTabControllerBuildingListOutShp : SVMTabControllerBuildingList<SVMSysDefOutShp> { }
     internal sealed class SVMTabControllerBuildingListOutPln : SVMTabControllerBuildingList<SVMSysDefOutPln> { }
+    internal sealed class SVMTabControllerBuildingListOutCar : SVMTabControllerBuildingList<SVMSysDefOutCar> { }
 
 }
