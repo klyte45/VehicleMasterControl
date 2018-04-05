@@ -214,9 +214,9 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         {
             if (ServiceVehiclesManagerMod.debugMode)
             {
-                SVMUtils.doLog("[{4}->{5}] info.m_class.m_service == service = {0}; subService == info.m_class.m_subService = {1}; info.m_class.m_level == level = {2}; aiOverride?.AllowVehicleType(vehicleType) = {3} ", info.m_class.m_service == service, subService == info.m_class.m_subService, info.m_class.m_level == level, SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType, info.GetAI()), info.GetAI().GetType(), this);
+                SVMUtils.doLog("[{4}->{5}] info.m_class.m_service == service = {0}; subService == info.m_class.m_subService = {1}; info.m_class.m_level == level = {2}; aiOverride?.AllowVehicleType(vehicleType) = {3} ", info?.m_class?.m_service == service, subService == info?.m_class?.m_subService, info?.m_class?.m_level == level, SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType, info?.GetAI()), info?.GetAI()?.GetType(), this);
             }
-            return info.m_class.m_service == service && subService == info.m_class.m_subService && (info.m_class.m_level == level || outsideConnection) && info.GetAI() is OutsideConnectionAI == outsideConnection && (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType, info.GetAI()) ?? false);
+            return info?.m_class?.m_service == service && subService == info?.m_class?.m_subService && (info?.m_class?.m_level == level || outsideConnection) && info?.GetAI() is OutsideConnectionAI == outsideConnection && (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.AllowVehicleType(vehicleType, info?.GetAI()) ?? false);
         }
 
         public override bool Equals(object obj)

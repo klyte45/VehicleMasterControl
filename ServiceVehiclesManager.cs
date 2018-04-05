@@ -19,7 +19,7 @@ using Klyte.ServiceVehiclesManager.i18n;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI;
 
-[assembly: AssemblyVersion("1.1.0.*")]
+[assembly: AssemblyVersion("1.1.1.*")]
 
 namespace Klyte.ServiceVehiclesManager
 {

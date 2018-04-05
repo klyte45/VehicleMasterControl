@@ -25,14 +25,14 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         public static void AfterCreateBuilding(bool __result, BuildingInfo info)
         {
-            if (__result && Singleton<V>.instance.GetSSD().isFromSystem(info))
+            if (__result && SVMTabControllerBuildingList<V>.exists && (Singleton<V>.instance?.GetSSD()?.isFromSystem(info) ?? false))
             {
                 SVMTabControllerBuildingList<V>.instance.m_LinesUpdated = false;
             }
         }
         public static void AfterRemoveBuilding(ushort building)
         {
-            if (Singleton<V>.instance.GetSSD().isFromSystem(Singleton<BuildingManager>.instance.m_buildings.m_buffer[building].Info))
+            if (SVMTabControllerBuildingList<V>.exists && (Singleton<V>.instance?.GetSSD()?.isFromSystem(Singleton<BuildingManager>.instance?.m_buildings?.m_buffer?[building].Info) ?? false))
             {
                 SVMTabControllerBuildingList<V>.instance.m_LinesUpdated = false;
             }
@@ -85,6 +85,10 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal abstract class SVMTabControllerBuildingList<T> : UICustomControl where T : SVMSysDef<T>
     {
         public static SVMTabControllerBuildingList<T> instance { get; private set; }
+        public static bool exists
+        {
+            get { return instance != null; }
+        }
 
         private UIScrollablePanel mainPanel;
         private static readonly string kLineTemplate = "LineTemplate";
