@@ -103,7 +103,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
 
         #region Hooking
 
-        public override void Awake()
+        public override void AwakeBody()
         {
             instance = this;
             var from = typeof(U).GetMethod("StartTransfer", allFlags);
@@ -120,5 +120,10 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         }
 
         #endregion
-    }
+        public override void doLog(string text, params object[] param)
+        {
+            SVMUtils.doLog(text, param);
+        }
+
+}
 }

@@ -46,7 +46,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             return true;
         }       
 
-        public override void Awake()
+        public override void AwakeBody()
         {
             #region Release Line Hooks
             MethodInfo preGetColor = typeof(VehicleAIOverrides).GetMethod("PreGetColor", allFlags);
@@ -63,5 +63,10 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             AddRedirect(origMethodShip, preGetColor);
             #endregion
         }
+        public override void doLog(string text, params object[] param)
+        {
+            SVMUtils.doLog(text, param);
+        }
+
     }
 }

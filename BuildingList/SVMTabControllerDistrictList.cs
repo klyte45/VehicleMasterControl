@@ -87,7 +87,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private static bool getCurrentSelectedId(out int currentDistrict)
         {
-            currentDistrict = SVMServiceBuildingDetailPanel.Get().getCurrentSelectedDistrictId();
+            currentDistrict = SVMServiceBuildingDetailPanel.instance.getCurrentSelectedDistrictId();
             return currentDistrict >= 0;
         }
 

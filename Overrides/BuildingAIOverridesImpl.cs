@@ -369,16 +369,13 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                     Array16<Vehicle> vehicles = Singleton<VehicleManager>.instance.m_vehicles;
                     Randomizer randomizer = default(Randomizer);
                     randomizer.seed = (ulong)((long)gateIndex);
-                    Vector3 vector;
-                    Vector3 vector2;
-                    __instance.CalculateSpawnPosition(buildingID, ref buildingData, ref randomizer, randomVehicleInfo, out vector, out vector2);
+                    __instance.CalculateSpawnPosition(buildingID, ref buildingData, ref randomizer, randomVehicleInfo, out Vector3 vector, out Vector3 vector2);
                     TransportInfo transportInfo = __instance.m_transportInfo;
                     if (__instance.m_secondaryTransportInfo != null && __instance.m_secondaryTransportInfo.m_class.m_subService == __instance.m_transportLineInfo.m_class.m_subService)
                     {
                         transportInfo = __instance.m_secondaryTransportInfo;
                     }
-                    ushort num;
-                    if (randomVehicleInfo.m_vehicleAI.CanSpawnAt(vector) && Singleton<VehicleManager>.instance.CreateVehicle(out num, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, vector, transportInfo.m_vehicleReason, false, true))
+                    if (randomVehicleInfo.m_vehicleAI.CanSpawnAt(vector) && Singleton<VehicleManager>.instance.CreateVehicle(out ushort num, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, vector, transportInfo.m_vehicleReason, false, true))
                     {
                         vehicles.m_buffer[(int)num].m_gateIndex = (byte)gateIndex;
                         Vehicle[] expr_12E_cp_0 = vehicles.m_buffer;
@@ -421,9 +418,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                         BuildingInfo info = Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)num].Info;
                         Randomizer randomizer = default(Randomizer);
                         randomizer.seed = (ulong)((long)gateIndex);
-                        Vector3 vector;
-                        Vector3 vector2;
-                        info.m_buildingAI.CalculateSpawnPosition(num, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)num], ref randomizer, randomVehicleInfo, out vector, out vector2);
+                        info.m_buildingAI.CalculateSpawnPosition(num, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)num], ref randomizer, randomVehicleInfo, out Vector3 vector, out Vector3 vector2);
                         TransportInfo transportInfo = __instance.m_transportInfo;
                         if (__instance.m_secondaryTransportInfo != null && __instance.m_secondaryTransportInfo.m_class.m_subService == __instance.m_transportLineInfo.m_class.m_subService)
                         {
@@ -450,7 +445,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             return false;
         }
 
-        public override void Awake()
+        public override void AwakeBody()
         {
             instance = this;
             var from = typeof(TransportStationAI).GetMethod("CreateIncomingVehicle", allFlags);
@@ -523,7 +518,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
 
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => null;
 
-        public override void Awake()
+        public override void AwakeBody()
         {
             instance = this;
         }
@@ -550,7 +545,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         }
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => null;
 
-        public override void Awake()
+        public override void AwakeBody()
         {
             instance = this;
             var from = typeof(OutsideConnectionAI).GetMethod("StartConnectionTransferImpl", allFlags);
@@ -608,21 +603,23 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             SVMUtils.doLog("[{1}] SSD = {0}", def, material);
             VehicleInfo randomVehicleInfo = ServiceSystemDefinition.availableDefinitions[def].GetAModel(offer.Building);
             SVMUtils.doLog("[{1}] Veh = {0}", randomVehicleInfo?.ToString() ?? "<NULL>", material);
-
-            Array16<Vehicle> vehicles = Singleton<VehicleManager>.instance.m_vehicles;
-            if (Singleton<VehicleManager>.instance.CreateVehicle(out ushort vehId, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, data.m_position, material, false, true))
+            if (randomVehicleInfo != null)
             {
-                Vehicle[] expr_BB7_cp_0 = vehicles.m_buffer;
-                ushort expr_BB7_cp_1 = vehId;
-                expr_BB7_cp_0[(int)expr_BB7_cp_1].m_flags = (expr_BB7_cp_0[(int)expr_BB7_cp_1].m_flags | Vehicle.Flags.DummyTraffic);
-                Vehicle[] expr_BD6_cp_0 = vehicles.m_buffer;
-                ushort expr_BD6_cp_1 = vehId;
-                expr_BD6_cp_0[(int)expr_BD6_cp_1].m_flags = (expr_BD6_cp_0[(int)expr_BD6_cp_1].m_flags & ~Vehicle.Flags.WaitingCargo);
+                Array16<Vehicle> vehicles = Singleton<VehicleManager>.instance.m_vehicles;
+                if (Singleton<VehicleManager>.instance.CreateVehicle(out ushort vehId, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, data.m_position, material, false, true))
+                {
+                    Vehicle[] expr_BB7_cp_0 = vehicles.m_buffer;
+                    ushort expr_BB7_cp_1 = vehId;
+                    expr_BB7_cp_0[(int)expr_BB7_cp_1].m_flags = (expr_BB7_cp_0[(int)expr_BB7_cp_1].m_flags | Vehicle.Flags.DummyTraffic);
+                    Vehicle[] expr_BD6_cp_0 = vehicles.m_buffer;
+                    ushort expr_BD6_cp_1 = vehId;
+                    expr_BD6_cp_0[(int)expr_BD6_cp_1].m_flags = (expr_BD6_cp_0[(int)expr_BD6_cp_1].m_flags & ~Vehicle.Flags.WaitingCargo);
 
-                randomVehicleInfo.m_vehicleAI.SetSource(vehId, ref vehicles.m_buffer[(int)vehId], buildingID);
-                randomVehicleInfo.m_vehicleAI.StartTransfer(vehId, ref vehicles.m_buffer[(int)vehId], material, offer);
-                SVMUtils.doLog("END TRANSFER: {0} , {1} (found)", typeof(OutsideConnectionAI), material);
-                return false;
+                    randomVehicleInfo.m_vehicleAI.SetSource(vehId, ref vehicles.m_buffer[(int)vehId], buildingID);
+                    randomVehicleInfo.m_vehicleAI.StartTransfer(vehId, ref vehicles.m_buffer[(int)vehId], material, offer);
+                    SVMUtils.doLog("END TRANSFER: {0} , {1} (found)", typeof(OutsideConnectionAI), material);
+                    return false;
+                }
             }
             SVMUtils.doLog("END TRANSFER: {0} , {1} (not found)", typeof(OutsideConnectionAI), material);
             return true;

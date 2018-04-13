@@ -99,22 +99,34 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public VehicleInfo GetAModel(uint buildingId)
         {
             SVMUtils.doLog("[{0}] GetAModel", typeof(SSD).Name);
-            List<string> assetList = GetEffectiveAssetList(buildingId);
-            return SVMUtils.GetRandomModel(assetList);
+            List<string> assetList = GetEffectiveAssetList(buildingId, out uint targetCodedId);
+            VehicleInfo info = null;
+            while (info == null && assetList.Count > 0)
+            {
+                info = SVMUtils.GetRandomModel(assetList, out string modelName);
+                if (info == null)
+                {
+                    RemoveAsset(targetCodedId, modelName);
+                    assetList = GetEffectiveAssetList(buildingId, out targetCodedId);
+                }
+            }
+            return info;
         }
 
-        private List<string> GetEffectiveAssetList(uint buildingId)
+        private List<string> GetEffectiveAssetList(uint buildingId, out uint targetCodedId)
         {
             uint codedId = buildingId | BUILDING_FLAG;
             List<string> assetList;
             if (buildingId > 0 && GetIgnoreDistrict(codedId))
             {
                 assetList = GetAssetList(codedId);
+                targetCodedId = codedId;
                 SVMUtils.doLog("[{0}] GetAModel - assetList (Building) = {1}", typeof(SSD).Name, string.Join(",", assetList.ToArray()));
             }
             else
             {
-                assetList = GetAssetList(DISTRICT_FLAG | SVMUtils.GetBuildingDistrict(buildingId));
+                targetCodedId = DISTRICT_FLAG | SVMUtils.GetBuildingDistrict(buildingId);
+                assetList = GetAssetList(targetCodedId);
                 if (assetList == null || assetList.Count == 0)
                 {
                     assetList = GetAssetList(DISTRICT_FLAG);
@@ -132,7 +144,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         public bool IsModelCompatible(uint buildingId, VehicleInfo vehicleInfo)
         {
-            return GetEffectiveAssetList(buildingId).Contains(vehicleInfo.name);
+            return GetEffectiveAssetList(buildingId, out uint targetCodedId).Contains(vehicleInfo.name);
         }
         public Dictionary<string, string> GetAllBasicAssets()
         {

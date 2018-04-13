@@ -10,6 +10,8 @@ using Klyte.ServiceVehiclesManager.Utils;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.Utils;
 using UnityEngine;
+using Klyte.Commons.UI;
+using Klyte.Commons;
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -27,35 +29,10 @@ namespace Klyte.ServiceVehiclesManager
 
         public void Start()
         {
-            UITabstrip toolStrip = ToolsModifierControl.mainToolbar.GetComponentInChildren<UITabstrip>();
-            openSVMPanelButton = toolStrip.AddTab();
-            this.openSVMPanelButton.size = new Vector2(49f, 49f);
-            this.openSVMPanelButton.name = "ServiceVehiclesManagerButton";
-            this.openSVMPanelButton.tooltip = "Service Vehicles Manager (v" + ServiceVehiclesManagerMod.version + ")";
-            this.openSVMPanelButton.relativePosition = new Vector3(0f, 5f);
-            toolStrip.AddTab("ServiceVehiclesManagerButton", this.openSVMPanelButton.gameObject, null, null);
-            openSVMPanelButton.atlas = taSVM;
-            openSVMPanelButton.normalBgSprite = "ServiceVehiclesManagerIconSmall";
-            openSVMPanelButton.focusedFgSprite = "ToolbarIconGroup6Focused";
-            openSVMPanelButton.hoveredFgSprite = "ToolbarIconGroup6Hovered";
-            this.openSVMPanelButton.eventButtonStateChanged += delegate (UIComponent c, UIButton.ButtonState s)
-            {
-                if (s == UIButton.ButtonState.Focused)
-                {
-                    internal_OpenSVMPanel();
-                }
-                else
-                {
-                    internal_CloseSVMPanel();
-                }
-            };
-            m_listPanel = SVMServiceBuildingDetailPanel.Get();
+            KlyteModsPanel.instance.AddTab(ModTab.ServiceVehiclesManager, typeof(SVMServiceBuildingDetailPanel), taSVM, "ServiceVehiclesManagerIcon", "Service Vehicles Manager (v" + ServiceVehiclesManagerMod.version + ")");
 
-            SVMUtils.createUIElement(out buildingInfoParent, FindObjectOfType<UIView>().transform, "SVMBuildingInfoPanel", new Vector4(0, 0, 0, 1));
-
-            buildingInfoParent.gameObject.AddComponent<SVMBuildingInfoPanel>();
             var typeTarg = typeof(Redirector<>);
-            List<Type> instances = GetSubtypesRecursive(typeTarg);
+            List<Type> instances = KlyteUtils.GetSubtypesRecursive(typeTarg, typeof(SVMController));
 
             foreach (Type t in instances)
             {
@@ -63,63 +40,20 @@ namespace Klyte.ServiceVehiclesManager
             }
         }
 
-        private static List<Type> GetSubtypesRecursive(Type typeTarg)
+        public void OpenSVMPanel()
         {
-            var classes = from t in Assembly.GetAssembly(typeof(SVMController)).GetTypes()
-                          let y = t.BaseType
-                          where t.IsClass && y != null && y.IsGenericType == typeTarg.IsGenericType && (y.GetGenericTypeDefinition() == typeTarg || y.BaseType == typeTarg)
-                          select t;
-            List<Type> result = new List<Type>();
-            foreach (Type t in classes)
-            {
-                if (t.IsAbstract)
-                {
-                    result.AddRange(GetSubtypesRecursive(t));
-                }
-                else
-                {
-                    result.Add(t);
-                }
-            }
-            return result;
+            KlyteModsPanel.instance.OpenAt(ModTab.Addresses);
         }
+        public void CloseSVMPanel()
+        {
+            KCController.instance.CloseKCPanel();
+        }
+
 
         public void Awake()
         {
             initNearLinesOnWorldInfoPanel();
             ServiceVehiclesManagerMod.instance.showVersionInfoPopup();
-        }
-
-        private void ToggleSVMPanel()
-        {
-            openSVMPanelButton.SimulateClick();
-        }
-        public void OpenSVMPanel()
-        {
-            if (!m_listPanel.GetComponent<UIPanel>().isVisible)
-            {
-                openSVMPanelButton.SimulateClick();
-            }
-        }
-        public void CloseSVMPanel()
-        {
-            if (m_listPanel.GetComponent<UIPanel>().isVisible)
-            {
-                openSVMPanelButton.SimulateClick();
-            }
-        }
-
-        private void internal_CloseSVMPanel()
-        {
-            m_listPanel.GetComponent<UIPanel>().isVisible = false;
-            openSVMPanelButton.Unfocus();
-            openSVMPanelButton.state = UIButton.ButtonState.Normal;
-        }
-
-        private void internal_OpenSVMPanel()
-        {
-            m_listPanel.GetComponent<UIPanel>().isVisible = true;
-            SVMBuildingInfoPanel.instance.Hide();
         }
 
         private void initNearLinesOnWorldInfoPanel()

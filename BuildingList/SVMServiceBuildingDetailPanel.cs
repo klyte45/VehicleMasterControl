@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using Klyte.Commons.Overrides;
+using Klyte.Commons.UI;
 
 namespace Klyte.ServiceVehiclesManager.UI
 {
@@ -25,7 +26,7 @@ namespace Klyte.ServiceVehiclesManager.UI
     class SVMServiceBuildingDetailPanel : UICustomControl
     {
         private const int NUM_SERVICES = 0;
-        private static SVMServiceBuildingDetailPanel instance;
+        public static SVMServiceBuildingDetailPanel instance { get; private set; }
 
         public UIPanel controlContainer { get; private set; }
         private UIPanel mainPanel;
@@ -46,27 +47,17 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         public static OnButtonClicked eventOnDistrictSelectionChanged;
 
-        public static SVMServiceBuildingDetailPanel Get()
-        {
-            if (instance)
-            {
-                return instance;
-            }
-            UIView view = FindObjectOfType<UIView>();
-            SVMUtils.createUIElement(out UIPanel panelObj, view.transform);
-
-            return instance = panelObj.gameObject.AddComponent<SVMServiceBuildingDetailPanel>();
-        }
-
         #region Awake
         private void Awake()
         {
+            instance = this;
+
             controlContainer = GetComponent<UIPanel>();
             controlContainer.area = new Vector4(0, 0, 0, 0);
             controlContainer.isVisible = false;
             controlContainer.name = "SVMPanel";
 
-            SVMUtils.createUIElement(out mainPanel, controlContainer.transform, "SVMListPanel", new Vector4(395, 58, 875, 550));
+            SVMUtils.createUIElement(out mainPanel, controlContainer.transform, "SVMListPanel", new Vector4(0, 0, 875, 550));
             mainPanel.backgroundSprite = "MenuPanel2";
 
             CreateTitleBar();
@@ -306,7 +297,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             titlebar.autoSize = false;
             titlebar.text = "Service Vehicles Manager v" + ServiceVehiclesManagerMod.version;
             titlebar.textAlignment = UIHorizontalAlignment.Center;
-            SVMUtils.createDragHandle(titlebar, mainPanel);
+            SVMUtils.createDragHandle(titlebar, KlyteModsPanel.instance.mainPanel);
 
             SVMUtils.createUIElement(out UIButton closeButton, mainPanel.transform, "CloseButton", new Vector4(mainPanel.width - 37, 5, 32, 32));
             SVMUtils.initButton(closeButton, false, "buttonclose", true);
@@ -319,7 +310,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             SVMUtils.createUIElement(out UISprite logo, mainPanel.transform, "SVMLogo", new Vector4(22, 5f, 32, 32));
             logo.atlas = SVMController.taSVM;
             logo.spriteName = "ServiceVehiclesManagerIcon";
-            SVMUtils.createDragHandle(logo, mainPanel);
+            SVMUtils.createDragHandle(logo, KlyteModsPanel.instance.mainPanel);
         }
 
         private static UIComponent CreateContentTemplate(float width, float height)

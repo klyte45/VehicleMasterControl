@@ -38,7 +38,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             }
         }
 
-        public override void Awake()
+        public override void AwakeBody()
         {
             instance = this;
             ServiceSystemDefinition def = Singleton<V>.instance.GetSSD();
@@ -51,6 +51,10 @@ namespace Klyte.ServiceVehiclesManager.UI
             SVMUtils.doLog("Loading After Hooks: {0} ({1}=>{2})", typeof(BuildingManager), from2, to2);
             AddRedirect(from, null, to);
             AddRedirect(from2, null, to2);
+        }
+        public override void doLog(string text, params object[] param)
+        {
+            SVMUtils.doLog(text, param);
         }
     }
     internal sealed class SVMTabControllerBuildingHooksDisCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksDisCar, SVMSysDefDisCar> { }
