@@ -218,21 +218,12 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 checkId(codedId);
                 string value = SafeGet(codedId, BuildingConfig.COLOR);
-                if (!string.IsNullOrEmpty(value))
-                {
-                    var list = value.Split(ItSepLvl3.ToCharArray()).ToList();
-                    if (list.Count == 3 && byte.TryParse(list[0], out byte r) && byte.TryParse(list[1], out byte g) && byte.TryParse(list[2], out byte b))
-                    {
-                        return new Color32(r, g, b, 255);
-                    }
-                    else
-                    {
-                        SVMUtils.doLog($"val = {value}; list = {String.Join(",", list.ToArray())} (Size {list.Count})");
-                    }
-                }
+                return SVMUtils.DeserializeColor(value,ItSepLvl3);
             }
             return new Color32(0, 0, 0, 1);
         }
+
+        
 
         private void SetColor(uint codedId, Color32 value)
         {
@@ -244,9 +235,10 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             }
             else
             {
-                SafeSet(codedId, BuildingConfig.COLOR, string.Join(ItSepLvl3, new string[] { value.r.ToString(), value.g.ToString(), value.b.ToString() }));
+                SafeSet(codedId, BuildingConfig.COLOR, SVMUtils.SerializeColor(value, ItSepLvl3));
             }
         }
+
         private void CleanColor(uint codedId)
         {
             if (!SVMConfigWarehouse.allowColorChanging(ConfigIndexKey)) return;
