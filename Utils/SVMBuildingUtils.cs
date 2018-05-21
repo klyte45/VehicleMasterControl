@@ -1,11 +1,9 @@
 ﻿using ColossalFramework;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.Overrides;
-using Klyte.Commons.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.Utils
@@ -44,12 +42,12 @@ namespace Klyte.ServiceVehiclesManager.Utils
             }
         }
 
-        public static int GetMaxVehiclesBuilding(ushort buildingID, VehicleInfo.VehicleType type) 
+        public static int GetMaxVehiclesBuilding(ushort buildingID, VehicleInfo.VehicleType type)
         {
             Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
             var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
             var maxField = ext.GetVehicleMaxCountField(type);
-            if(maxField == null)
+            if (maxField == null)
             {
                 return 0xFFFFFF;
             }
@@ -71,7 +69,8 @@ namespace Klyte.ServiceVehiclesManager.Utils
             {
                 buildings = bm.GetOutsideConnections();
             }
-            else {
+            else
+            {
                 buildings = bm.GetServiceBuildings(ssd.service);
             }
 

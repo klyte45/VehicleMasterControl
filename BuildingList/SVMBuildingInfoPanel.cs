@@ -1,21 +1,17 @@
 ﻿using ColossalFramework;
-using ColossalFramework.Math;
-using ColossalFramework.UI;
-using Klyte.Extensions;
-using System;
-using System.Linq;
-using UnityEngine;
-using SVMCW = Klyte.ServiceVehiclesManager.SVMConfigWarehouse;
-using Klyte.Commons.Extensors;
-using System.Collections.Generic;
 using ColossalFramework.Globalization;
-using Klyte.Commons.Utils;
+using ColossalFramework.UI;
+using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
-using Klyte.ServiceVehiclesManager.UI;
-using Klyte.ServiceVehiclesManager.Utils;
+using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.UI.ExtraUI;
+using Klyte.ServiceVehiclesManager.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.UI
 {

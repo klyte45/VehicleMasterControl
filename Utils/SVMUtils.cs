@@ -1,10 +1,8 @@
-﻿using ColossalFramework;
+﻿using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.Commons.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.Utils
@@ -61,28 +59,5 @@ namespace Klyte.ServiceVehiclesManager.Utils
         }
         #endregion
 
-        #region Districts Utils
-        public static Dictionary<string, int> getValidDistricts()
-        {
-            Dictionary<string, int> districts = new Dictionary<string, int>
-            {
-                [$"<{Singleton<SimulationManager>.instance.m_metaData.m_CityName}>"] = 0
-            };
-            for (int i = 1; i <= 0x7F; i++)
-            {
-                if ((Singleton<DistrictManager>.instance.m_districts.m_buffer[i].m_flags & District.Flags.Created) != District.Flags.None)
-                {
-                    String districtName = Singleton<DistrictManager>.instance.GetDistrictName(i);
-                    if (districts.ContainsKey(districtName))
-                    {
-                        districtName += $" (ID:{i})";
-                    }
-                    districts[districtName] = i;
-                }
-            }
-
-            return districts;
-        }
-        #endregion
     }
 }

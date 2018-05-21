@@ -1,18 +1,10 @@
 ﻿using ColossalFramework;
-using ColossalFramework.Globalization;
 using ColossalFramework.UI;
-using ICities;
-using Klyte.Extensions;
-using Klyte.Harmony;
+using Klyte.Commons.Extensors;
+using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI.ExtraUI;
 using Klyte.ServiceVehiclesManager.Utils;
-using Klyte.Commons.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.UI
@@ -27,7 +19,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private UIColorField m_districtColor;
         private SVMAssetSelectorWindowDistrictTab m_assetSelectorWindow;
-        
+
         private bool allowColorChange;
 
         private static ISVMTransportTypeExtension extension => Singleton<T>.instance.GetSSD().GetTransportExtension();
@@ -43,7 +35,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             m_uiHelper = new UIHelperExtension(mainPanel);
 
             SVMUtils.createUIElement(out UILabel lbl, mainPanel.transform, "DistrictColorLabel", new Vector4(5, 5, 250, 40));
-           
+
             allowColorChange = SVMConfigWarehouse.allowColorChanging(extension.ConfigIndexKey);
             if (allowColorChange)
             {
@@ -145,5 +137,6 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerDistrictListRegPln : SVMTabControllerDistrictList<SVMSysDefRegPln> { }
     internal sealed class SVMTabControllerDistrictListCrgTra : SVMTabControllerDistrictList<SVMSysDefCrgTra> { }
     internal sealed class SVMTabControllerDistrictListCrgShp : SVMTabControllerDistrictList<SVMSysDefCrgShp> { }
+    internal sealed class SVMTabControllerDistrictListBeaCar : SVMTabControllerDistrictList<SVMSysDefBeaCar> { }
 
 }

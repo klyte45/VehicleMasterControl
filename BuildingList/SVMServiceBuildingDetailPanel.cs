@@ -1,24 +1,16 @@
-﻿using ColossalFramework;
-using ColossalFramework.Globalization;
+﻿using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using ICities;
-using Klyte.Extensions;
-using Klyte.Harmony;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.UI;
-using Klyte.ServiceVehiclesManager.Overrides;
-using Klyte.ServiceVehiclesManager.UI.ExtraUI;
-using Klyte.ServiceVehiclesManager.Utils;
 using Klyte.Commons.Extensors;
+using Klyte.Commons.Overrides;
+using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
+using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.ServiceVehiclesManager.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using UnityEngine;
-using Klyte.Commons.Overrides;
-using Klyte.Commons.UI;
 
 namespace Klyte.ServiceVehiclesManager.UI
 {
@@ -110,6 +102,14 @@ namespace Klyte.ServiceVehiclesManager.UI
             m_StripMain.selectedIndex = -1;
             m_StripBuilings.selectedIndex = -1;
             m_StripDistricts.selectedIndex = -1;
+
+            mainPanel.eventVisibilityChanged += (x, y) =>
+            {
+                if (y)
+                {
+                    ServiceVehiclesManagerMod.instance.showVersionInfoPopup();
+                }
+            };
         }
 
         internal void OpenAt(ServiceSystemDefinition ssd)

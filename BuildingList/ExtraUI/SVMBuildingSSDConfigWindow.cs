@@ -1,16 +1,14 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Globalization;
 using ColossalFramework.UI;
-using Klyte.Extensions;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.UI;
-using Klyte.ServiceVehiclesManager.Utils;
+using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
+using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.ServiceVehiclesManager.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
@@ -352,4 +350,5 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
     internal sealed class SVMBuildingSSDConfigWindowOutShp : SVMBuildingSSDConfigWindow<SVMSysDefOutShp> { }
     internal sealed class SVMBuildingSSDConfigWindowOutPln : SVMBuildingSSDConfigWindow<SVMSysDefOutPln> { }
     internal sealed class SVMBuildingSSDConfigWindowOutCar : SVMBuildingSSDConfigWindow<SVMSysDefOutCar> { }
+    internal sealed class SVMBuildingSSDConfigWindowBeaCar : SVMBuildingSSDConfigWindow<SVMSysDefBeaCar> { }
 }

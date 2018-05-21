@@ -1,20 +1,11 @@
 ﻿using ColossalFramework;
-using ColossalFramework.Globalization;
 using ColossalFramework.UI;
-using ICities;
-using Klyte.Extensions;
-using Klyte.Harmony;
+using Klyte.Commons.Extensors;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.Utils;
-using Klyte.Commons.Extensors;
-using Klyte.Commons.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.UI
@@ -83,6 +74,7 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingHooksOutShp : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutShp, SVMSysDefOutShp> { }
     internal sealed class SVMTabControllerBuildingHooksOutPln : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutPln, SVMSysDefOutPln> { }
     internal sealed class SVMTabControllerBuildingHooksOutCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutCar, SVMSysDefOutCar> { }
+    internal sealed class SVMTabControllerBuildingHooksBeaCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksBeaCar, SVMSysDefBeaCar> { }
 
 
 
@@ -144,7 +136,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                 int count = 0;
                 var buildingList = SVMBuildingUtils.getAllBuildingsFromCity(Singleton<T>.instance.GetSSD());
 
-                SVMUtils.doLog("{0} buildingList = {1} (s={2})", GetType(), buildingList.ToArray(), buildingList.Count);
+                SVMUtils.doLog("{0} buildingList = [{1}] (s={2})", GetType(), string.Join(",", buildingList.Select(x => x.ToString()).ToArray()), buildingList.Count);
                 foreach (ushort buildingID in buildingList)
                 {
                     Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
@@ -158,6 +150,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
                 }
                 RemoveExtraLines(count);
+                SVMUtils.doLog("{0} final count = {1}", GetType(), count);
 
                 m_LinesUpdated = true;
             }
@@ -199,5 +192,6 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingListOutShp : SVMTabControllerBuildingList<SVMSysDefOutShp> { }
     internal sealed class SVMTabControllerBuildingListOutPln : SVMTabControllerBuildingList<SVMSysDefOutPln> { }
     internal sealed class SVMTabControllerBuildingListOutCar : SVMTabControllerBuildingList<SVMSysDefOutCar> { }
+    internal sealed class SVMTabControllerBuildingListBeaCar : SVMTabControllerBuildingList<SVMSysDefBeaCar> { }
 
 }

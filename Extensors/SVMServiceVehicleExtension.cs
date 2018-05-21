@@ -1,17 +1,13 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Globalization;
-using ColossalFramework.Math;
-using Klyte.Commons.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using UnityEngine;
+using ColossalFramework.Threading;
 using Klyte.Commons.Interfaces;
 using Klyte.ServiceVehiclesManager.Utils;
+using System;
 using System.Collections;
-using ColossalFramework.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 {
@@ -218,12 +214,12 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 checkId(codedId);
                 string value = SafeGet(codedId, BuildingConfig.COLOR);
-                return SVMUtils.DeserializeColor(value,ItSepLvl3);
+                return SVMUtils.DeserializeColor(value, ItSepLvl3);
             }
             return new Color32(0, 0, 0, 1);
         }
 
-        
+
 
         private void SetColor(uint codedId, Color32 value)
         {
@@ -386,6 +382,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMServiceVehicleExtensionOutShp : SVMServiceVehicleExtension<SVMSysDefOutShp, SVMServiceVehicleExtensionOutShp> { }
     internal sealed class SVMServiceVehicleExtensionOutPln : SVMServiceVehicleExtension<SVMSysDefOutPln, SVMServiceVehicleExtensionOutPln> { }
     internal sealed class SVMServiceVehicleExtensionOutCar : SVMServiceVehicleExtension<SVMSysDefOutPln, SVMServiceVehicleExtensionOutCar> { }
+    internal sealed class SVMServiceVehicleExtensionBeaCar : SVMServiceVehicleExtension<SVMSysDefBeaCar, SVMServiceVehicleExtensionBeaCar> { }
 
     public sealed class SVMTransportExtensionUtils
     {

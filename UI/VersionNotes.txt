@@ -1,6 +1,6 @@
-﻿SVMv1.1.1
-    - Fixed "Object Reference not found" when using this mod without a DLC
-1.1
-    - Cargo vehicles added
-    - Fixed outside connections' spawn models
-    - Added outside connections buildings (allow set fixed names to neighborhood)
+﻿SVMv1.2
+   -Added support for ParkLife (Park maintence services - at "?" menu)
+   -New listing interface, using 45's menu from Klyte Commons
+   -Added text field for hex color input at color pickers (from Klyte Commons' new version)
+   -Fixed: Incorrect spawning on deleting assets previously selected for use in a depot
+   -Fixed: Cable cars and Taxi Stands lists are empty

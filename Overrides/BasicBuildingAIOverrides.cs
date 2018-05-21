@@ -1,18 +1,10 @@
 ﻿using ColossalFramework;
-using ColossalFramework.Globalization;
 using ColossalFramework.UI;
-using ICities;
-using Klyte.Extensions;
-using Klyte.Harmony;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.Utils;
 using Klyte.Commons.Extensors;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using UnityEngine;
 using Klyte.Commons.Utils;
 

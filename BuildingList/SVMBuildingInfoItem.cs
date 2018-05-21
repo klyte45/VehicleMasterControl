@@ -1,24 +1,12 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SVMCW = Klyte.ServiceVehiclesManager.SVMConfigWarehouse;
-
-namespace Klyte.ServiceVehiclesManager.UI
+﻿namespace Klyte.ServiceVehiclesManager.UI
 {
     using ColossalFramework;
     using ColossalFramework.Globalization;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
-    using Extensions;
-    using Extensors;
     using Klyte.Commons.Utils;
     using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
     using Klyte.ServiceVehiclesManager.Overrides;
-    using System;
-    using System.Collections;
-    using System.Diagnostics;
     using UnityEngine;
     using Utils;
     internal abstract class SVMBuildingInfoItem<T> : ToolsModifierControl where T : SVMSysDef<T>
@@ -311,4 +299,5 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMBuildingInfoItemOutShp : SVMBuildingInfoItem<SVMSysDefOutShp> { }
     internal sealed class SVMBuildingInfoItemOutPln : SVMBuildingInfoItem<SVMSysDefOutPln> { }
     internal sealed class SVMBuildingInfoItemOutCar : SVMBuildingInfoItem<SVMSysDefOutCar> { }
+    internal sealed class SVMBuildingInfoItemBeaCar : SVMBuildingInfoItem<SVMSysDefBeaCar> { }
 }

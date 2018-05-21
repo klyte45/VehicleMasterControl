@@ -1,11 +1,9 @@
 ﻿using ColossalFramework;
 using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.Utils;
-using Klyte.Commons.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 
 namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
@@ -34,6 +32,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition REG_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition CARG_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level4);
         public static readonly ServiceSystemDefinition CARG_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level4);
+        public static readonly ServiceSystemDefinition BEAU_CAR = new ServiceSystemDefinition(ItemClass.Service.Beautification, ItemClass.SubService.BeautificationParks, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
 
         public static readonly ServiceSystemDefinition OUT_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1, true);
         public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
@@ -95,6 +94,10 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
                     {
                         m_availableDefinitions[GARBBIO_CAR] = SVMServiceVehicleExtensionGbcCar.instance;
                     }
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
+                    {
+                        m_availableDefinitions[BEAU_CAR] = SVMServiceVehicleExtensionBeaCar.instance;
+                    }
                 }
                 return m_availableDefinitions;
             }
@@ -151,6 +154,11 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
                     if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
                     {
                         m_sysDefinitions[GARBBIO_CAR] = typeof(SVMSysDefGbcCar);
+                    }
+
+                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
+                    {
+                        m_sysDefinitions[BEAU_CAR] = typeof(SVMSysDefBeaCar);
                     }
                 }
                 return m_sysDefinitions;
@@ -329,4 +337,5 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_TRAIN; } }
     internal sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_PLANE; } }
     internal sealed class SVMSysDefOutCar : SVMSysDef<SVMSysDefOutCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_ROAD; } }
+    internal sealed class SVMSysDefBeaCar : SVMSysDef<SVMSysDefBeaCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.BEAU_CAR; } }
 }

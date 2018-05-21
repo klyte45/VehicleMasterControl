@@ -1,20 +1,14 @@
 ﻿using ColossalFramework;
-using ColossalFramework.Globalization;
+using ColossalFramework.Math;
 using ColossalFramework.UI;
-using ICities;
-using Klyte.Extensions;
-using Klyte.Harmony;
+using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.Utils;
-using Klyte.Commons.Extensors;
-using Klyte.Commons.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using UnityEngine;
-using ColossalFramework.Math;
 
 namespace Klyte.ServiceVehiclesManager.Overrides
 {
@@ -29,13 +23,18 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             if (subtypes == null)
             {
                 subtypes = new Dictionary<Type, Type>();
-                foreach (Type t in SVMUtils.GetSubtypesRecursive(typeof(BasicBuildingAIOverrides<,>), typeof(SVMBuildingAIOverrideUtils)))
+                var subclasses = SVMUtils.GetSubtypesRecursive(typeof(BasicBuildingAIOverrides<,>), typeof(SVMBuildingAIOverrideUtils));
+                SVMUtils.doLog("GetOverride pré - subclasses:\r\n\t{0}", string.Join("\r\n\t", subclasses?.Select(x => x.ToString())?.ToArray() ?? new string[0]));
+                foreach (Type t in subclasses)
                 {
                     try
                     {
                         subtypes[t.BaseType.GetGenericArguments()[1]] = t;
                     }
-                    catch { }
+                    catch (Exception e)
+                    {
+                        SVMUtils.doErrorLog("ERROR ADDING SUBTYPE {0}!\r\n{1}", t, subclasses);
+                    }
                 }
                 SVMUtils.doLog("GetOverride - Classes:\r\n\t{0}", string.Join("\r\n\t", subtypes?.Select(x => x.Key.ToString() + "=>" + x.Value.ToString())?.ToArray() ?? new string[0]));
             }
@@ -157,7 +156,8 @@ namespace Klyte.ServiceVehiclesManager.Overrides
     {
         private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
         {
-            [TransferManager.TransferReason.RoadMaintenance] = Tuple.New(VehicleInfo.VehicleType.Car, true, false)
+            [TransferManager.TransferReason.RoadMaintenance] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.ParkMaintenance] = Tuple.New(VehicleInfo.VehicleType.Car, true, false)
         };
         public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(MaintenanceDepotAI ai, TransferManager.TransferOffer offer) => reasons;
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_maintenanceTruckCount";
@@ -257,12 +257,12 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         {
             if (ai is TransportStationAI) return false;
             List<VehicleInfo.VehicleType> allowedTypes = new List<VehicleInfo.VehicleType>();
-            AddAllowedType(ai?.m_transportInfo?.m_transportType, allowedTypes);
-            AddAllowedType(ai?.m_secondaryTransportInfo?.m_transportType, allowedTypes);
+            AddAllowedType(ai?.m_transportInfo?.m_transportType, ref allowedTypes);
+            AddAllowedType(ai?.m_secondaryTransportInfo?.m_transportType, ref allowedTypes);
             return allowedTypes.Contains(type);
         }
 
-        public static void AddAllowedType(TransportInfo.TransportType? type, List<VehicleInfo.VehicleType> allowedTypes)
+        public static void AddAllowedType(TransportInfo.TransportType? type, ref List<VehicleInfo.VehicleType> allowedTypes)
         {
             switch (type)
             {
@@ -298,8 +298,8 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                 return reasonsNone;
             }
             List<VehicleInfo.VehicleType> allowedTypes = new List<VehicleInfo.VehicleType>();
-            AddAllowedType(ai?.m_transportInfo?.m_transportType, allowedTypes);
-            AddAllowedType(ai?.m_secondaryTransportInfo?.m_transportType, allowedTypes);
+            AddAllowedType(ai?.m_transportInfo?.m_transportType, ref allowedTypes);
+            AddAllowedType(ai?.m_secondaryTransportInfo?.m_transportType, ref allowedTypes);
 
             IEnumerable<KeyValuePair<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>> result = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
             foreach (var type in allowedTypes)
@@ -327,7 +327,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             return result.ToDictionary(x => x.Key, x => x.Value);
         }
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_maxVehicleCount";
-        public override bool AcceptsAI(PrefabAI ai) => ai.GetType() == typeof(DepotAI);
+        public override bool AcceptsAI(PrefabAI ai) => typeof(DepotAI).IsAssignableFrom(ai.GetType());
     }
 
     internal sealed class TransportStationAIOverrides : BasicBuildingAIOverrides<TransportStationAIOverrides, TransportStationAI>
@@ -336,8 +336,8 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, TransportStationAI ai)
         {
             List<VehicleInfo.VehicleType> allowedTypes = new List<VehicleInfo.VehicleType>();
-            DepotAIOverrides.AddAllowedType(ai?.m_transportInfo?.m_transportType, allowedTypes);
-            DepotAIOverrides.AddAllowedType(ai?.m_secondaryTransportInfo?.m_transportType, allowedTypes);
+            DepotAIOverrides.AddAllowedType(ai?.m_transportInfo?.m_transportType, ref allowedTypes);
+            DepotAIOverrides.AddAllowedType(ai?.m_secondaryTransportInfo?.m_transportType, ref allowedTypes);
             return allowedTypes.Contains(type);
         }
         public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(TransportStationAI ai, TransferManager.TransferOffer offer)
@@ -494,8 +494,8 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(CargoStationAI ai, TransferManager.TransferOffer offer)
         {
             List<VehicleInfo.VehicleType> allowedTypes = new List<VehicleInfo.VehicleType>();
-            DepotAIOverrides.AddAllowedType(ai?.m_transportInfo?.m_transportType, allowedTypes);
-            DepotAIOverrides.AddAllowedType(ai?.m_transportInfo2?.m_transportType, allowedTypes);
+            DepotAIOverrides.AddAllowedType(ai?.m_transportInfo?.m_transportType, ref allowedTypes);
+            DepotAIOverrides.AddAllowedType(ai?.m_transportInfo2?.m_transportType, ref allowedTypes);
             IEnumerable<KeyValuePair<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>> result = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
             foreach (var type in allowedTypes)
             {

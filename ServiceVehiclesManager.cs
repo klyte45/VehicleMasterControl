@@ -1,25 +1,17 @@
 using ColossalFramework;
+using ColossalFramework.DataBinding;
+using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using ICities;
-using Klyte.Extensions;
+using Klyte.Commons.Extensors;
+using Klyte.ServiceVehiclesManager.i18n;
+using Klyte.ServiceVehiclesManager.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using ColossalFramework.DataBinding;
-using ColossalFramework.Globalization;
-using Klyte.Commons.Utils;
-using Klyte.Commons.Extensors;
-using Klyte.Commons.Overrides;
-using ColossalFramework.PlatformServices;
-using Klyte.Commons;
-using Klyte.ServiceVehiclesManager.Utils;
-using Klyte.ServiceVehiclesManager.i18n;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.UI;
 
-[assembly: AssemblyVersion("1.1.1.*")]
+[assembly: AssemblyVersion("1.2.0.*")]
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -171,6 +163,13 @@ namespace Klyte.ServiceVehiclesManager
                 {
                     showVersionInfoPopup(true);
                 });
+                //UILabel lblResult = null;
+                //group9.AddButton("TEST SUBTYPE", delegate ()
+                // {
+                //     var subclasses = SVMUtils.GetSubtypesRecursive(typeof(BasicBuildingAIOverrides<,>), typeof(BasicBuildingAIOverrides<,>));
+                //     lblResult.text = string.Format("GetOverride pré - subclasses:\r\n\t{0}", string.Join("\r\n\t", subclasses?.Select(x => x.ToString())?.ToArray() ?? new string[0]));
+                // });
+                //lblResult = group9.AddLabel("XXX1");
                 //string testString = "";
                 //for (int i = 0; i < 360; i++)
                 //{
@@ -294,7 +293,7 @@ namespace Klyte.ServiceVehiclesManager
             if (!m_loaded) { return; }
             if (SVMController.instance != null)
             {
-                SVMController.instance.destroy();
+                Destroy(SVMController.instance);
             }
             //			Log.debug ("LEVELUNLOAD");
             m_loaded = false;

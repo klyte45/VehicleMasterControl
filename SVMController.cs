@@ -1,35 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ColossalFramework;
+﻿using ColossalFramework;
 using ColossalFramework.UI;
+using Klyte.Commons;
+using Klyte.Commons.Extensors;
+using Klyte.Commons.UI;
+using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Utils;
-using Klyte.Commons.Extensors;
-using Klyte.Commons.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
-using Klyte.Commons.UI;
-using Klyte.Commons;
 
 namespace Klyte.ServiceVehiclesManager
 {
     internal class SVMController : Singleton<SVMController>
     {
         internal static UITextureAtlas taSVM;
-        private UIButton openSVMPanelButton;
-        private SVMServiceBuildingDetailPanel m_listPanel;
-        private UIPanel buildingInfoParent;
 
-        public void destroy()
-        {
-            Destroy(openSVMPanelButton);
-        }
 
         public void Start()
         {
             KlyteModsPanel.instance.AddTab(ModTab.ServiceVehiclesManager, typeof(SVMServiceBuildingDetailPanel), taSVM, "ServiceVehiclesManagerIcon", "Service Vehicles Manager (v" + ServiceVehiclesManagerMod.version + ")");
+
+            SVMUtils.createUIElement(out UIPanel buildingInfoParent, FindObjectOfType<UIView>().transform, "SVMBuildingInfoPanel", new Vector4(0, 0, 0, 1));
+
+            buildingInfoParent.gameObject.AddComponent<SVMBuildingInfoPanel>();
 
             var typeTarg = typeof(Redirector<>);
             List<Type> instances = KlyteUtils.GetSubtypesRecursive(typeTarg, typeof(SVMController));
@@ -42,7 +39,7 @@ namespace Klyte.ServiceVehiclesManager
 
         public void OpenSVMPanel()
         {
-            KlyteModsPanel.instance.OpenAt(ModTab.Addresses);
+            KlyteModsPanel.instance.OpenAt(ModTab.ServiceVehiclesManager);
         }
         public void CloseSVMPanel()
         {
@@ -53,24 +50,32 @@ namespace Klyte.ServiceVehiclesManager
         public void Awake()
         {
             initNearLinesOnWorldInfoPanel();
-            ServiceVehiclesManagerMod.instance.showVersionInfoPopup();
         }
 
         private void initNearLinesOnWorldInfoPanel()
         {
 
-            UIPanel parent = GameObject.Find("UIView").transform.GetComponentInChildren<CityServiceWorldInfoPanel>().gameObject.GetComponent<UIPanel>();
 
-            if (parent == null)
-                return;
-            parent.eventVisibilityChanged += (component, value) =>
+            BuildingWorldInfoPanel[] panelList = GameObject.Find("UIView").GetComponentsInChildren<BuildingWorldInfoPanel>();
+            SVMUtils.doLog("WIP LIST: [{0}]", string.Join(", ", panelList.Select(x => x.name).ToArray()));
+
+            foreach (BuildingWorldInfoPanel wip in panelList)
             {
-                updateBuildingEditShortcutButton(parent);
-            };
-            parent.eventPositionChanged += (component, value) =>
-            {
-                updateBuildingEditShortcutButton(parent);
-            };
+                SVMUtils.doLog("LOADING WIP HOOK FOR: {0}", wip.name);
+
+                UIPanel parent = wip.gameObject.GetComponent<UIPanel>();
+
+                if (parent == null)
+                    return;
+                parent.eventVisibilityChanged += (component, value) =>
+                {
+                    updateBuildingEditShortcutButton(parent);
+                };
+                parent.eventPositionChanged += (component, value) =>
+                {
+                    updateBuildingEditShortcutButton(parent);
+                };
+            }
         }
 
         private void updateBuildingEditShortcutButton(UIPanel parent)

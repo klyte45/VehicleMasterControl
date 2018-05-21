@@ -1,16 +1,8 @@
-﻿using ColossalFramework;
-using ColossalFramework.Globalization;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.Utils;
-using Klyte.Commons.Extensors;
+﻿using ColossalFramework.Globalization;
 using Klyte.Commons.Interfaces;
-using Klyte.Commons.Utils;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using UnityEngine;
+using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI;
+using System.Linq;
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -73,6 +65,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.OUT_SHIP: return Locale.Get("AREA_YES_SHIPCONNECTION");
                 case ConfigIndex.OUT_PLANE: return Locale.Get("AREA_YES_PLANECONNECTION");
                 case ConfigIndex.OUT_ROAD: return Locale.Get("AREA_YES_HIGHWAYCONNECTION");
+                case ConfigIndex.BEAU_CAR: return Locale.Get("VEHICLE_TITLE", "Park Staff Vehicle 01");
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
 
             }
@@ -107,6 +100,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.CARG_SHIP: return "SubBarPublicTransportShip";
                 case ConfigIndex.OUT_PLANE:
                 case ConfigIndex.REG_PLANE: return "SubBarPublicTransportPlane";
+                case ConfigIndex.BEAU_CAR: return "ToolbarIconBeautification";
                 default: return "???" + (i & ConfigIndex.SSD_PART).ToString("X");
             }
         }
@@ -122,6 +116,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.PRISION_CAR:
                 case ConfigIndex.TAXI_CAR:
                     return false;
+                case ConfigIndex.BEAU_CAR:
                 case ConfigIndex.DISASTER_CAR:
                 case ConfigIndex.DISASTER_HELICOPTER:
                 case ConfigIndex.FIRE_HELICOPTER:
@@ -163,6 +158,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.DEATHCARE_CAR:
                 case ConfigIndex.POLICE_CAR:
                 case ConfigIndex.ROAD_CAR:
+                case ConfigIndex.BEAU_CAR:
                 case ConfigIndex.WATER_CAR:
                 case ConfigIndex.PRISION_CAR:
                 case ConfigIndex.CABLECAR_CABLECAR:
@@ -215,6 +211,7 @@ namespace Klyte.ServiceVehiclesManager
                 case ConfigIndex.CARG_SHIP:
                     return CategoryTab.PublicTransport;
                 case ConfigIndex.ROAD_CAR:
+                case ConfigIndex.BEAU_CAR:
                 case ConfigIndex.WATER_CAR:
                 case ConfigIndex.SNOW_CAR:
                 case ConfigIndex.GARBAGE_CAR:
@@ -272,6 +269,7 @@ namespace Klyte.ServiceVehiclesManager
             OUT_SHIP = OUTSIDE_PART | (4 << 26) | (ItemClass.SubService.PublicTransportShip << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             OUT_PLANE = OUTSIDE_PART | (5 << 26) | (ItemClass.SubService.PublicTransportPlane << 20) | (ItemClass.Service.PublicTransport << 15) | ((ItemClass.Level.Level1 + 1) << 12),
             OUT_ROAD = OUTSIDE_PART | (1 << 26) | (ItemClass.SubService.None << 20) | (ItemClass.Service.Road << 15) | ((ItemClass.Level.Level5 + 1) << 12),
+            BEAU_CAR = (1 << 26) | (ItemClass.SubService.BeautificationParks << 20) | (ItemClass.Service.Beautification << 15) | ((ItemClass.Level.Level2 + 1) << 12),
 
             EXTENSION_CONFIG_DISTRICT = 0x1 | TYPE_STRING | SYSTEM_CONFIG,
             BASIC_CONFIG_DISTRICT = 0x2 | TYPE_STRING | GLOBAL_CONFIG,
@@ -301,6 +299,7 @@ namespace Klyte.ServiceVehiclesManager
             OUTROAD_TRAIN_CONFIG = OUT_ROAD | EXTENSION_CONFIG_DISTRICT,
             CARG_TRAIN_CONFIG = CARG_TRAIN | EXTENSION_CONFIG_DISTRICT,
             CARG_SHIP_CONFIG = CARG_SHIP | EXTENSION_CONFIG_DISTRICT,
+            BEAU_CAR_CONFIG = BEAU_CAR | EXTENSION_CONFIG_DISTRICT,
         }
 
         public static ConfigIndex[] defaultTrueBoolProperties => new ConfigIndex[] {
@@ -335,6 +334,7 @@ namespace Klyte.ServiceVehiclesManager
             if (serviceSystemDefinition == ServiceSystemDefinition.REG_SHIP) return ConfigIndex.REG_SHIP;
             if (serviceSystemDefinition == ServiceSystemDefinition.CARG_TRAIN) return ConfigIndex.CARG_TRAIN;
             if (serviceSystemDefinition == ServiceSystemDefinition.CARG_SHIP) return ConfigIndex.CARG_SHIP;
+            if (serviceSystemDefinition == ServiceSystemDefinition.BEAU_CAR) return ConfigIndex.BEAU_CAR;
             return ConfigIndex.NIL;
         }
     }
