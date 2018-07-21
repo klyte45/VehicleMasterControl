@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.2.0.*")]
+[assembly: AssemblyVersion("1.2.1.*")]
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -55,14 +55,18 @@ namespace Klyte.ServiceVehiclesManager
         {
             if (!m_isKlyteCommonsLoaded)
             {
-                var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                var assembly = (from a in assemblies
-                                where a.GetType("Klyte.Commons.KlyteCommonsMod") != null
-                                select a).SingleOrDefault();
-                if (assembly != null)
+                try
                 {
-                    m_isKlyteCommonsLoaded = true;
+                    var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    var assembly = (from a in assemblies
+                                    where a.GetType("Klyte.Commons.KlyteCommonsMod") != null
+                                    select a).SingleOrDefault();
+                    if (assembly != null)
+                    {
+                        m_isKlyteCommonsLoaded = true;
+                    }
                 }
+                catch { }
             }
             return m_isKlyteCommonsLoaded;
         }
