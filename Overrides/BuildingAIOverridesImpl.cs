@@ -31,7 +31,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                     {
                         subtypes[t.BaseType.GetGenericArguments()[1]] = t;
                     }
-                    catch (Exception e)
+                    catch
                     {
                         SVMUtils.doErrorLog("ERROR ADDING SUBTYPE {0}!\r\n{1}", t, subclasses);
                     }
