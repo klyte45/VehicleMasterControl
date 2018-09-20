@@ -1,9 +1,6 @@
 ﻿using ColossalFramework.Globalization;
 using Klyte.ServiceVehiclesManager.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Klyte.ServiceVehiclesManager.i18n
 {
@@ -16,7 +13,7 @@ namespace Klyte.ServiceVehiclesManager.i18n
         private const string commentChar = "#";
         private const string ignorePrefixChar = "%";
         private static string language = "";
-        private static string[] locales = new string[] { "en", "pt" };
+        private static string[] locales = new string[] { "en", "pt", "ru" };
 
         public static string loadedLanguage
         {
