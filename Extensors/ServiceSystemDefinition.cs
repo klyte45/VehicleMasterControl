@@ -34,10 +34,10 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition CARG_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level4);
         public static readonly ServiceSystemDefinition BEAU_CAR = new ServiceSystemDefinition(ItemClass.Service.Beautification, ItemClass.SubService.BeautificationParks, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
 
-        public static readonly ServiceSystemDefinition OUT_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1, true);
-        public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
-        public static readonly ServiceSystemDefinition OUT_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1, true);
-        public static readonly ServiceSystemDefinition OUT_ROAD = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5, true);
+        //public static readonly ServiceSystemDefinition OUT_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1, true);
+        //public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
+        //public static readonly ServiceSystemDefinition OUT_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1, true);
+        //public static readonly ServiceSystemDefinition OUT_ROAD = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5, true);
 
 
         public static Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> availableDefinitions
@@ -58,46 +58,46 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
                     m_availableDefinitions[CARG_TRAIN] = SVMServiceVehicleExtensionCrgTra.instance;
                     m_availableDefinitions[CARG_SHIP] = SVMServiceVehicleExtensionCrgShp.instance;
 
-                    m_availableDefinitions[OUT_TRAIN] = SVMServiceVehicleExtensionOutTra.instance;
-                    m_availableDefinitions[OUT_SHIP] = SVMServiceVehicleExtensionOutShp.instance;
-                    m_availableDefinitions[OUT_PLANE] = SVMServiceVehicleExtensionOutPln.instance;
-                    m_availableDefinitions[OUT_ROAD] = SVMServiceVehicleExtensionOutCar.instance;
+                    //m_availableDefinitions[OUT_TRAIN] = SVMServiceVehicleExtensionOutTra.instance;
+                    //m_availableDefinitions[OUT_SHIP] = SVMServiceVehicleExtensionOutShp.instance;
+                    //m_availableDefinitions[OUT_PLANE] = SVMServiceVehicleExtensionOutPln.instance;
+                    //m_availableDefinitions[OUT_ROAD] = SVMServiceVehicleExtensionOutCar.instance;
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
+                    //{
                         m_availableDefinitions[PRISION_CAR] = SVMServiceVehicleExtensionPriCar.instance;
                         m_availableDefinitions[TAXI_CAR] = SVMServiceVehicleExtensionTaxCar.instance;
-                    }
+                    //}
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
+                    //{
                         m_availableDefinitions[ROAD_CAR] = SVMServiceVehicleExtensionRoaCar.instance;
                         m_availableDefinitions[SNOW_CAR] = SVMServiceVehicleExtensionSnwCar.instance;
-                    }
+                    //}
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
+                    //{
                         m_availableDefinitions[DISASTER_CAR] = SVMServiceVehicleExtensionDisCar.instance;
                         m_availableDefinitions[DISASTER_HELICOPTER] = SVMServiceVehicleExtensionDisHel.instance;
                         m_availableDefinitions[FIRE_HELICOPTER] = SVMServiceVehicleExtensionFirHel.instance;
                         m_availableDefinitions[HEALTHCARE_HELICOPTER] = SVMServiceVehicleExtensionHcrHel.instance;
                         m_availableDefinitions[POLICE_HELICOPTER] = SVMServiceVehicleExtensionPolHel.instance;
                         m_availableDefinitions[WATER_CAR] = SVMServiceVehicleExtensionWatCar.instance;
-                    }
+                    //}
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
+                    //{
                         m_availableDefinitions[CABLECAR_CABLECAR] = SVMServiceVehicleExtensionCcrCcr.instance;
-                    }
+                    //}
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
+                    //{
                         m_availableDefinitions[GARBBIO_CAR] = SVMServiceVehicleExtensionGbcCar.instance;
-                    }
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
-                    {
+                    //}
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
+                    //{
                         m_availableDefinitions[BEAU_CAR] = SVMServiceVehicleExtensionBeaCar.instance;
-                    }
+                    //}
                 }
                 return m_availableDefinitions;
             }
@@ -119,47 +119,47 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
                     m_sysDefinitions[CARG_TRAIN] = typeof(SVMSysDefCrgTra);
                     m_sysDefinitions[CARG_SHIP] = typeof(SVMSysDefCrgShp);
 
-                    m_sysDefinitions[OUT_PLANE] = typeof(SVMSysDefOutPln);
-                    m_sysDefinitions[OUT_TRAIN] = typeof(SVMSysDefOutTra);
-                    m_sysDefinitions[OUT_SHIP] = typeof(SVMSysDefOutShp);
-                    m_sysDefinitions[OUT_ROAD] = typeof(SVMSysDefOutCar);
+                    //m_sysDefinitions[OUT_PLANE] = typeof(SVMSysDefOutPln);
+                    //m_sysDefinitions[OUT_TRAIN] = typeof(SVMSysDefOutTra);
+                    //m_sysDefinitions[OUT_SHIP] = typeof(SVMSysDefOutShp);
+                    //m_sysDefinitions[OUT_ROAD] = typeof(SVMSysDefOutCar);
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
+                    //{
                         m_sysDefinitions[PRISION_CAR] = typeof(SVMSysDefPriCar);
                         m_sysDefinitions[TAXI_CAR] = typeof(SVMSysDefTaxCar);
-                    }
+                    //}
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
+                    //{
                         m_sysDefinitions[ROAD_CAR] = typeof(SVMSysDefRoaCar);
                         m_sysDefinitions[SNOW_CAR] = typeof(SVMSysDefSnwCar);
-                    }
+                    //}
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
+                    //{
                         m_sysDefinitions[WATER_CAR] = typeof(SVMSysDefWatCar);
                         m_sysDefinitions[DISASTER_CAR] = typeof(SVMSysDefDisCar);
                         m_sysDefinitions[DISASTER_HELICOPTER] = typeof(SVMSysDefDisHel);
                         m_sysDefinitions[FIRE_HELICOPTER] = typeof(SVMSysDefFirHel);
                         m_sysDefinitions[HEALTHCARE_HELICOPTER] = typeof(SVMSysDefHcrHel);
                         m_sysDefinitions[POLICE_HELICOPTER] = typeof(SVMSysDefPolHel);
-                    }
+                    //}
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
+                    //{
                         m_sysDefinitions[CABLECAR_CABLECAR] = typeof(SVMSysDefCcrCcr);
-                    }
+                    //}
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
+                    //{
                         m_sysDefinitions[GARBBIO_CAR] = typeof(SVMSysDefGbcCar);
-                    }
+                    //}
 
-                    if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
-                    {
+                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
+                    //{
                         m_sysDefinitions[BEAU_CAR] = typeof(SVMSysDefBeaCar);
-                    }
+                    //}
                 }
                 return m_sysDefinitions;
             }
@@ -284,7 +284,8 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         public SVMConfigWarehouse.ConfigIndex toConfigIndex()
         {
-            return SVMConfigWarehouse.getConfigServiceSystemForDefinition(this);
+            var th = this;
+            return SVMConfigWarehouse.getConfigServiceSystemForDefinition(ref th);
         }
 
         public override string ToString()
@@ -333,9 +334,9 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     internal sealed class SVMSysDefRegPln : SVMSysDef<SVMSysDefRegPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_PLANE; } }
     internal sealed class SVMSysDefCrgTra : SVMSysDef<SVMSysDefCrgTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CARG_TRAIN; } }
     internal sealed class SVMSysDefCrgShp : SVMSysDef<SVMSysDefCrgShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CARG_SHIP; } }
-    internal sealed class SVMSysDefOutShp : SVMSysDef<SVMSysDefOutShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_SHIP; } }
-    internal sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_TRAIN; } }
-    internal sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_PLANE; } }
-    internal sealed class SVMSysDefOutCar : SVMSysDef<SVMSysDefOutCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_ROAD; } }
+    //internal sealed class SVMSysDefOutShp : SVMSysDef<SVMSysDefOutShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_SHIP; } }
+    //internal sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_TRAIN; } }
+    //internal sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_PLANE; } }
+    //internal sealed class SVMSysDefOutCar : SVMSysDef<SVMSysDefOutCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_ROAD; } }
     internal sealed class SVMSysDefBeaCar : SVMSysDef<SVMSysDefBeaCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.BEAU_CAR; } }
 }

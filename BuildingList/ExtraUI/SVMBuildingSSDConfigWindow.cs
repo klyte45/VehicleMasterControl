@@ -346,9 +346,9 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
     internal sealed class SVMBuildingSSDConfigWindowRegPln : SVMBuildingSSDConfigWindow<SVMSysDefRegPln> { }
     internal sealed class SVMBuildingSSDConfigWindowCrgTra : SVMBuildingSSDConfigWindow<SVMSysDefCrgTra> { }
     internal sealed class SVMBuildingSSDConfigWindowCrgShp : SVMBuildingSSDConfigWindow<SVMSysDefCrgShp> { }
-    internal sealed class SVMBuildingSSDConfigWindowOutTra : SVMBuildingSSDConfigWindow<SVMSysDefOutTra> { }
-    internal sealed class SVMBuildingSSDConfigWindowOutShp : SVMBuildingSSDConfigWindow<SVMSysDefOutShp> { }
-    internal sealed class SVMBuildingSSDConfigWindowOutPln : SVMBuildingSSDConfigWindow<SVMSysDefOutPln> { }
-    internal sealed class SVMBuildingSSDConfigWindowOutCar : SVMBuildingSSDConfigWindow<SVMSysDefOutCar> { }
+    //internal sealed class SVMBuildingSSDConfigWindowOutTra : SVMBuildingSSDConfigWindow<SVMSysDefOutTra> { }
+    //internal sealed class SVMBuildingSSDConfigWindowOutShp : SVMBuildingSSDConfigWindow<SVMSysDefOutShp> { }
+    //internal sealed class SVMBuildingSSDConfigWindowOutPln : SVMBuildingSSDConfigWindow<SVMSysDefOutPln> { }
+    //internal sealed class SVMBuildingSSDConfigWindowOutCar : SVMBuildingSSDConfigWindow<SVMSysDefOutCar> { }
     internal sealed class SVMBuildingSSDConfigWindowBeaCar : SVMBuildingSSDConfigWindow<SVMSysDefBeaCar> { }
 }

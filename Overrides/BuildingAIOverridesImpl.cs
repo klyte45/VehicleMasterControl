@@ -453,8 +453,8 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             var from2 = typeof(TransportStationAI).GetMethod("CreateOutgoingVehicle", allFlags);
             var to2 = typeof(TransportStationAIOverrides).GetMethod("CreateOutgoingVehicle", allFlags);
             SVMUtils.doLog("Loading Hooks: {0} ({1}=>{2})", typeof(TransportStationAI), from, to);
-            SVMUtils.doLog("Loading Hooks: {0} ({1}=>{2})", typeof(TransportStationAI), from2, to2);
             AddRedirect(from, to);
+            SVMUtils.doLog("Loading Hooks: {0} ({1}=>{2})", typeof(TransportStationAI), from2, to2);
             AddRedirect(from2, to2);
         }
     }
@@ -524,106 +524,107 @@ namespace Klyte.ServiceVehiclesManager.Overrides
         }
     }
 
-    internal sealed class OutsideConnectionAIOverrides : BasicBuildingAIOverrides<OutsideConnectionAIOverrides, OutsideConnectionAI>
-    {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
-        {
-            [TransferManager.TransferReason.DummyTrain] = Tuple.New(VehicleInfo.VehicleType.Train, false, true),
-            [TransferManager.TransferReason.DummyShip] = Tuple.New(VehicleInfo.VehicleType.Ship, false, true),
-            [TransferManager.TransferReason.DummyPlane] = Tuple.New(VehicleInfo.VehicleType.Plane, false, true),
-            [TransferManager.TransferReason.DummyCar] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
-        };
+    /* internal sealed class OutsideConnectionAIOverrides : BasicBuildingAIOverrides<OutsideConnectionAIOverrides, OutsideConnectionAI>
+     {
+         private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+         {
+             [TransferManager.TransferReason.DummyTrain] = Tuple.New(VehicleInfo.VehicleType.Train, false, true),
+             [TransferManager.TransferReason.DummyShip] = Tuple.New(VehicleInfo.VehicleType.Ship, false, true),
+             [TransferManager.TransferReason.DummyPlane] = Tuple.New(VehicleInfo.VehicleType.Plane, false, true),
+             [TransferManager.TransferReason.DummyCar] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
+         };
 
-        public override bool AllowVehicleType(VehicleInfo.VehicleType type, OutsideConnectionAI ai) => type == VehicleInfo.VehicleType.Train || type == VehicleInfo.VehicleType.Car || type == VehicleInfo.VehicleType.Ship || type == VehicleInfo.VehicleType.Plane;
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(OutsideConnectionAI ai, TransferManager.TransferOffer offer)
-        {
-            if (offer.TransportLine != 0)
-            {
-                return new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
-            }
-            return reasons;
-        }
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => null;
+         public override bool AllowVehicleType(VehicleInfo.VehicleType type, OutsideConnectionAI ai) => type == VehicleInfo.VehicleType.Train || type == VehicleInfo.VehicleType.Car || type == VehicleInfo.VehicleType.Ship || type == VehicleInfo.VehicleType.Plane;
+         public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(OutsideConnectionAI ai, TransferManager.TransferOffer offer)
+         {
+             if (offer.TransportLine != 0)
+             {
+                 return new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
+             }
+             return reasons;
+         }
+         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => null;
 
-        public override void AwakeBody()
-        {
-            instance = this;
-            var from = typeof(OutsideConnectionAI).GetMethod("StartConnectionTransferImpl", allFlags);
-            var to = typeof(OutsideConnectionAIOverrides).GetMethod("StartTransferOverride", allFlags);
-            SVMUtils.doLog("Loading Hooks: {0} ({1}=>{2})", typeof(OutsideConnectionAI), from, to);
-            AddRedirect(from, to);
-        }
-        private static bool StartTransferOverride(ushort buildingID, ref Building data, TransferManager.TransferReason material, TransferManager.TransferOffer offer)
-        {
+         public override void AwakeBody()
+         {
+             instance = this;
+             var from = typeof(OutsideConnectionAI).GetMethod("StartConnectionTransferImpl", allFlags);
+             var to = typeof(OutsideConnectionAIOverrides).GetMethod("StartTransferOverride", allFlags);
+             SVMUtils.doLog("Loading Hooks: {0} ({1}=>{2})", typeof(OutsideConnectionAI), from, to);
+             AddRedirect(from, to);
+         }
+         private static bool StartTransferOverride(ushort buildingID, ref Building data, TransferManager.TransferReason material, TransferManager.TransferOffer offer)
+         {
 
-            SVMUtils.doLog("START TRANSFER: {0} , {1}", typeof(OutsideConnectionAI), material);
-            ServiceSystemDefinition def = null;
-            switch (material)
-            {
-                case TransferManager.TransferReason.DummyTrain:
-                    if (offer.Building != buildingID)
-                    {
-                        if (Singleton<SimulationManager>.instance.m_randomizer.Int32(2u) == 0)
-                        {
-                            def = ServiceSystemDefinition.CARG_TRAIN;
-                        }
-                        else
-                        {
-                            def = ServiceSystemDefinition.REG_TRAIN;
-                        }
-                        goto OfferProcessing;
-                    }
-                    break;
-                case TransferManager.TransferReason.DummyShip:
-                    if (offer.Building != buildingID)
-                    {
-                        if (Singleton<SimulationManager>.instance.m_randomizer.Int32(2u) == 0)
-                        {
-                            def = ServiceSystemDefinition.CARG_SHIP;
-                        }
-                        else
-                        {
-                            def = ServiceSystemDefinition.REG_SHIP;
-                        }
-                        goto OfferProcessing;
-                    }
-                    break;
-                case TransferManager.TransferReason.DummyPlane:
-                    if (offer.Building != buildingID)
-                    {
-                        def = ServiceSystemDefinition.REG_PLANE;
-                        goto OfferProcessing;
-                    }
-                    break;
-            }
-            SVMUtils.doLog("END TRANSFER: {0} , {1} (not set)", typeof(OutsideConnectionAI), material);
-            return true;
+             SVMUtils.doLog("START TRANSFER: {0} , {1}", typeof(OutsideConnectionAI), material);
+             ServiceSystemDefinition def = null;
+             switch (material)
+             {
+                 case TransferManager.TransferReason.DummyTrain:
+                     if (offer.Building != buildingID)
+                     {
+                         if (Singleton<SimulationManager>.instance.m_randomizer.Int32(2u) == 0)
+                         {
+                             def = ServiceSystemDefinition.CARG_TRAIN;
+                         }
+                         else
+                         {
+                             def = ServiceSystemDefinition.REG_TRAIN;
+                         }
+                         goto OfferProcessing;
+                     }
+                     break;
+                 case TransferManager.TransferReason.DummyShip:
+                     if (offer.Building != buildingID)
+                     {
+                         if (Singleton<SimulationManager>.instance.m_randomizer.Int32(2u) == 0)
+                         {
+                             def = ServiceSystemDefinition.CARG_SHIP;
+                         }
+                         else
+                         {
+                             def = ServiceSystemDefinition.REG_SHIP;
+                         }
+                         goto OfferProcessing;
+                     }
+                     break;
+                 case TransferManager.TransferReason.DummyPlane:
+                     if (offer.Building != buildingID)
+                     {
+                         def = ServiceSystemDefinition.REG_PLANE;
+                         goto OfferProcessing;
+                     }
+                     break;
+             }
+             SVMUtils.doLog("END TRANSFER: {0} , {1} (not set)", typeof(OutsideConnectionAI), material);
+             return true;
 
-            OfferProcessing:
-            SVMUtils.doLog("[{1}] SSD = {0}", def, material);
-            VehicleInfo randomVehicleInfo = ServiceSystemDefinition.availableDefinitions[def].GetAModel(offer.Building);
-            SVMUtils.doLog("[{1}] Veh = {0}", randomVehicleInfo?.ToString() ?? "<NULL>", material);
-            if (randomVehicleInfo != null)
-            {
-                Array16<Vehicle> vehicles = Singleton<VehicleManager>.instance.m_vehicles;
-                if (Singleton<VehicleManager>.instance.CreateVehicle(out ushort vehId, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, data.m_position, material, false, true))
-                {
-                    Vehicle[] expr_BB7_cp_0 = vehicles.m_buffer;
-                    ushort expr_BB7_cp_1 = vehId;
-                    expr_BB7_cp_0[(int)expr_BB7_cp_1].m_flags = (expr_BB7_cp_0[(int)expr_BB7_cp_1].m_flags | Vehicle.Flags.DummyTraffic);
-                    Vehicle[] expr_BD6_cp_0 = vehicles.m_buffer;
-                    ushort expr_BD6_cp_1 = vehId;
-                    expr_BD6_cp_0[(int)expr_BD6_cp_1].m_flags = (expr_BD6_cp_0[(int)expr_BD6_cp_1].m_flags & ~Vehicle.Flags.WaitingCargo);
+             OfferProcessing:
+             SVMUtils.doLog("[{1}] SSD = {0}", def, material);
+             VehicleInfo randomVehicleInfo = ServiceSystemDefinition.availableDefinitions[def].GetAModel(offer.Building);
+             SVMUtils.doLog("[{1}] Veh = {0}", randomVehicleInfo?.ToString() ?? "<NULL>", material);
+             if (randomVehicleInfo != null)
+             {
+                 Array16<Vehicle> vehicles = Singleton<VehicleManager>.instance.m_vehicles;
+                 if (Singleton<VehicleManager>.instance.CreateVehicle(out ushort vehId, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, data.m_position, material, false, true))
+                 {
+                     Vehicle[] expr_BB7_cp_0 = vehicles.m_buffer;
+                     ushort expr_BB7_cp_1 = vehId;
+                     expr_BB7_cp_0[(int)expr_BB7_cp_1].m_flags = (expr_BB7_cp_0[(int)expr_BB7_cp_1].m_flags | Vehicle.Flags.DummyTraffic);
+                     Vehicle[] expr_BD6_cp_0 = vehicles.m_buffer;
+                     ushort expr_BD6_cp_1 = vehId;
+                     expr_BD6_cp_0[(int)expr_BD6_cp_1].m_flags = (expr_BD6_cp_0[(int)expr_BD6_cp_1].m_flags & ~Vehicle.Flags.WaitingCargo);
 
-                    randomVehicleInfo.m_vehicleAI.SetSource(vehId, ref vehicles.m_buffer[(int)vehId], buildingID);
-                    randomVehicleInfo.m_vehicleAI.StartTransfer(vehId, ref vehicles.m_buffer[(int)vehId], material, offer);
-                    SVMUtils.doLog("END TRANSFER: {0} , {1} (found)", typeof(OutsideConnectionAI), material);
-                    return false;
-                }
-            }
-            SVMUtils.doLog("END TRANSFER: {0} , {1} (not found)", typeof(OutsideConnectionAI), material);
-            return true;
-        }
+                     randomVehicleInfo.m_vehicleAI.SetSource(vehId, ref vehicles.m_buffer[(int)vehId], buildingID);
+                     randomVehicleInfo.m_vehicleAI.StartTransfer(vehId, ref vehicles.m_buffer[(int)vehId], material, offer);
+                     SVMUtils.doLog("END TRANSFER: {0} , {1} (found)", typeof(OutsideConnectionAI), material);
+                     return false;
+                 }
+             }
+             SVMUtils.doLog("END TRANSFER: {0} , {1} (not found)", typeof(OutsideConnectionAI), material);
+             return true;
+         }
 
-    }
+     }
+     */
 }

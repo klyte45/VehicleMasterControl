@@ -10,73 +10,6 @@ using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.UI
 {
-    internal abstract class SVMTabControllerBuildingHooks<T, V> : Redirector<T> where T : SVMTabControllerBuildingHooks<T, V> where V : SVMSysDef<V>
-    {
-        private static SVMTabControllerBuildingHooks<T, V> instance;
-
-        public static void AfterCreateBuilding(bool __result, BuildingInfo info)
-        {
-            if (__result && SVMTabControllerBuildingList<V>.exists && (Singleton<V>.instance?.GetSSD()?.isFromSystem(info) ?? false))
-            {
-                SVMTabControllerBuildingList<V>.instance.m_LinesUpdated = false;
-            }
-        }
-        public static void AfterRemoveBuilding(ushort building)
-        {
-            if (SVMTabControllerBuildingList<V>.exists && (Singleton<V>.instance?.GetSSD()?.isFromSystem(Singleton<BuildingManager>.instance?.m_buildings?.m_buffer?[building].Info) ?? false))
-            {
-                SVMTabControllerBuildingList<V>.instance.m_LinesUpdated = false;
-            }
-        }
-
-        public override void AwakeBody()
-        {
-            instance = this;
-            ServiceSystemDefinition def = Singleton<V>.instance.GetSSD();
-
-            var from = typeof(BuildingManager).GetMethod("CreateBuilding", allFlags);
-            var to = typeof(SVMTabControllerBuildingHooks<T, V>).GetMethod("AfterCreateBuilding", allFlags);
-            var from2 = typeof(BuildingManager).GetMethod("ReleaseBuilding", allFlags);
-            var to2 = typeof(SVMTabControllerBuildingHooks<T, V>).GetMethod("AfterRemoveBuilding", allFlags);
-            SVMUtils.doLog("Loading After Hooks: {0} ({1}=>{2})", typeof(BuildingManager), from, to);
-            SVMUtils.doLog("Loading After Hooks: {0} ({1}=>{2})", typeof(BuildingManager), from2, to2);
-            AddRedirect(from, null, to);
-            AddRedirect(from2, null, to2);
-        }
-        public override void doLog(string text, params object[] param)
-        {
-            SVMUtils.doLog(text, param);
-        }
-    }
-    internal sealed class SVMTabControllerBuildingHooksDisCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksDisCar, SVMSysDefDisCar> { }
-    internal sealed class SVMTabControllerBuildingHooksDisHel : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksDisHel, SVMSysDefDisHel> { }
-    internal sealed class SVMTabControllerBuildingHooksFirCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksFirCar, SVMSysDefFirCar> { }
-    internal sealed class SVMTabControllerBuildingHooksFirHel : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksFirHel, SVMSysDefFirHel> { }
-    internal sealed class SVMTabControllerBuildingHooksGarCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksGarCar, SVMSysDefGarCar> { }
-    internal sealed class SVMTabControllerBuildingHooksGbcCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksGbcCar, SVMSysDefGbcCar> { }
-    internal sealed class SVMTabControllerBuildingHooksHcrCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksHcrCar, SVMSysDefHcrCar> { }
-    internal sealed class SVMTabControllerBuildingHooksHcrHel : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksHcrHel, SVMSysDefHcrHel> { }
-    internal sealed class SVMTabControllerBuildingHooksPolCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksPolCar, SVMSysDefPolCar> { }
-    internal sealed class SVMTabControllerBuildingHooksPolHel : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksPolHel, SVMSysDefPolHel> { }
-    internal sealed class SVMTabControllerBuildingHooksRoaCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRoaCar, SVMSysDefRoaCar> { }
-    internal sealed class SVMTabControllerBuildingHooksWatCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksWatCar, SVMSysDefWatCar> { }
-    internal sealed class SVMTabControllerBuildingHooksPriCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksPriCar, SVMSysDefPriCar> { }
-    internal sealed class SVMTabControllerBuildingHooksDcrCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksDcrCar, SVMSysDefDcrCar> { }
-    internal sealed class SVMTabControllerBuildingHooksTaxCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksTaxCar, SVMSysDefTaxCar> { }
-    internal sealed class SVMTabControllerBuildingHooksCcrCcr : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksCcrCcr, SVMSysDefCcrCcr> { }
-    internal sealed class SVMTabControllerBuildingHooksSnwCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksSnwCar, SVMSysDefSnwCar> { }
-    internal sealed class SVMTabControllerBuildingHooksRegTra : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRegTra, SVMSysDefRegTra> { }
-    internal sealed class SVMTabControllerBuildingHooksRegShp : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRegShp, SVMSysDefRegShp> { }
-    internal sealed class SVMTabControllerBuildingHooksRegPln : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksRegPln, SVMSysDefRegPln> { }
-    internal sealed class SVMTabControllerBuildingHooksCrgTra : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksCrgTra, SVMSysDefCrgTra> { }
-    internal sealed class SVMTabControllerBuildingHooksCrgShp : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksCrgShp, SVMSysDefCrgShp> { }
-    internal sealed class SVMTabControllerBuildingHooksOutTra : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutTra, SVMSysDefOutTra> { }
-    internal sealed class SVMTabControllerBuildingHooksOutShp : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutShp, SVMSysDefOutShp> { }
-    internal sealed class SVMTabControllerBuildingHooksOutPln : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutPln, SVMSysDefOutPln> { }
-    internal sealed class SVMTabControllerBuildingHooksOutCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksOutCar, SVMSysDefOutCar> { }
-    internal sealed class SVMTabControllerBuildingHooksBeaCar : SVMTabControllerBuildingHooks<SVMTabControllerBuildingHooksBeaCar, SVMSysDefBeaCar> { }
-
-
 
     internal abstract class SVMTabControllerBuildingList<T> : UICustomControl where T : SVMSysDef<T>
     {
@@ -86,9 +19,10 @@ namespace Klyte.ServiceVehiclesManager.UI
             get { return instance != null; }
         }
 
+        public bool m_LinesUpdated = false;
         private UIScrollablePanel mainPanel;
         private static readonly string kLineTemplate = "LineTemplate";
-        public bool m_LinesUpdated = false;
+
 
         #region Awake
         private void Awake()
@@ -102,7 +36,11 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private void Update()
         {
-            if (!mainPanel.isVisible) return;
+            if (!mainPanel.isVisible)
+            {
+                m_LinesUpdated = false;
+                return;
+            }
             if (!this.m_LinesUpdated)
             {
                 this.RefreshLines();
@@ -188,10 +126,10 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerBuildingListRegPln : SVMTabControllerBuildingList<SVMSysDefRegPln> { }
     internal sealed class SVMTabControllerBuildingListCrgTra : SVMTabControllerBuildingList<SVMSysDefCrgTra> { }
     internal sealed class SVMTabControllerBuildingListCrgShp : SVMTabControllerBuildingList<SVMSysDefCrgShp> { }
-    internal sealed class SVMTabControllerBuildingListOutTra : SVMTabControllerBuildingList<SVMSysDefOutTra> { }
-    internal sealed class SVMTabControllerBuildingListOutShp : SVMTabControllerBuildingList<SVMSysDefOutShp> { }
-    internal sealed class SVMTabControllerBuildingListOutPln : SVMTabControllerBuildingList<SVMSysDefOutPln> { }
-    internal sealed class SVMTabControllerBuildingListOutCar : SVMTabControllerBuildingList<SVMSysDefOutCar> { }
+    //internal sealed class SVMTabControllerBuildingListOutTra : SVMTabControllerBuildingList<SVMSysDefOutTra> { }
+    //internal sealed class SVMTabControllerBuildingListOutShp : SVMTabControllerBuildingList<SVMSysDefOutShp> { }
+    //internal sealed class SVMTabControllerBuildingListOutPln : SVMTabControllerBuildingList<SVMSysDefOutPln> { }
+    //internal sealed class SVMTabControllerBuildingListOutCar : SVMTabControllerBuildingList<SVMSysDefOutCar> { }
     internal sealed class SVMTabControllerBuildingListBeaCar : SVMTabControllerBuildingList<SVMSysDefBeaCar> { }
 
 }

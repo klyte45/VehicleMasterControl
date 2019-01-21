@@ -295,9 +295,9 @@
     internal sealed class SVMBuildingInfoItemRegPln : SVMBuildingInfoItem<SVMSysDefRegPln> { }
     internal sealed class SVMBuildingInfoItemCrgTra : SVMBuildingInfoItem<SVMSysDefCrgTra> { }
     internal sealed class SVMBuildingInfoItemCrgShp : SVMBuildingInfoItem<SVMSysDefCrgShp> { }
-    internal sealed class SVMBuildingInfoItemOutTra : SVMBuildingInfoItem<SVMSysDefOutTra> { }
-    internal sealed class SVMBuildingInfoItemOutShp : SVMBuildingInfoItem<SVMSysDefOutShp> { }
-    internal sealed class SVMBuildingInfoItemOutPln : SVMBuildingInfoItem<SVMSysDefOutPln> { }
-    internal sealed class SVMBuildingInfoItemOutCar : SVMBuildingInfoItem<SVMSysDefOutCar> { }
+    //internal sealed class SVMBuildingInfoItemOutTra : SVMBuildingInfoItem<SVMSysDefOutTra> { }
+    //internal sealed class SVMBuildingInfoItemOutShp : SVMBuildingInfoItem<SVMSysDefOutShp> { }
+    //internal sealed class SVMBuildingInfoItemOutPln : SVMBuildingInfoItem<SVMSysDefOutPln> { }
+    //internal sealed class SVMBuildingInfoItemOutCar : SVMBuildingInfoItem<SVMSysDefOutCar> { }
     internal sealed class SVMBuildingInfoItemBeaCar : SVMBuildingInfoItem<SVMSysDefBeaCar> { }
 }

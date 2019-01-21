@@ -21,9 +21,9 @@ namespace Klyte.ServiceVehiclesManager
             return defaultTrueBoolProperties.Contains(i);
         }
 
-        internal static ConfigIndex getConfigAssetsForAI(ServiceSystemDefinition definition)
+        internal static ConfigIndex getConfigAssetsForAI(ref ServiceSystemDefinition definition)
         {
-            return getConfigServiceSystemForDefinition(definition) | ConfigIndex.EXTENSION_CONFIG_DISTRICT;
+            return getConfigServiceSystemForDefinition(ref definition) | ConfigIndex.EXTENSION_CONFIG_DISTRICT;
         }
 
         public override int getDefaultIntValueForProperty(ConfigIndex i)
@@ -306,12 +306,12 @@ namespace Klyte.ServiceVehiclesManager
 
         };
 
-        internal static ConfigIndex getConfigServiceSystemForDefinition(ServiceSystemDefinition serviceSystemDefinition)
+        internal static ConfigIndex getConfigServiceSystemForDefinition(ref ServiceSystemDefinition serviceSystemDefinition)
         {
-            if (serviceSystemDefinition == ServiceSystemDefinition.OUT_TRAIN) return ConfigIndex.OUT_TRAIN;
-            if (serviceSystemDefinition == ServiceSystemDefinition.OUT_PLANE) return ConfigIndex.OUT_PLANE;
-            if (serviceSystemDefinition == ServiceSystemDefinition.OUT_SHIP) return ConfigIndex.OUT_SHIP;
-            if (serviceSystemDefinition == ServiceSystemDefinition.OUT_ROAD) return ConfigIndex.OUT_ROAD;
+            //if (serviceSystemDefinition == ServiceSystemDefinition.OUT_TRAIN) return ConfigIndex.OUT_TRAIN;
+            //if (serviceSystemDefinition == ServiceSystemDefinition.OUT_PLANE) return ConfigIndex.OUT_PLANE;
+            //if (serviceSystemDefinition == ServiceSystemDefinition.OUT_SHIP) return ConfigIndex.OUT_SHIP;
+            //if (serviceSystemDefinition == ServiceSystemDefinition.OUT_ROAD) return ConfigIndex.OUT_ROAD;
             if (serviceSystemDefinition == ServiceSystemDefinition.DISASTER_CAR) return ConfigIndex.DISASTER_CAR;
             if (serviceSystemDefinition == ServiceSystemDefinition.DISASTER_HELICOPTER) return ConfigIndex.DISASTER_HELICOPTER;
             if (serviceSystemDefinition == ServiceSystemDefinition.FIRE_CAR) return ConfigIndex.FIRE_CAR;

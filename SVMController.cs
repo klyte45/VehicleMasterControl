@@ -33,6 +33,7 @@ namespace Klyte.ServiceVehiclesManager
 
             foreach (Type t in instances)
             {
+                SVMUtils.doLog($"ADD REDIR: [{t.Name}]");
                 gameObject.AddComponent(t);
             }
         }
