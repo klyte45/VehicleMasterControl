@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 {
-    internal interface ISVMTransportTypeExtension : ISVMAssetSelectorExtension, ISVMIgnorableDistrictExtensionValue, ISVMColorSelectableExtensionValue
+    internal interface ISVMTransportTypeExtension : ISVMAssetSelectorExtension, ISVMIgnorableDistrictExtensionValue, ISVMColorSelectableExtensionValue, ISVMDistrictServiceRestrictions
     {
     }
 
@@ -309,7 +309,83 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             CleanColor(id | BUILDING_FLAG);
         }
 
+        #endregion
 
+        #region District service restrictions
+        private bool? m_allowDistrictServiceRestrictions;
+
+        public bool GetAllowDistrictServiceRestrictions()
+        {
+            if (m_allowDistrictServiceRestrictions == null)
+            {
+                m_allowDistrictServiceRestrictions = Singleton<SSD>.instance.GetSSD().service != ItemClass.Service.PublicTransport || Singleton<SSD>.instance.GetSSD().subService == ItemClass.SubService.PublicTransportTaxi;
+            }
+            return m_allowDistrictServiceRestrictions ?? false;
+        }
+
+        public bool? GetAllowOutsiders(uint district)
+        {
+            if (!GetAllowDistrictServiceRestrictions()) throw new Exception("This behaviour not applies to Public Transport (except Taxi)");
+            if (!Boolean.TryParse(SafeGet(district | DISTRICT_FLAG, BuildingConfig.DISTRICT_ALLOW_OUTSIDERS), out bool result))
+            {
+                return null;
+            }
+            return result;
+        }
+
+        public void SetAllowOutsiders(uint district, bool value)
+        {
+            if (!GetAllowDistrictServiceRestrictions()) throw new Exception("This behaviour not applies to Public Transport (except Taxi)");
+            SafeSet(district | DISTRICT_FLAG, BuildingConfig.DISTRICT_ALLOW_OUTSIDERS, value.ToString());
+        }
+
+        public bool? GetAllowGoOutside(uint district)
+        {
+            if (!GetAllowDistrictServiceRestrictions()) throw new Exception("This behaviour not applies to Public Transport (except Taxi)");
+            if (!Boolean.TryParse(SafeGet(district | DISTRICT_FLAG, BuildingConfig.DISTRICT_ALLOW_GO_OTHERS), out bool result))
+            {
+                return null;
+            }
+            return result;
+        }
+
+        public void SetAllowGoOutside(uint district, bool value)
+        {
+            if (!GetAllowDistrictServiceRestrictions()) throw new Exception("This behaviour not applies to Public Transport (except Taxi)");
+            SafeSet(district | DISTRICT_FLAG, BuildingConfig.DISTRICT_ALLOW_GO_OTHERS, value.ToString());
+        }
+
+        public bool GetAllowOutsidersEffective(uint district)
+        {
+            if (district == 0) return true;
+            var value = GetAllowOutsiders(district);
+            if (value == null)
+            {
+                return GetAllowOutsiders(0) ?? ServiceVehiclesManagerMod.allowOutsidersAsDefault;
+            }
+            return value ?? true;
+        }
+
+        public bool GetAllowGoOutsideEffective(uint district)
+        {
+            if (district == 0) return true;
+            var value = GetAllowGoOutside(district);
+            if (value == null)
+            {
+                return GetAllowGoOutside(0) ?? ServiceVehiclesManagerMod.allowGoOutsideAsDefault;
+            }
+            return value ?? true;
+        }
+
+        public void CleanAllowOutsiders(uint district)
+        {
+            SafeCleanProperty(district | DISTRICT_FLAG, BuildingConfig.DISTRICT_ALLOW_OUTSIDERS);
+        }
+
+        public void CleanAllowGoOutside(uint district)
+        {
+            SafeCleanProperty(district | DISTRICT_FLAG, BuildingConfig.DISTRICT_ALLOW_GO_OTHERS);
+        }
         #endregion
     }
 
@@ -322,6 +398,21 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     {
         bool GetIgnoreDistrict(uint buildingId);
         void SetIgnoreDistrict(uint buildingId, bool value);
+    }
+
+    internal interface ISVMDistrictServiceRestrictions : ISVMConfigIndexKeyContainer
+    {
+        bool GetAllowDistrictServiceRestrictions();
+
+        bool? GetAllowOutsiders(uint district);
+        bool GetAllowOutsidersEffective(uint district);
+        void SetAllowOutsiders(uint district, bool value);
+        void CleanAllowOutsiders(uint district);
+
+        bool? GetAllowGoOutside(uint district);
+        bool GetAllowGoOutsideEffective(uint district);
+        void SetAllowGoOutside(uint district, bool value);
+        void CleanAllowGoOutside(uint district);
     }
 
 
@@ -384,6 +475,8 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     //internal sealed class SVMServiceVehicleExtensionOutPln : SVMServiceVehicleExtension<SVMSysDefOutPln, SVMServiceVehicleExtensionOutPln> { }
     //internal sealed class SVMServiceVehicleExtensionOutCar : SVMServiceVehicleExtension<SVMSysDefOutPln, SVMServiceVehicleExtensionOutCar> { }
     internal sealed class SVMServiceVehicleExtensionBeaCar : SVMServiceVehicleExtension<SVMSysDefBeaCar, SVMServiceVehicleExtensionBeaCar> { }
+    internal sealed class SVMServiceVehicleExtensionPstCar : SVMServiceVehicleExtension<SVMSysDefPstCar, SVMServiceVehicleExtensionPstCar> { }
+    internal sealed class SVMServiceVehicleExtensionPstTrk : SVMServiceVehicleExtension<SVMSysDefPstTrk, SVMServiceVehicleExtensionPstTrk> { }
 
     public sealed class SVMTransportExtensionUtils
     {
@@ -427,6 +520,8 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     {
         MODELS,
         COLOR,
-        IGNORE_DISTRICT
+        IGNORE_DISTRICT,
+        DISTRICT_ALLOW_OUTSIDERS,
+        DISTRICT_ALLOW_GO_OTHERS
     }
 }

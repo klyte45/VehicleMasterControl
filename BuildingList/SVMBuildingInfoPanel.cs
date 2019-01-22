@@ -250,14 +250,16 @@ namespace Klyte.ServiceVehiclesManager.UI
             List<string> textVehicles = new List<string>();
             foreach (var ssd in ssds)
             {
+                var defLevel = Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)m_buildingIdSelecionado.Building].Info.m_class.m_level;
+
                 int count = 0;
                 int cargo = 0;
                 int capacity = 0;
                 int inbound = 0;
                 int outbound = 0;
-                var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
-                SVMBuildingUtils.CalculateOwnVehicles(m_buildingIdSelecionado.Building, ref b, ext.GetManagedReasons(b.Info).Keys, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
-                var maxField = ext.GetVehicleMaxCountField(ssd.vehicleType);
+                var extstr = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
+                SVMBuildingUtils.CalculateOwnVehicles(m_buildingIdSelecionado.Building, ref b, extstr.GetManagedReasons(b.Info).Where(x => (x.Value.vehicleLevel ?? defLevel) == ssd.level).Select(x => x.Key), ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                var maxField = extstr.GetVehicleMaxCountField(ssd.vehicleType, ssd.level);
                 int maxVehicles = (SVMUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
                 string maxVehiclesStr = maxField == null || maxVehicles > 0x3FFF ? "∞" : maxVehicles.ToString();
                 textVehicles.Add($"{count}/{maxVehiclesStr} ({Locale.Get("SVM_VEHICLE_TYPE", ssd.vehicleType.ToString())})");

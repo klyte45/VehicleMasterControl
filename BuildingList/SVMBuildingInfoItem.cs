@@ -7,6 +7,7 @@
     using Klyte.Commons.Utils;
     using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
     using Klyte.ServiceVehiclesManager.Overrides;
+    using System.Linq;
     using UnityEngine;
     using Utils;
     internal abstract class SVMBuildingInfoItem<T> : ToolsModifierControl where T : SVMSysDef<T>
@@ -76,6 +77,8 @@
             this.m_buildingID = id;
         }
 
+        private ServiceSystemDefinition sysDef = Singleton<T>.instance.GetSSD();
+
 
 
         public void RefreshData()
@@ -94,9 +97,11 @@
                 int capacity = 0;
                 int inbound = 0;
                 int outbound = 0;
-                var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
-                SVMBuildingUtils.CalculateOwnVehicles(buildingId, ref b, ext.GetManagedReasons(b.Info).Keys, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
-                int maxCount = SVMBuildingUtils.GetMaxVehiclesBuilding(buildingId, SVMSysDef<T>.instance.GetSSD().vehicleType);
+                var extstr = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
+                var defLevel = b.Info.m_class.m_level;
+                SVMBuildingUtils.CalculateOwnVehicles(buildingId, ref b, extstr.GetManagedReasons(b.Info).Where(x => (x.Value.vehicleLevel ?? defLevel) == sysDef.level).Select(x => x.Key), ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+
+                int maxCount = SVMBuildingUtils.GetMaxVehiclesBuilding(buildingId, sysDef.vehicleType, sysDef.level);
                 m_totalVehicles.prefix = count.ToString();
                 m_totalVehicles.suffix = maxCount > 0x3FFF ? "∞" : maxCount.ToString();
                 if (Singleton<T>.instance.GetSSD().outsideConnection)
@@ -300,4 +305,6 @@
     //internal sealed class SVMBuildingInfoItemOutPln : SVMBuildingInfoItem<SVMSysDefOutPln> { }
     //internal sealed class SVMBuildingInfoItemOutCar : SVMBuildingInfoItem<SVMSysDefOutCar> { }
     internal sealed class SVMBuildingInfoItemBeaCar : SVMBuildingInfoItem<SVMSysDefBeaCar> { }
+    internal sealed class SVMBuildingInfoItemPstCar : SVMBuildingInfoItem<SVMSysDefPstCar> { }
+    internal sealed class SVMBuildingInfoItemPstTrk : SVMBuildingInfoItem<SVMSysDefPstTrk> { }
 }

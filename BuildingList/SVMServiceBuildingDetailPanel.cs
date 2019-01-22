@@ -103,6 +103,15 @@ namespace Klyte.ServiceVehiclesManager.UI
             m_StripBuilings.selectedIndex = -1;
             m_StripDistricts.selectedIndex = -1;
 
+            foreach (var strip in m_StripDistrictsStrips.Values)
+            {
+                strip.selectedIndex = -1;
+            }
+            foreach (var strip in m_StripBuilingsStrips.Values)
+            {
+                strip.selectedIndex = -1;
+            }
+
             mainPanel.eventVisibilityChanged += (x, y) =>
             {
                 if (y)
@@ -117,7 +126,9 @@ namespace Klyte.ServiceVehiclesManager.UI
             m_StripMain.selectedIndex = 0;
             if (ssd != null)
             {
-                m_StripBuilings.selectedIndex = m_StripBuilings.Find<UIComponent>(ssd.GetDefType().Name)?.zOrder ?? 0;
+                var catIdx = SVMConfigWarehouse.getCategory(ssd.toConfigIndex());
+                m_StripBuilings.selectedIndex = (int)catIdx;
+                m_StripBuilingsStrips[catIdx].selectedIndex = m_StripBuilingsStrips[catIdx].Find<UIComponent>(ssd.GetDefType().Name)?.zOrder ?? 0;
             }
             SVMController.instance.OpenSVMPanel();
         }

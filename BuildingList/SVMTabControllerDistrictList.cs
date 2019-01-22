@@ -1,4 +1,5 @@
 ﻿using ColossalFramework;
+using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.Utils;
@@ -18,9 +19,13 @@ namespace Klyte.ServiceVehiclesManager.UI
         public UIHelperExtension m_uiHelper;
 
         private UIColorField m_districtColor;
+        private UICheckBox m_districtAllowOutsiders;
+        private UICheckBox m_districtAllowGoOutside;
+        private UIButton m_resetValues;
         private SVMAssetSelectorWindowDistrictTab m_assetSelectorWindow;
 
         private bool allowColorChange;
+        private bool isLoading = true;
 
         private static ISVMTransportTypeExtension extension => Singleton<T>.instance.GetSSD().GetTransportExtension();
 
@@ -54,8 +59,33 @@ namespace Klyte.ServiceVehiclesManager.UI
                 resetColor.localeID = "SVM_RESET_COLOR";
                 resetColor.eventClick += onResetColor;
             }
+            if (extension.GetAllowDistrictServiceRestrictions())
+            {
+                m_districtAllowOutsiders = m_uiHelper.AddCheckboxLocale("SVM_ALLOW_OUTSIDERS", true, (x) =>
+                {
+                    if (!getCurrentSelectedId(out int currentDistrict) || isLoading) return;
+                    extension.SetAllowOutsiders((uint)currentDistrict, x);
+                    m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = Color.white;
+                });
+                m_districtAllowGoOutside = m_uiHelper.AddCheckboxLocale("SVM_ALLOW_GO_OUTSIDE", true, (x) =>
+                {
+                    if (!getCurrentSelectedId(out int currentDistrict) || isLoading) return;
+                    extension.SetAllowGoOutside((uint)currentDistrict, x);
+                    m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = Color.white;
+                });
 
+                m_resetValues = (UIButton)m_uiHelper.AddButton(Locale.Get("SVM_RESET_VALUE_CITY_DEFAULT"), () =>
+                {
+                    if (!getCurrentSelectedId(out int currentDistrict) || isLoading) return;
+                    extension.CleanAllowGoOutside((uint)currentDistrict);
+                    extension.CleanAllowOutsiders((uint)currentDistrict);
+                    onDistrictChanged();
+                });
 
+                m_districtAllowOutsiders.relativePosition = new Vector2(0, 30);
+                m_districtAllowGoOutside.relativePosition = new Vector2(0, 60);
+                m_resetValues.relativePosition = new Vector2(0, 90);
+            }
             SVMUtils.createElement(out m_assetSelectorWindow, mainPanel.transform);
             m_assetSelectorWindow.setTabContent(this);
 
@@ -88,12 +118,21 @@ namespace Klyte.ServiceVehiclesManager.UI
         {
             if (getCurrentSelectedId(out int currentDistrict))
             {
+                isLoading = true;
                 mainPanel.isVisible = true;
                 if (m_districtColor != null)
                 {
                     m_districtColor.selectedColor = Singleton<T>.instance.GetSSD().GetTransportExtension().GetColorDistrict((uint)currentDistrict);
                 }
+                if (m_districtAllowOutsiders != null && m_districtAllowGoOutside != null)
+                {
+                    m_districtAllowOutsiders.isChecked = extension.GetAllowOutsiders((uint)currentDistrict) ?? extension.GetAllowOutsidersEffective((uint)currentDistrict);
+                    m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = extension.GetAllowOutsiders((uint)currentDistrict) == null ? Color.yellow : Color.white;
+                    m_districtAllowGoOutside.isChecked = extension.GetAllowGoOutside((uint)currentDistrict) ?? extension.GetAllowGoOutsideEffective((uint)currentDistrict);
+                    m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = extension.GetAllowGoOutside((uint)currentDistrict) == null ? Color.yellow : Color.white;
+                }
                 eventOnDistrictSelectionChanged?.Invoke(currentDistrict);
+                isLoading = false;
             }
             else
             {
@@ -138,5 +177,7 @@ namespace Klyte.ServiceVehiclesManager.UI
     internal sealed class SVMTabControllerDistrictListCrgTra : SVMTabControllerDistrictList<SVMSysDefCrgTra> { }
     internal sealed class SVMTabControllerDistrictListCrgShp : SVMTabControllerDistrictList<SVMSysDefCrgShp> { }
     internal sealed class SVMTabControllerDistrictListBeaCar : SVMTabControllerDistrictList<SVMSysDefBeaCar> { }
+    internal sealed class SVMTabControllerDistrictListPstCar : SVMTabControllerDistrictList<SVMSysDefPstCar> { }
+    internal sealed class SVMTabControllerDistrictListPstTrk : SVMTabControllerDistrictList<SVMSysDefPstTrk> { }
 
 }

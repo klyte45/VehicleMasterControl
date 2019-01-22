@@ -9,75 +9,84 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using static ItemClass;
 
 namespace Klyte.ServiceVehiclesManager.Overrides
 {
     internal sealed class SVMBuildingAIOverrideUtils
     {
-        private static Dictionary<Type, Type> subtypes = null;
+        private static ILookup<Type, Type> subtypes = null;
 
-        public static IBasicBuildingAIOverrides getBuildingOverrideExtension(BuildingInfo info)
+        public static List<IBasicBuildingAIOverrides> getBuildingOverrideExtension(BuildingInfo info)
         {
             PrefabAI targetAi = info.GetAI();
             Type targetTypeAi = targetAi.GetType();
             if (subtypes == null)
             {
-                subtypes = new Dictionary<Type, Type>();
                 var subclasses = SVMUtils.GetSubtypesRecursive(typeof(BasicBuildingAIOverrides<,>), typeof(SVMBuildingAIOverrideUtils));
                 SVMUtils.doLog("GetOverride pré - subclasses:\r\n\t{0}", string.Join("\r\n\t", subclasses?.Select(x => x.ToString())?.ToArray() ?? new string[0]));
-                foreach (Type t in subclasses)
+                subtypes = subclasses.ToLookup(x =>
                 {
                     try
                     {
-                        subtypes[t.BaseType.GetGenericArguments()[1]] = t;
+                        return x.BaseType.GetGenericArguments()[1];
                     }
                     catch
                     {
-                        SVMUtils.doErrorLog("ERROR ADDING SUBTYPE {0}!\r\n{1}", t, subclasses);
+                        SVMUtils.doErrorLog("ERROR ADDING SUBTYPE {0}!\r\n{1}", x, subclasses);
+                        return null;
                     }
-                }
-                SVMUtils.doLog("GetOverride - Classes:\r\n\t{0}", string.Join("\r\n\t", subtypes?.Select(x => x.Key.ToString() + "=>" + x.Value.ToString())?.ToArray() ?? new string[0]));
+                }, x => x);
+
+                SVMUtils.doLog("GetOverride - Classes:\r\n\t{0}", string.Join("\r\n\t", subtypes?.Select(x => x.Key.ToString() + "=>" + x.ToList().ToString())?.ToArray() ?? new string[0]));
             }
-            Type targetClass = null;
-            IBasicBuildingAIOverrides value = null;
-            if (!subtypes.ContainsKey(targetTypeAi))
+            List<Type> targetClasses = new List<Type>();
+            List<IBasicBuildingAIOverrides> value = null;
+            if (!subtypes.Contains(targetTypeAi))
             {
-                foreach (var clazz in subtypes.Keys)
+                foreach (var clazz in subtypes.Select(x => x.Key))
                 {
                     if (clazz.IsAssignableFrom(targetTypeAi))
                     {
-                        value = (IBasicBuildingAIOverrides)SVMUtils.GetPrivateStaticField("instance", subtypes[clazz]);
-                        //SVMUtils.doLog("GetOverride - clazz = {0}; value = {1}", clazz, value);
-                        if (value.AcceptsAI(targetAi))
+                        foreach (var selClazz in subtypes[clazz])
                         {
-                            targetClass = subtypes[clazz];
-                            break;
+                            var ai = (IBasicBuildingAIOverrides)SVMUtils.GetPrivateStaticField("instance", selClazz);
+                            //SVMUtils.doLog("GetOverride - clazz = {0}; value = {1}", clazz, value);
+                            if (ai.AcceptsAI(targetAi))
+                            {
+                                targetClasses.Add(selClazz);
+                            }
                         }
                     }
                 }
-                SVMUtils.doLog("GetOverride - targetClass = {0} ({1})", targetClass, targetTypeAi);
-                if (targetClass == null) return null;
+                SVMUtils.doLog("GetOverride - targetClasses = {0} ({1})", targetClasses, targetTypeAi);
             }
             else
             {
-                targetClass = subtypes[targetTypeAi];
-                value = (IBasicBuildingAIOverrides)SVMUtils.GetPrivateStaticField("instance", targetClass);
+                targetClasses = subtypes[targetTypeAi].ToList();
             }
+            value = targetClasses.Select(targetClass => (IBasicBuildingAIOverrides)SVMUtils.GetPrivateStaticField("instance", targetClass)).ToList();
             //SVMUtils.doLog("GetOverride - value = {0}", value);
-            return (IBasicBuildingAIOverrides)value;
+            return value;
+        }
+
+        public static IBasicBuildingAIOverrides getBuildingOverrideExtensionStrict(BuildingInfo info)
+        {
+            return getBuildingOverrideExtension(info).FirstOrDefault(x => !x.ExtraAllowedLevels().Contains(info.m_class.m_level));
         }
     }
 
+
     internal sealed class DisasterResponseBuildingAIOverrides : BasicBuildingAIOverrides<DisasterResponseBuildingAIOverrides, DisasterResponseBuildingAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.Collapsed] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
-            [TransferManager.TransferReason.Collapsed2] = Tuple.New(VehicleInfo.VehicleType.Helicopter, true, false),
+            [TransferManager.TransferReason.Collapsed] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.Collapsed2] = new StartTransferCallStructure(VehicleInfo.VehicleType.Helicopter, true, false),
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(DisasterResponseBuildingAI ai, TransferManager.TransferOffer offer) => reasons;
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(DisasterResponseBuildingAI ai, TransferManager.TransferOffer offer) => reasons;
 
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh)
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level)
         {
             if (veh == VehicleInfo.VehicleType.Car)
             {
@@ -94,108 +103,108 @@ namespace Klyte.ServiceVehiclesManager.Overrides
 
     internal sealed class CemeteryAIOverrides : BasicBuildingAIOverrides<CemeteryAIOverrides, CemeteryAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.Dead] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
-            [TransferManager.TransferReason.DeadMove] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
+            [TransferManager.TransferReason.Dead] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.DeadMove] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true),
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(CemeteryAI ai, TransferManager.TransferOffer offer) => reasons;
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_hearseCount";
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(CemeteryAI ai, TransferManager.TransferOffer offer) => reasons;
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_hearseCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, CemeteryAI ai) => type == VehicleInfo.VehicleType.Car;
     }
 
     internal sealed class FireStationAIOverrides : BasicBuildingAIOverrides<FireStationAIOverrides, FireStationAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.Fire] = Tuple.New(VehicleInfo.VehicleType.Car, true, false)
+            [TransferManager.TransferReason.Fire] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false)
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(FireStationAI ai, TransferManager.TransferOffer offer) => reasons;
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_fireTruckCount";
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(FireStationAI ai, TransferManager.TransferOffer offer) => reasons;
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_fireTruckCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, FireStationAI ai) => type == VehicleInfo.VehicleType.Car;
     }
 
     internal sealed class HelicopterDepotAIOverrides : BasicBuildingAIOverrides<HelicopterDepotAIOverrides, HelicopterDepotAI>
     {
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(HelicopterDepotAI ai, TransferManager.TransferOffer offer)
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(HelicopterDepotAI ai, TransferManager.TransferOffer offer)
         {
             var r1 = (TransferManager.TransferReason)SVMUtils.ExecuteReflectionMethod(ai, "GetTransferReason1");
             var r2 = (TransferManager.TransferReason)SVMUtils.ExecuteReflectionMethod(ai, "GetTransferReason2");
 
-            var result = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
+            var result = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>();
 
             if (r1 != TransferManager.TransferReason.None)
             {
-                result[r1] = Tuple.New(VehicleInfo.VehicleType.Helicopter, true, false);
+                result[r1] = new StartTransferCallStructure(VehicleInfo.VehicleType.Helicopter, true, false);
             }
             if (r2 != TransferManager.TransferReason.None)
             {
-                result[r2] = Tuple.New(VehicleInfo.VehicleType.Helicopter, true, false);
+                result[r2] = new StartTransferCallStructure(VehicleInfo.VehicleType.Helicopter, true, false);
             }
 
             return result;
         }
 
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_helicopterCount";
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_helicopterCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, HelicopterDepotAI ai) => type == VehicleInfo.VehicleType.Helicopter;
     }
 
     internal sealed class HospitalAIOverrides : BasicBuildingAIOverrides<HospitalAIOverrides, HospitalAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.Sick] = Tuple.New(VehicleInfo.VehicleType.Car, true, false)
+            [TransferManager.TransferReason.Sick] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false)
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(HospitalAI ai, TransferManager.TransferOffer offer) => reasons;
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(HospitalAI ai, TransferManager.TransferOffer offer) => reasons;
 
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_ambulanceCount";
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_ambulanceCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, HospitalAI ai) => type == VehicleInfo.VehicleType.Car;
     }
 
     internal sealed class MaintenanceDepotAIOverrides : BasicBuildingAIOverrides<MaintenanceDepotAIOverrides, MaintenanceDepotAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.RoadMaintenance] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
-            [TransferManager.TransferReason.ParkMaintenance] = Tuple.New(VehicleInfo.VehicleType.Car, true, false)
+            [TransferManager.TransferReason.RoadMaintenance] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.ParkMaintenance] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false)
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(MaintenanceDepotAI ai, TransferManager.TransferOffer offer) => reasons;
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_maintenanceTruckCount";
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(MaintenanceDepotAI ai, TransferManager.TransferOffer offer) => reasons;
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_maintenanceTruckCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, MaintenanceDepotAI ai) => type == VehicleInfo.VehicleType.Car;
     }
 
     internal sealed class PoliceStationAIOverrides : BasicBuildingAIOverrides<PoliceStationAIOverrides, PoliceStationAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.Crime] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
-            [TransferManager.TransferReason.CriminalMove] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.Crime] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.CriminalMove] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(PoliceStationAI ai, TransferManager.TransferOffer offer) => reasons;
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_policeCarCount";
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(PoliceStationAI ai, TransferManager.TransferOffer offer) => reasons;
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_policeCarCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, PoliceStationAI ai) => type == VehicleInfo.VehicleType.Car;
     }
 
     internal sealed class SnowDumpAIOverrides : BasicBuildingAIOverrides<SnowDumpAIOverrides, SnowDumpAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.Snow] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
-            [TransferManager.TransferReason.SnowMove] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
+            [TransferManager.TransferReason.Snow] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.SnowMove] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true),
         };
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(SnowDumpAI ai, TransferManager.TransferOffer offer) => reasons;
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_snowTruckCount";
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(SnowDumpAI ai, TransferManager.TransferOffer offer) => reasons;
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_snowTruckCount";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, SnowDumpAI ai) => type == VehicleInfo.VehicleType.Car;
     }
 
     internal sealed class WaterFacilityAIOverrides : BasicBuildingAIOverrides<WaterFacilityAIOverrides, WaterFacilityAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.FloodWater] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.FloodWater] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
         };
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsNull = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(WaterFacilityAI ai, TransferManager.TransferOffer offer)
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsNull = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>();
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(WaterFacilityAI ai, TransferManager.TransferOffer offer)
         {
             if (ai.m_sewageOutlet != 0 && ai.m_sewageStorage != 0 && ai.m_pumpingVehicles != 0)
             {
@@ -207,49 +216,189 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             }
         }
 
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_pumpingVehicles";
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_pumpingVehicles";
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, WaterFacilityAI ai) => type == VehicleInfo.VehicleType.Car;
     }
 
     internal sealed class LandfillSiteAIOverrides : BasicBuildingAIOverrides<LandfillSiteAIOverrides, LandfillSiteAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.Garbage] = Tuple.New(VehicleInfo.VehicleType.Car, true, false),
-            [TransferManager.TransferReason.GarbageMove] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
+            [TransferManager.TransferReason.Garbage] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.GarbageMove] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true),
         };
 
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, LandfillSiteAI ai) => type == VehicleInfo.VehicleType.Car;
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(LandfillSiteAI ai, TransferManager.TransferOffer offer) => reasons;
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_garbageTruckCount";
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(LandfillSiteAI ai, TransferManager.TransferOffer offer) => reasons;
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_garbageTruckCount";
+    }
+
+
+    internal sealed class PostOfficeAIOverrides : BasicBuildingAIOverrides<PostOfficeAIOverrides, PostOfficeAI>
+    {
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
+        {
+            [TransferManager.TransferReason.UnsortedMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true, Level.Level5),
+            [TransferManager.TransferReason.IncomingMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false, Level.Level5),
+            [TransferManager.TransferReason.OutgoingMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false, Level.Level5),
+            [TransferManager.TransferReason.SortedMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false, Level.Level5),
+            [TransferManager.TransferReason.Mail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false)
+        };
+
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsInv = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
+        {
+            [TransferManager.TransferReason.UnsortedMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false, Level.Level5),
+            [TransferManager.TransferReason.IncomingMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true, Level.Level5),
+            [TransferManager.TransferReason.OutgoingMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true, Level.Level5),
+            [TransferManager.TransferReason.SortedMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true, Level.Level5),
+            [TransferManager.TransferReason.Mail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false)
+        };
+
+        public override bool AllowVehicleType(VehicleInfo.VehicleType type, PostOfficeAI ai) => type == VehicleInfo.VehicleType.Car;
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(PostOfficeAI ai, TransferManager.TransferOffer offer) => ai.m_sortingRate == 0 ? reasonsInv : reasons;
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => level == Level.Level5 ? "m_postTruckCount" : "m_postVanCount";
+        public override List<Level> ExtraAllowedLevels() => new Level[] { Level.Level5 }.ToList();
+
+        protected override bool ProcessOffer(ushort buildingID, ref Building data, TransferManager.TransferReason material, TransferManager.TransferOffer offer, TransferManager.TransferReason trTarget, StartTransferCallStructure tup, PostOfficeAI instance)
+        {
+            if (material == TransferManager.TransferReason.Mail)
+            {
+                //return base.ProcessOffer(buildingID, ref data, material, offer, trTarget, tup, instance);
+                if (material == trTarget)
+                {
+                    SVMUtils.doLog("VAN POSTOFFICE!");
+                    ServiceSystemDefinition def = ServiceSystemDefinition.from(instance.m_info, tup.vehicleType);
+                    if (def == null)
+                    {
+                        SVMUtils.doLog("SSD Não definido para: {0} {1} {2} {3}", instance.m_info.m_class.m_service, instance.m_info.m_class.m_subService, tup.vehicleLevel ?? instance.m_info.m_class.m_level, tup.vehicleType);
+                        return false;
+                    }
+
+                    SVMUtils.doLog("[{1}] SSD = {0}", def, material);
+                    VehicleInfo randomVehicleInfo = ServiceSystemDefinition.availableDefinitions[def].GetAModel(buildingID);
+                    SVMUtils.doLog("[{1}] Veh = {0}", randomVehicleInfo?.ToString() ?? "<NULL>", material);
+                    if (randomVehicleInfo != null)
+                    {
+                        Vehicle vehicle = default(Vehicle);
+                        randomVehicleInfo.m_vehicleAI.GetSize(0, ref vehicle, out int num, out int num2);
+                        int num3 = (data.m_customBuffer2 * 1000);
+                        if (num3 >= num2)
+                        {
+                            Array16<Vehicle> vehicles = Singleton<VehicleManager>.instance.m_vehicles;
+                            instance.CalculateSpawnPosition(buildingID, ref data, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, out Vector3 position, out Vector3 vector2);
+                            if (Singleton<VehicleManager>.instance.CreateVehicle(out ushort vehId, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, position, material, true, false))
+                            {
+                                randomVehicleInfo.m_vehicleAI.SetSource(vehId, ref vehicles.m_buffer[(int)vehId], buildingID);
+                                randomVehicleInfo.m_vehicleAI.StartTransfer(vehId, ref vehicles.m_buffer[(int)vehId], material, offer);
+                                return true;
+                            }
+                        }
+
+                    }
+                }
+                return false;
+            }
+            else return PostOfficeAITruckOverrides.ProcessOfferTruck(buildingID, ref data, material, offer, trTarget, tup, instance);
+
+        }
+    }
+
+    internal sealed class PostOfficeAITruckOverrides : BasicBuildingAIOverrides<PostOfficeAITruckOverrides, PostOfficeAI>
+    {
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
+        {
+            [TransferManager.TransferReason.UnsortedMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true),
+            [TransferManager.TransferReason.IncomingMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.OutgoingMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.SortedMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+        };
+
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsInv = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
+        {
+            [TransferManager.TransferReason.UnsortedMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, true, false),
+            [TransferManager.TransferReason.IncomingMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true),
+            [TransferManager.TransferReason.OutgoingMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true),
+            [TransferManager.TransferReason.SortedMail] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true),
+        };
+
+        public override bool AllowVehicleType(VehicleInfo.VehicleType type, PostOfficeAI ai) => type == VehicleInfo.VehicleType.Car;
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(PostOfficeAI ai, TransferManager.TransferOffer offer) => ai.m_sortingRate == 0 ? reasonsInv : reasons;
+
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_postTruckCount";
+
+        protected override bool ProcessOffer(ushort buildingID, ref Building data, TransferManager.TransferReason material, TransferManager.TransferOffer offer, TransferManager.TransferReason trTarget, StartTransferCallStructure tup, PostOfficeAI instance)
+        {
+            return ProcessOfferTruck(buildingID, ref data, material, offer, trTarget, tup, instance);
+        }
+        public static bool ProcessOfferTruck(ushort buildingID, ref Building data, TransferManager.TransferReason material, TransferManager.TransferOffer offer, TransferManager.TransferReason trTarget, StartTransferCallStructure tup, PostOfficeAI instance)
+        {
+            if (material == trTarget)
+            {
+                SVMUtils.doLog("TRUCK POSTOFFICE!");
+                ServiceSystemDefinition def = ServiceSystemDefinition.from(instance.m_info, tup.vehicleType);
+                if (def == null)
+                {
+                    SVMUtils.doLog("SSD Não definido para: {0} {1} {2} {3}", instance.m_info.m_class.m_service, instance.m_info.m_class.m_subService, tup.vehicleLevel ?? instance.m_info.m_class.m_level, tup.vehicleType);
+                    return false;
+                }
+                object[] args = new object[] { buildingID, data, 0, 0, 0, 0, 0, 0, 0, 0 };
+                SVMUtils.RunPrivateMethod<object>(instance, "CalculateVehicles", args);
+                if (ServiceVehiclesManagerMod.debugMode) SVMUtils.doLog($"[{material}]RESULT: {string.Join(";", args.Select(x => x?.ToString()).ToArray())}");
+                bool flag = (instance.m_sortingRate == 0) ? (material != TransferManager.TransferReason.UnsortedMail) : (material == TransferManager.TransferReason.UnsortedMail);
+                if ((int)args[7] < instance.m_postTruckCount)
+                {
+                    SVMUtils.doLog("[{1}] SSD = {0}", def, material);
+                    VehicleInfo randomVehicleInfo = ServiceSystemDefinition.availableDefinitions[def].GetAModel(buildingID);
+                    SVMUtils.doLog("[{1}] Veh = {0}", randomVehicleInfo?.ToString() ?? "<NULL>", material);
+                    if (randomVehicleInfo != null)
+                    {
+                        Array16<Vehicle> vehicles = Singleton<VehicleManager>.instance.m_vehicles;
+                        instance.CalculateSpawnPosition(buildingID, ref data, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, out Vector3 position, out Vector3 vector2);
+                        if (Singleton<VehicleManager>.instance.CreateVehicle(out ushort vehId, ref Singleton<SimulationManager>.instance.m_randomizer, randomVehicleInfo, position, material, flag, !flag))
+                        {
+                            randomVehicleInfo.m_vehicleAI.SetSource(vehId, ref vehicles.m_buffer[(int)vehId], buildingID);
+                            randomVehicleInfo.m_vehicleAI.StartTransfer(vehId, ref vehicles.m_buffer[(int)vehId], material, offer);
+                            ushort building = offer.Building;
+                            if (building != 0 && (Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)building].m_flags & Building.Flags.IncomingOutgoing) != Building.Flags.None)
+                            {
+                                randomVehicleInfo.m_vehicleAI.GetSize(vehId, ref vehicles.m_buffer[(int)vehId], out int amount, out int num14);
+                                CommonBuildingAI.ExportResource(buildingID, ref data, material, amount);
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
     }
 
     internal sealed class DepotAIOverrides : BasicBuildingAIOverrides<DepotAIOverrides, DepotAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsTaxi = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsTaxi = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.Taxi] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
+            [TransferManager.TransferReason.Taxi] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true),
         };
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsTrain = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsTrain = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.PassengerTrain] = Tuple.New(VehicleInfo.VehicleType.Train, false, true),
-            [TransferManager.TransferReason.DummyTrain] = Tuple.New(VehicleInfo.VehicleType.Train, false, true),
+            [TransferManager.TransferReason.PassengerTrain] = new StartTransferCallStructure(VehicleInfo.VehicleType.Train, false, true),
+            [TransferManager.TransferReason.DummyTrain] = new StartTransferCallStructure(VehicleInfo.VehicleType.Train, false, true),
         };
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsShip = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsShip = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.PassengerShip] = Tuple.New(VehicleInfo.VehicleType.Ship, false, true),
-            [TransferManager.TransferReason.DummyShip] = Tuple.New(VehicleInfo.VehicleType.Ship, false, true),
+            [TransferManager.TransferReason.PassengerShip] = new StartTransferCallStructure(VehicleInfo.VehicleType.Ship, false, true),
+            [TransferManager.TransferReason.DummyShip] = new StartTransferCallStructure(VehicleInfo.VehicleType.Ship, false, true),
         };
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsPlane = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsPlane = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.PassengerPlane] = Tuple.New(VehicleInfo.VehicleType.Plane, false, true),
-            [TransferManager.TransferReason.DummyPlane] = Tuple.New(VehicleInfo.VehicleType.Plane, false, true),
+            [TransferManager.TransferReason.PassengerPlane] = new StartTransferCallStructure(VehicleInfo.VehicleType.Plane, false, true),
+            [TransferManager.TransferReason.DummyPlane] = new StartTransferCallStructure(VehicleInfo.VehicleType.Plane, false, true),
         };
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsCableCar = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsCableCar = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.CableCar] = Tuple.New(VehicleInfo.VehicleType.CableCar, false, true),
+            [TransferManager.TransferReason.CableCar] = new StartTransferCallStructure(VehicleInfo.VehicleType.CableCar, false, true),
         };
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsNone = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsNone = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
         };
 
@@ -291,7 +440,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             }
         }
 
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(DepotAI ai, TransferManager.TransferOffer offer)
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(DepotAI ai, TransferManager.TransferOffer offer)
         {
             if (offer.TransportLine != 0)
             {
@@ -301,7 +450,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             AddAllowedType(ai?.m_transportInfo?.m_transportType, ref allowedTypes);
             AddAllowedType(ai?.m_secondaryTransportInfo?.m_transportType, ref allowedTypes);
 
-            IEnumerable<KeyValuePair<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>> result = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
+            IEnumerable<KeyValuePair<TransferManager.TransferReason, StartTransferCallStructure>> result = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>();
             foreach (var type in allowedTypes)
             {
                 switch (type)
@@ -326,7 +475,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             }
             return result.ToDictionary(x => x.Key, x => x.Value);
         }
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => "m_maxVehicleCount";
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => "m_maxVehicleCount";
         public override bool AcceptsAI(PrefabAI ai) => typeof(DepotAI).IsAssignableFrom(ai.GetType());
     }
 
@@ -340,11 +489,11 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             DepotAIOverrides.AddAllowedType(ai?.m_secondaryTransportInfo?.m_transportType, ref allowedTypes);
             return allowedTypes.Contains(type);
         }
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(TransportStationAI ai, TransferManager.TransferOffer offer)
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(TransportStationAI ai, TransferManager.TransferOffer offer)
         {
             return DepotAIOverrides.instance.GetManagedReasons(ai, offer);
         }
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => DepotAIOverrides.instance.GetVehicleMaxCountField(veh);
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => DepotAIOverrides.instance.GetVehicleMaxCountField(veh, level);
 
 
         private static MethodInfo FindConnectionVehicle = typeof(TransportStationAI).GetMethod("FindConnectionVehicle", allFlags);
@@ -461,17 +610,17 @@ namespace Klyte.ServiceVehiclesManager.Overrides
 
     internal sealed class CargoStationAIOverrides : BasicBuildingAIOverrides<CargoStationAIOverrides, CargoStationAI>
     {
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsTrain = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsTrain = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.DummyTrain] = Tuple.New(VehicleInfo.VehicleType.Train, false, true),
+            [TransferManager.TransferReason.DummyTrain] = new StartTransferCallStructure(VehicleInfo.VehicleType.Train, false, true),
         };
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsShip = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsShip = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.DummyShip] = Tuple.New(VehicleInfo.VehicleType.Ship, false, true),
+            [TransferManager.TransferReason.DummyShip] = new StartTransferCallStructure(VehicleInfo.VehicleType.Ship, false, true),
         };
-        private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasonsPlane = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+        private readonly Dictionary<TransferManager.TransferReason, StartTransferCallStructure> reasonsPlane = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>
         {
-            [TransferManager.TransferReason.DummyPlane] = Tuple.New(VehicleInfo.VehicleType.Plane, false, true),
+            [TransferManager.TransferReason.DummyPlane] = new StartTransferCallStructure(VehicleInfo.VehicleType.Plane, false, true),
         };
         public override bool AllowVehicleType(VehicleInfo.VehicleType type, CargoStationAI ai)
         {
@@ -491,12 +640,12 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             return allowedTypes.Contains(type);
         }
 
-        public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(CargoStationAI ai, TransferManager.TransferOffer offer)
+        public override Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(CargoStationAI ai, TransferManager.TransferOffer offer)
         {
             List<VehicleInfo.VehicleType> allowedTypes = new List<VehicleInfo.VehicleType>();
             DepotAIOverrides.AddAllowedType(ai?.m_transportInfo?.m_transportType, ref allowedTypes);
             DepotAIOverrides.AddAllowedType(ai?.m_transportInfo2?.m_transportType, ref allowedTypes);
-            IEnumerable<KeyValuePair<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>> result = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
+            IEnumerable<KeyValuePair<TransferManager.TransferReason, StartTransferCallStructure>> result = new Dictionary<TransferManager.TransferReason, StartTransferCallStructure>();
             foreach (var type in allowedTypes)
             {
                 switch (type)
@@ -516,7 +665,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             return result.ToDictionary(x => x.Key, x => x.Value);
         }
 
-        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => null;
+        public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => null;
 
         public override void AwakeBody()
         {
@@ -526,24 +675,24 @@ namespace Klyte.ServiceVehiclesManager.Overrides
 
     /* internal sealed class OutsideConnectionAIOverrides : BasicBuildingAIOverrides<OutsideConnectionAIOverrides, OutsideConnectionAI>
      {
-         private readonly Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> reasons = new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>
+         private readonly Dictionary<TransferManager.TransferReason,StartTransferCallStructure> reasons = new Dictionary<TransferManager.TransferReason,StartTransferCallStructure>
          {
-             [TransferManager.TransferReason.DummyTrain] = Tuple.New(VehicleInfo.VehicleType.Train, false, true),
-             [TransferManager.TransferReason.DummyShip] = Tuple.New(VehicleInfo.VehicleType.Ship, false, true),
-             [TransferManager.TransferReason.DummyPlane] = Tuple.New(VehicleInfo.VehicleType.Plane, false, true),
-             [TransferManager.TransferReason.DummyCar] = Tuple.New(VehicleInfo.VehicleType.Car, false, true),
+             [TransferManager.TransferReason.DummyTrain] = new StartTransferCallStructure(VehicleInfo.VehicleType.Train, false, true),
+             [TransferManager.TransferReason.DummyShip] = new StartTransferCallStructure(VehicleInfo.VehicleType.Ship, false, true),
+             [TransferManager.TransferReason.DummyPlane] = new StartTransferCallStructure(VehicleInfo.VehicleType.Plane, false, true),
+             [TransferManager.TransferReason.DummyCar] = new StartTransferCallStructure(VehicleInfo.VehicleType.Car, false, true),
          };
 
          public override bool AllowVehicleType(VehicleInfo.VehicleType type, OutsideConnectionAI ai) => type == VehicleInfo.VehicleType.Train || type == VehicleInfo.VehicleType.Car || type == VehicleInfo.VehicleType.Ship || type == VehicleInfo.VehicleType.Plane;
-         public override Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>> GetManagedReasons(OutsideConnectionAI ai, TransferManager.TransferOffer offer)
+         public override Dictionary<TransferManager.TransferReason,StartTransferCallStructure> GetManagedReasons(OutsideConnectionAI ai, TransferManager.TransferOffer offer)
          {
              if (offer.TransportLine != 0)
              {
-                 return new Dictionary<TransferManager.TransferReason, Tuple<VehicleInfo.VehicleType, bool, bool>>();
+                 return new Dictionary<TransferManager.TransferReason,StartTransferCallStructure>();
              }
              return reasons;
          }
-         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh) => null;
+         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => null;
 
          public override void AwakeBody()
          {

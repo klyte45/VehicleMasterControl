@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static ItemClass;
 
 namespace Klyte.ServiceVehiclesManager.Utils
 {
@@ -42,11 +43,11 @@ namespace Klyte.ServiceVehiclesManager.Utils
             }
         }
 
-        public static int GetMaxVehiclesBuilding(ushort buildingID, VehicleInfo.VehicleType type)
+        public static int GetMaxVehiclesBuilding(ushort buildingID, VehicleInfo.VehicleType type, Level level)
         {
             Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
-            var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
-            var maxField = ext.GetVehicleMaxCountField(type);
+            var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
+            var maxField = ext.GetVehicleMaxCountField(type, level);
             if (maxField == null)
             {
                 return 0xFFFFFF;
@@ -60,11 +61,12 @@ namespace Klyte.ServiceVehiclesManager.Utils
             return PlayerBuildingAI.GetProductionRate(100, budget);
         }
 
-        public static List<ushort> getAllBuildingsFromCity(ServiceSystemDefinition ssd)
+        public static List<ushort> getAllBuildingsFromCity(ServiceSystemDefinition ssd, int? districtId = null, bool strict = false, bool mustAllowSpawn = false)
         {
             List<ushort> saida = new List<ushort>();
             var bm = Singleton<BuildingManager>.instance;
             FastList<ushort> buildings;
+            var ext = ssd.GetTransportExtension();
             if (ssd.outsideConnection)
             {
                 buildings = bm.GetOutsideConnections();
@@ -80,6 +82,25 @@ namespace Klyte.ServiceVehiclesManager.Utils
             {
                 if (ssd.isFromSystem(bm.m_buildings.m_buffer[i].Info))
                 {
+                    if (districtId != null && ext.GetAllowDistrictServiceRestrictions())
+                    {
+                        var buildingDistrict = DistrictManager.instance.GetDistrict(bm.m_buildings.m_buffer[i].m_position);
+                        if (districtId != buildingDistrict && (strict || !ext.GetAllowGoOutsideEffective(buildingDistrict)))
+                        {
+                            continue;
+                        }
+                    }
+                    if (mustAllowSpawn)
+                    {
+                        int max = GetMaxVehiclesBuilding(i, ssd.vehicleType, ssd.level);
+                        int count = 0;
+                        int cargo = 0;
+                        int capacity = 0;
+                        int inbound = 0;
+                        int outbound = 0;
+                        SVMBuildingUtils.CalculateOwnVehicles(i, ref bm.m_buildings.m_buffer[i], SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(bm.m_buildings.m_buffer[i].Info).GetManagedReasons(bm.m_buildings.m_buffer[i].Info).Where(x => x.Value.vehicleLevel == null).Select(x => x.Key), ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                        if (count >= max) continue;
+                    }
                     saida.Add(i);
                 }
             }

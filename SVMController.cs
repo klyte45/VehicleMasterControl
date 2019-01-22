@@ -96,7 +96,7 @@ namespace Klyte.ServiceVehiclesManager
                 byte count = 0;
                 foreach (var ssd in ssds)
                 {
-                    var maxCount = SVMBuildingUtils.GetMaxVehiclesBuilding(buildingId, ssd.vehicleType);
+                    var maxCount = SVMBuildingUtils.GetMaxVehiclesBuilding(buildingId, ssd.vehicleType, ssd.level);
                     if (maxCount > 0)
                     {
                         count++;

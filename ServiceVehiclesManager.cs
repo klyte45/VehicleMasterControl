@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.9999.0.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
 
 namespace Klyte.ServiceVehiclesManager
 {
@@ -46,6 +46,10 @@ namespace Klyte.ServiceVehiclesManager
         public bool needShowPopup;
         private static bool isLocaleLoaded = false;
 
+
+        private SavedBool m_allowOutsidersAsDefault;
+        private SavedBool m_allowGoOutsideAsDefault;
+
         public static bool LocaleLoaded => isLocaleLoaded;
 
         private string currentSelectedConfigEditor => currentCityId;
@@ -72,6 +76,8 @@ namespace Klyte.ServiceVehiclesManager
         }
 
         public static bool debugMode => instance.m_debugMode.value;
+        public static bool allowOutsidersAsDefault => instance.m_allowOutsidersAsDefault.value;
+        public static bool allowGoOutsideAsDefault => instance.m_allowGoOutsideAsDefault.value;
 
         private SavedString currentSaveVersion => new SavedString("SVMSaveVersion", Settings.gameSettingsFile, "null", true);
 
@@ -124,7 +130,7 @@ namespace Klyte.ServiceVehiclesManager
                     svmSettings = tryLoad;
                 }
             }
-            m_debugMode = new SavedBool("SVMdebugMode", Settings.gameSettingsFile, typeof(ServiceVehiclesManagerMod).Assembly.GetName().Version.Major == 0, true);
+            m_debugMode = new SavedBool("SVMdebugMode", Settings.gameSettingsFile, false, true);
             if (m_debugMode.value)
                 Debug.LogWarningFormat("currentSaveVersion.value = {0}, fullVersion = {1}", currentSaveVersion.value, fullVersion);
             if (currentSaveVersion.value != fullVersion)
@@ -133,6 +139,8 @@ namespace Klyte.ServiceVehiclesManager
             }
             LocaleManager.eventLocaleChanged += new LocaleManager.LocaleChangedHandler(autoLoadSVMLocale);
             if (instance != null) { Destroy(instance); }
+            m_allowGoOutsideAsDefault = new SavedBool("SVMAllowGoOutsideAsDefault", Settings.gameSettingsFile, true, true);
+            m_allowOutsidersAsDefault = new SavedBool("SVMAllowOutsidersAsDefault", Settings.gameSettingsFile, true, true);
             instance = this;
         }
 
@@ -153,6 +161,12 @@ namespace Klyte.ServiceVehiclesManager
                         showVersionInfoPopup();
                     }
                 };
+                UIHelperExtension group8 = helper.AddGroupExtended(Locale.Get("SVM_DISTRICT_SERVICE_RESTRICTIONS"));
+                group8.AddCheckboxLocale("SVM_DEFAULT_ALLOW_OUTSIDERS", m_allowOutsidersAsDefault.value, (x) => {  m_allowOutsidersAsDefault.value = x; });
+                group8.AddCheckboxLocale("SVM_DEFAULT_ALLOW_GO_OUTSIDE", m_allowGoOutsideAsDefault.value, (x) => { m_allowGoOutsideAsDefault.value = x; });
+                group8.AddLabel(Locale.Get("SVM_DEFAULT_RESTRICTIONS_NOTE2")).textColor = Color.white;
+                group8.AddLabel(Locale.Get("SVM_DEFAULT_RESTRICTIONS_NOTE")).textColor = Color.yellow;
+                group8.AddLabel(Locale.Get("SVM_DEFAULT_RESTRICTIONS_NOTE3")).textColor = Color.red;
 
                 UIHelperExtension group9 = helper.AddGroupExtended(Locale.Get("SVM_BETAS_EXTRA_INFO"));
                 group9.AddDropdownLocalized("SVM_MOD_LANG", SVMLocaleUtils.getLanguageIndex(), currentLanguageId.value, delegate (int idx)

@@ -1,6 +1,5 @@
-﻿SVMv1.2
-   -Added support for ParkLife (Park maintence services - at "?" menu)
-   -New listing interface, using 45's menu from Klyte Commons
-   -Added text field for hex color input at color pickers (from Klyte Commons' new version)
-   -Fixed: Incorrect spawning on deleting assets previously selected for use in a depot
-   -Fixed: Cable cars and Taxi Stands lists are empty
+﻿SVMv2
+   -Added service restriction, configurable by district and by category
+   -Removed all OutsideConnections "buildings" from lists due incompatibilities found. May be back in a future release.
+   -Fixed: The information of first tab isn't appearing when selecting a tab category
+   -Added support to Post Office cars   

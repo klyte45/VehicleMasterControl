@@ -78,8 +78,8 @@ namespace Klyte.ServiceVehiclesManager.UI
                 foreach (ushort buildingID in buildingList)
                 {
                     Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
-                    var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(b.Info);
-                    var maxCountField = ext.GetVehicleMaxCountField(SVMSysDef<T>.instance.GetSSD().vehicleType);
+                    var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
+                    var maxCountField = ext.GetVehicleMaxCountField(SVMSysDef<T>.instance.GetSSD().vehicleType, SVMSysDef<T>.instance.GetSSD().level);
                     var maxVehicle = SVMUtils.GetPrivateField<int>(b.Info.GetAI(), maxCountField);
                     if (maxCountField == null || maxVehicle > 0)
                     {
@@ -131,5 +131,7 @@ namespace Klyte.ServiceVehiclesManager.UI
     //internal sealed class SVMTabControllerBuildingListOutPln : SVMTabControllerBuildingList<SVMSysDefOutPln> { }
     //internal sealed class SVMTabControllerBuildingListOutCar : SVMTabControllerBuildingList<SVMSysDefOutCar> { }
     internal sealed class SVMTabControllerBuildingListBeaCar : SVMTabControllerBuildingList<SVMSysDefBeaCar> { }
+    internal sealed class SVMTabControllerBuildingListPstCar : SVMTabControllerBuildingList<SVMSysDefPstCar> { }
+    internal sealed class SVMTabControllerBuildingListPstTrk : SVMTabControllerBuildingList<SVMSysDefPstTrk> { }
 
 }
