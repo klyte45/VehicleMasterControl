@@ -5,6 +5,7 @@ using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.ServiceVehiclesManager.TextureAtlas;
 using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Utils;
 using System;
@@ -17,12 +18,9 @@ namespace Klyte.ServiceVehiclesManager
 {
     internal class SVMController : Singleton<SVMController>
     {
-        internal static UITextureAtlas taSVM;
-
-
         public void Start()
         {
-            KlyteModsPanel.instance.AddTab(ModTab.ServiceVehiclesManager, typeof(SVMServiceBuildingDetailPanel), taSVM, "ServiceVehiclesManagerIcon", "Service Vehicles Manager (v" + ServiceVehiclesManagerMod.version + ")");
+            KlyteModsPanel.instance.AddTab(ModTab.ServiceVehiclesManager, typeof(SVMServiceBuildingDetailPanel), SVMCommonTextureAtlas.instance.atlas, "ServiceVehiclesManagerIcon", "Service Vehicles Manager (v" + ServiceVehiclesManagerMod.version + ")");
 
             SVMUtils.createUIElement(out UIPanel buildingInfoParent, FindObjectOfType<UIView>().transform, "SVMBuildingInfoPanel", new Vector4(0, 0, 0, 1));
 
@@ -110,7 +108,7 @@ namespace Klyte.ServiceVehiclesManager
         {
             UIButton saida = parent.AddUIComponent<UIButton>();
             saida.relativePosition = new Vector3(-40, parent.height - 50);
-            saida.atlas = taSVM;
+            saida.atlas = SVMCommonTextureAtlas.instance.atlas;
             saida.width = 30;
             saida.height = 30;
             saida.name = "SVMBuildingShortcut";

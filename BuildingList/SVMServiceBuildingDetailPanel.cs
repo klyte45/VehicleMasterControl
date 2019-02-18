@@ -6,6 +6,7 @@ using Klyte.Commons.Overrides;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.ServiceVehiclesManager.TextureAtlas;
 using Klyte.ServiceVehiclesManager.Utils;
 using System;
 using System.Collections.Generic;
@@ -223,7 +224,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                 {
                     SVMUtils.createUIElement(out UISprite sprite, tabButton.transform, "OverSprite", new Vector4(0, 0, 40, 40));
                     sprite.spriteName = fgIcon;
-                    sprite.atlas = SVMController.taSVM;
+                    sprite.atlas = SVMCommonTextureAtlas.instance.atlas;
                 }
                 Type[] components;
                 Type targetType;
@@ -319,7 +320,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             };
 
             SVMUtils.createUIElement(out UISprite logo, mainPanel.transform, "SVMLogo", new Vector4(22, 5f, 32, 32));
-            logo.atlas = SVMController.taSVM;
+            logo.atlas = SVMCommonTextureAtlas.instance.atlas;
             logo.spriteName = "ServiceVehiclesManagerIcon";
             SVMUtils.createDragHandle(logo, KlyteModsPanel.instance.mainPanel);
         }

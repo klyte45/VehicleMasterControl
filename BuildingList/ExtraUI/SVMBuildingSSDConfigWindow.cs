@@ -5,6 +5,7 @@ using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.ServiceVehiclesManager.TextureAtlas;
 using Klyte.ServiceVehiclesManager.Utils;
 using System;
 using System.Collections.Generic;
@@ -113,7 +114,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
             var icon = removeUndesired.AddUIComponent<UISprite>();
             icon.relativePosition = new Vector3(2, 2);
-            icon.atlas = SVMController.taSVM;
+            icon.atlas = SVMCommonTextureAtlas.instance.atlas;
             icon.width = 18;
             icon.height = 18;
             icon.spriteName = "RemoveUnwantedIcon";

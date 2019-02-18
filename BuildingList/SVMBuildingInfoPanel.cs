@@ -6,6 +6,7 @@ using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.Overrides;
+using Klyte.ServiceVehiclesManager.TextureAtlas;
 using Klyte.ServiceVehiclesManager.UI.ExtraUI;
 using Klyte.ServiceVehiclesManager.Utils;
 using System;
@@ -177,7 +178,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             buildingTypeIconFg.height = 30;
             buildingTypeIconFg.name = "BuildingTypeIconFg";
             buildingTypeIconFg.clipChildren = true;
-            buildingTypeIconFg.atlas = SVMController.taSVM;
+            buildingTypeIconFg.atlas = SVMCommonTextureAtlas.instance.atlas;
             SVMUtils.createDragHandle(buildingTypeIconFg, m_buildingInfoPanel);
 
             SVMUtils.createUIElement(out buildingNameField, m_buildingInfoPanel.transform);
