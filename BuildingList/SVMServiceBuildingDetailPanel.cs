@@ -1,6 +1,7 @@
 ﻿using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using ICities;
+using Klyte.Commons;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.Overrides;
 using Klyte.Commons.UI;
@@ -16,7 +17,7 @@ using UnityEngine;
 namespace Klyte.ServiceVehiclesManager.UI
 {
 
-    class SVMServiceBuildingDetailPanel : UICustomControl
+    public class SVMServiceBuildingDetailPanel : UICustomControl
     {
         private const int NUM_SERVICES = 0;
         public static SVMServiceBuildingDetailPanel instance { get; private set; }
@@ -131,7 +132,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                 m_StripBuilings.selectedIndex = (int)catIdx;
                 m_StripBuilingsStrips[catIdx].selectedIndex = m_StripBuilingsStrips[catIdx].Find<UIComponent>(ssd.GetDefType().Name)?.zOrder ?? 0;
             }
-            SVMController.instance.OpenSVMPanel();
+            ServiceVehiclesManagerMod.instance.controller.OpenSVMPanel();
         }
 
         private void OnDistrictSelect(int x)
@@ -316,7 +317,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             closeButton.hoveredBgSprite = "buttonclosehover";
             closeButton.eventClick += (x, y) =>
             {
-                SVMController.instance.CloseSVMPanel();
+                KlyteCommonsMod.CloseKCPanel();
             };
 
             SVMUtils.createUIElement(out UISprite logo, mainPanel.transform, "SVMLogo", new Vector4(22, 5f, 32, 32));

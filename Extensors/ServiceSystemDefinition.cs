@@ -338,7 +338,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         internal abstract ServiceSystemDefinition GetSSD();
         public void Awake()
         {
-            this.transform.SetParent(SVMController.instance.transform);
+            this.transform.SetParent(ServiceVehiclesManagerMod.instance.controller.transform);
         }
     }
     internal sealed class SVMSysDefDisCar : SVMSysDef<SVMSysDefDisCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.DISASTER_CAR; } }

@@ -5,7 +5,10 @@ using ColossalFramework.UI;
 using ICities;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.Interfaces;
+using Klyte.Commons.UI;
 using Klyte.ServiceVehiclesManager.i18n;
+using Klyte.ServiceVehiclesManager.TextureAtlas;
+using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Utils;
 using System;
 using System.Linq;
@@ -16,13 +19,15 @@ using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager
 {
-    public class ServiceVehiclesManagerMod : BasicIUserMod<ServiceVehiclesManagerMod, SVMLocaleUtils, SVMResourceLoader>
+    public class ServiceVehiclesManagerMod : BasicIUserMod<ServiceVehiclesManagerMod, SVMLocaleUtils, SVMResourceLoader, SVMController, SVMCommonTextureAtlas, SVMServiceBuildingDetailPanel>
     {
 
         public ServiceVehiclesManagerMod()
         {
             Construct();
         }
+
+        protected override ModTab? Tab => ModTab.ServiceVehiclesManager;
 
         private SavedBool m_allowOutsidersAsDefault = new SavedBool("SVMAllowGoOutsideAsDefault", Settings.gameSettingsFile, true, true);
         private SavedBool m_allowGoOutsideAsDefault = new SavedBool("SVMAllowOutsidersAsDefault", Settings.gameSettingsFile, true, true);
@@ -45,31 +50,6 @@ namespace Klyte.ServiceVehiclesManager
         public override void LoadSettings()
         {
         }
-
-        public override void OnCreated(ILoading loading)
-        {
-        }
-
-        public override void OnLevelLoaded(LoadMode mode)
-        {
-            SVMUtils.doLog("LEVEL LOAD");
-            if (mode != LoadMode.LoadGame && mode != LoadMode.NewGame && mode != LoadMode.NewGameFromScenario)
-            {
-                SVMUtils.doLog("NOT GAME ({0})", mode);
-                return;
-            }
-
-            SVMController.Ensure();
-        }
-
-        public override void OnLevelUnloading()
-        {
-        }
-
-        public override void OnReleased()
-        {
-        }
-
         public override void TopSettingsUI(UIHelperExtension helper)
         {
             UIHelperExtension group8 = helper.AddGroupExtended(Locale.Get("SVM_DISTRICT_SERVICE_RESTRICTIONS"));

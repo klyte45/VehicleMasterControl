@@ -16,33 +16,21 @@ using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager
 {
-    internal class SVMController : Singleton<SVMController>
+    public class SVMController : MonoBehaviour
     {
+
+        internal static SVMController instance => ServiceVehiclesManagerMod.instance.controller;
+
         public void Start()
         {
-            KlyteModsPanel.instance.AddTab(ModTab.ServiceVehiclesManager, typeof(SVMServiceBuildingDetailPanel), SVMCommonTextureAtlas.instance.atlas, "ServiceVehiclesManagerIcon", "Service Vehicles Manager (v" + ServiceVehiclesManagerMod.version + ")");
-
             SVMUtils.createUIElement(out UIPanel buildingInfoParent, FindObjectOfType<UIView>().transform, "SVMBuildingInfoPanel", new Vector4(0, 0, 0, 1));
 
             buildingInfoParent.gameObject.AddComponent<SVMBuildingInfoPanel>();
-
-            var typeTarg = typeof(Redirector<>);
-            List<Type> instances = KlyteUtils.GetSubtypesRecursive(typeTarg, typeof(SVMController));
-
-            foreach (Type t in instances)
-            {
-                SVMUtils.doLog($"ADD REDIR: [{t.Name}]");
-                gameObject.AddComponent(t);
-            }
         }
 
         public void OpenSVMPanel()
         {
             KlyteModsPanel.instance.OpenAt(ModTab.ServiceVehiclesManager);
-        }
-        public void CloseSVMPanel()
-        {
-            KCController.instance.CloseKCPanel();
         }
 
 

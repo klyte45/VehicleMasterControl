@@ -18,7 +18,7 @@ namespace Klyte.ServiceVehiclesManager.TextureAtlas
     {
         protected override string ResourceName => "UI.Images.sprites.png";
         protected override string CommonName => "ServiceVehiclesManagerSprites";
-        protected override string[] SpriteNames => new string[] {
+        public override string[] SpriteNames => new string[] {
                "ServiceVehiclesManagerIcon","ServiceVehiclesManagerIconSmall","ToolbarIconGroup6Hovered","ToolbarIconGroup6Focused","HelicopterIndicator","RemoveUnwantedIcon","CargoIndicator", "OutsideIndicator", "BioIndicator"
                 };
     }

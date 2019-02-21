@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Globalization;
 using ColossalFramework.UI;
+using Klyte.Commons;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
@@ -343,7 +344,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             buildingTypeIcon.normalFgSprite = bgIcon;
             buildingTypeIconFg.spriteName = fgIcon;
 
-            SVMController.instance.CloseSVMPanel();
+            KlyteCommonsMod.CloseKCPanel();
             Show();
             EventOnBuildingSelChanged?.Invoke(buildingID);
         }
