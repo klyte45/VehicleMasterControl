@@ -32,7 +32,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         #region Awake
         private void Awake()
         {
-            SVMServiceBuildingDetailPanel.eventOnDistrictSelectionChanged += onDistrictChanged;
+            SVMTabPanel.eventOnDistrictSelectionChanged += onDistrictChanged;
 
 
             mainPanel = GetComponentInChildren<UIScrollablePanel>();
@@ -109,7 +109,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private static bool getCurrentSelectedId(out int currentDistrict)
         {
-            currentDistrict = SVMServiceBuildingDetailPanel.instance.getCurrentSelectedDistrictId();
+            currentDistrict = SVMTabPanel.instance.getCurrentSelectedDistrictId();
             return currentDistrict >= 0;
         }
 

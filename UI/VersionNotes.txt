@@ -1,5 +1,3 @@
-﻿SVMv2
-   -Added service restriction, configurable by district and by category
-   -Removed all OutsideConnections "buildings" from lists due incompatibilities found. May be back in a future release.
-   -Fixed: The information of first tab isn't appearing when selecting a tab category
-   -Added support to Post Office cars   
+﻿SVMv2.1
+    - Updated for Campus DLC
+    - Fixed some missing buildings entries at buildings lists

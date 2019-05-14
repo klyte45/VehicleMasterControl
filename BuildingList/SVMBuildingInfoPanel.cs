@@ -122,7 +122,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         public void Hide()
         {
             m_buildingInfoPanel.Hide();
-            SVMServiceBuildingDetailPanel.instance.OpenAt(ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingIdSel.Building].Info).FirstOrDefault());
+            SVMTabPanel.instance.OpenAt(ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingIdSel.Building].Info).FirstOrDefault());
         }
 
 

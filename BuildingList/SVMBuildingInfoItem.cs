@@ -145,6 +145,7 @@
             GameObject.Destroy(base.Find<UICheckBox>("LineVisible").gameObject);
             GameObject.Destroy(base.Find<UIColorField>("LineColor").gameObject);
             GameObject.Destroy(base.Find<UIPanel>("WarningIncomplete"));
+            GameObject.Destroy(base.Find<UIPanel>("LineModelSelectorContainer"));
 
             this.m_buildingName = base.Find<UILabel>("LineName");
             this.m_buildingName.area = new Vector4(200, 2, 198, 35);

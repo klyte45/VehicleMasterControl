@@ -234,21 +234,29 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         {
             if (ServiceVehiclesManagerMod.debugMode)
             {
-                SVMUtils.doLog($"[{info?.GetAI()?.GetType()}->{this}] info.m_class.m_service == service = { info?.m_class?.m_service == service}; subService == info.m_class.m_subService = { subService == info?.m_class?.m_subService };" +
-                    $"info?.GetAI() is OutsideConnectionAI == outsideConnection = {info?.GetAI() is OutsideConnectionAI == outsideConnection }, info.m_class.m_level == level = {info?.m_class?.m_level == level}; ExtraAllowedLevels = {SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).SelectMany(x => x.ExtraAllowedLevels())}" +
-                    $" SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Where = {ListAiOverrides(info)} ");
+                SVMUtils.doLog($"[{info?.GetAI()?.GetType()}->{this}]" +
+                    $" info.m_class.m_service == service = { info?.m_class?.m_service == service};" +
+                    $" subService == info.m_class.m_subService = { subService == info?.m_class?.m_subService };" +
+                    $" info?.GetAI() is OutsideConnectionAI == outsideConnection = {info?.GetAI() is OutsideConnectionAI == outsideConnection };" +
+                    $" info.m_class.m_level == level = {info?.m_class?.m_level} == {level} = {info?.m_class?.m_level == level};" +
+                    $" SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Count = {SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.Count};" +
+                    $" ExtraAllowedLevels = [{String.Join(",", SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).SelectMany(x => x?.ExtraAllowedLevels() ?? new List<ItemClass.Level>()).Select(x => x.ToString() ?? "<NULL>")?.ToArray())}];" +
+                    $" instance?.vehicleType ({this?.vehicleType}) ;" +
+                    $" aiOverride?.AllowVehicleType(vehicleType) = {this?.vehicleType}) ;" +
+                    $" SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Where = {ListAiOverrides(info).Count()} ");
             }
             return ListAiOverrides(info).Count() > 0;
         }
 
         private static IEnumerable<IBasicBuildingAIOverrides> ListAiOverrides(BuildingInfo info, ServiceSystemDefinition instance)
         {
+            if (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Count == 0) return new List<IBasicBuildingAIOverrides>();
             return SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Where(aiOverride =>
-            info?.m_class?.m_service == instance.service
-            && instance.subService == info?.m_class?.m_subService
-            && (instance.outsideConnection || info?.m_class?.m_level == instance.level || aiOverride.ExtraAllowedLevels().Contains(instance.level))
-            && info?.GetAI() is OutsideConnectionAI == instance.outsideConnection
-            && (aiOverride?.AllowVehicleType(instance.vehicleType, info?.GetAI()) ?? false)
+               (info?.m_class?.m_service == instance?.service)
+            && instance?.subService == info?.m_class?.m_subService
+            && ((instance?.outsideConnection ?? false) || info?.m_class?.m_level == instance.level || (aiOverride?.ExtraAllowedLevels()?.Contains(instance.level) ?? false))
+            && info?.GetAI() is OutsideConnectionAI == instance?.outsideConnection
+            && SVMUtils.logAndReturn(aiOverride?.AllowVehicleType(SVMUtils.logAndReturn(instance?.vehicleType ?? VehicleInfo.VehicleType.None, "EFF VEHICLE TYPE TESTED"), info?.GetAI()) ?? SVMUtils.logAndReturn(false, "AI OVERRIDE NULL!!!!!"), "AllowVehicleType")
             );
         }
         private IEnumerable<IBasicBuildingAIOverrides> ListAiOverrides(BuildingInfo info)

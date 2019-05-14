@@ -45,7 +45,6 @@ namespace Klyte.ServiceVehiclesManager.Overrides
     internal abstract class BasicBuildingAIOverrides<T, U> : Redirector<T>, IBasicBuildingAIOverrides<U> where T : BasicBuildingAIOverrides<T, U>, new() where U : BuildingAI
     {
         #region Overrides
-        protected static BasicBuildingAIOverrides<T, U> instance;
         protected static List<Level> emptyLevelList = new List<Level>();
 
         public Dictionary<TransferManager.TransferReason, StartTransferCallStructure> GetManagedReasons(BuildingInfo info)
@@ -156,7 +155,6 @@ namespace Klyte.ServiceVehiclesManager.Overrides
 
         public override void AwakeBody()
         {
-            instance = this;
             var from = typeof(U).GetMethod("StartTransfer", allFlags);
             if (from == null)
             {
@@ -167,7 +165,14 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             }
             var to = typeof(BasicBuildingAIOverrides<T, U>).GetMethod(typeof(DepotAI).IsAssignableFrom(typeof(U)) ? "StartTransferDepot" : "StartTransfer", allFlags);
             SVMUtils.doLog("Loading Hooks: {0} ({1}=>{2})", typeof(U), from, to);
-            AddRedirect(from, to);
+            if (from == null)
+            {
+                SVMUtils.doErrorLog($"ORIGINAL METHOD NOT FOUND FOR {typeof(U)}! Skipping");
+            }
+            else
+            {
+                AddRedirect(from, to);
+            }
         }
 
         #endregion

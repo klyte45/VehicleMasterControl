@@ -19,7 +19,7 @@ using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager
 {
-    public class ServiceVehiclesManagerMod : BasicIUserMod<ServiceVehiclesManagerMod, SVMLocaleUtils, SVMResourceLoader, SVMController, SVMCommonTextureAtlas, SVMServiceBuildingDetailPanel>
+    public class ServiceVehiclesManagerMod : BasicIUserMod<ServiceVehiclesManagerMod, SVMLocaleUtils, SVMResourceLoader, SVMController, SVMCommonTextureAtlas, SVMTabPanel>
     {
 
         public ServiceVehiclesManagerMod()

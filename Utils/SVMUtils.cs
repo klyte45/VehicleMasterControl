@@ -1,6 +1,7 @@
 ﻿using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,6 +11,18 @@ namespace Klyte.ServiceVehiclesManager.Utils
     class SVMUtils : KlyteUtils
     {
         #region Logging
+
+        internal static T logAndReturn<T>(T itemToLog, string comment = "")
+        {
+            if (ServiceVehiclesManagerMod.debugMode) doLog($"LOG OBJ: {itemToLog} ({comment})");
+            return itemToLog;
+        }
+
+        internal static T logAndReturn<T, X>(T itemToLog, string comment = "") where T : IEnumerable<X>
+        {
+            if (ServiceVehiclesManagerMod.debugMode) doLog($"LOG OBJ: [{string.Join(",", itemToLog?.Select(x => x.ToString())?.ToArray())}] ({comment})");
+            return itemToLog;
+        }
         public static void doLog(string format, params object[] args)
         {
             try

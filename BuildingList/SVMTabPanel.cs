@@ -17,10 +17,10 @@ using UnityEngine;
 namespace Klyte.ServiceVehiclesManager.UI
 {
 
-    public class SVMServiceBuildingDetailPanel : UICustomControl
+    public class SVMTabPanel : UICustomControl
     {
         private const int NUM_SERVICES = 0;
-        public static SVMServiceBuildingDetailPanel instance { get; private set; }
+        public static SVMTabPanel instance { get; private set; }
 
         public UIPanel controlContainer { get; private set; }
         private UIPanel mainPanel;
@@ -99,7 +99,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             label.padding.top = 10;
             label.padding.right = 10;
 
-            DistrictManagerOverrides.eventOnDistrictRenamed += reloadDistricts;
+            DistrictManagerOverrides.eventOnDistrictChanged += reloadDistricts;
 
             m_StripMain.selectedIndex = -1;
             m_StripBuilings.selectedIndex = -1;
@@ -292,7 +292,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
             SVMUtils.createUIElement(out UILabel vehicleCapacityLabel, titleLine.transform, "vehicleCapacityLabel");
             vehicleCapacityLabel.autoSize = false;
-            vehicleCapacityLabel.area = new Vector4(400, 10, 200, 18);
+            vehicleCapacityLabel.area = new Vector4(475, 10, 200, 18);
             vehicleCapacityLabel.textAlignment = UIHorizontalAlignment.Center;
             vehicleCapacityLabel.text = Locale.Get("SVM_VEHICLE_CAPACITY_LABEL");
 

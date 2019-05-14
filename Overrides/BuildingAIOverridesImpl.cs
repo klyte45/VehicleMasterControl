@@ -24,7 +24,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             if (subtypes == null)
             {
                 var subclasses = SVMUtils.GetSubtypesRecursive(typeof(BasicBuildingAIOverrides<,>), typeof(SVMBuildingAIOverrideUtils));
-                SVMUtils.doLog("GetOverride pré - subclasses:\r\n\t{0}", string.Join("\r\n\t", subclasses?.Select(x => x.ToString())?.ToArray() ?? new string[0]));
+                if (ServiceVehiclesManagerMod.debugMode) SVMUtils.doLog("GetOverride pré - subclasses:\r\n\t{0}", string.Join("\r\n\t", subclasses?.Select(x => x.ToString())?.ToArray() ?? new string[0]));
                 subtypes = subclasses.ToLookup(x =>
                 {
                     try
@@ -38,7 +38,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                     }
                 }, x => x);
 
-                SVMUtils.doLog("GetOverride - Classes:\r\n\t{0}", string.Join("\r\n\t", subtypes?.Select(x => x.Key.ToString() + "=>" + x.ToList().ToString())?.ToArray() ?? new string[0]));
+                if (ServiceVehiclesManagerMod.debugMode) SVMUtils.doLog("GetOverride - Classes:\r\n\t{0}", string.Join("\r\n\t", subtypes?.Select(x => x.Key.ToString() + "=>" + x.ToList().ToString())?.ToArray() ?? new string[0]));
             }
             List<Type> targetClasses = new List<Type>();
             List<IBasicBuildingAIOverrides> value = null;
@@ -59,14 +59,14 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                         }
                     }
                 }
-                SVMUtils.doLog("GetOverride - targetClasses = {0} ({1})", targetClasses, targetTypeAi);
+                if (ServiceVehiclesManagerMod.debugMode) SVMUtils.doLog("GetOverride - targetClasses = [{0}] ({1})", String.Join(",", targetClasses.Select(x => x.ToString()).ToArray()), targetTypeAi);
             }
             else
             {
                 targetClasses = subtypes[targetTypeAi].ToList();
             }
-            value = targetClasses.Select(targetClass => (IBasicBuildingAIOverrides)SVMUtils.GetPrivateStaticField("instance", targetClass)).ToList();
-            //SVMUtils.doLog("GetOverride - value = {0}", value);
+            value = targetClasses.Select(targetClass => (IBasicBuildingAIOverrides)SVMUtils.GetPrivateStaticProperty("instance", targetClass)).ToList();
+            if (ServiceVehiclesManagerMod.debugMode) SVMUtils.doLog("GetOverride - value = {0}", value);
             return value;
         }
 
@@ -596,7 +596,6 @@ namespace Klyte.ServiceVehiclesManager.Overrides
 
         public override void AwakeBody()
         {
-            instance = this;
             var from = typeof(TransportStationAI).GetMethod("CreateIncomingVehicle", allFlags);
             var to = typeof(TransportStationAIOverrides).GetMethod("CreateIncomingVehicle", allFlags);
             var from2 = typeof(TransportStationAI).GetMethod("CreateOutgoingVehicle", allFlags);
@@ -667,10 +666,6 @@ namespace Klyte.ServiceVehiclesManager.Overrides
 
         public override string GetVehicleMaxCountField(VehicleInfo.VehicleType veh, Level level) => null;
 
-        public override void AwakeBody()
-        {
-            instance = this;
-        }
     }
 
     /* internal sealed class OutsideConnectionAIOverrides : BasicBuildingAIOverrides<OutsideConnectionAIOverrides, OutsideConnectionAI>
