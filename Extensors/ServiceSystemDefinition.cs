@@ -1,14 +1,16 @@
 ﻿using ColossalFramework;
+using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Overrides;
+using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 {
-    internal class ServiceSystemDefinition
+    public struct ServiceSystemDefinition
     {
         public static readonly ServiceSystemDefinition DISASTER_CAR = new ServiceSystemDefinition(ItemClass.Service.Disaster, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition DISASTER_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.Disaster, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level2);
@@ -16,11 +18,16 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition FIRE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.FireDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition GARBAGE_CAR = new ServiceSystemDefinition(ItemClass.Service.Garbage, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition GARBBIO_CAR = new ServiceSystemDefinition(ItemClass.Service.Garbage, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
+
+
         public static readonly ServiceSystemDefinition HEALTHCARE_CAR = new ServiceSystemDefinition(ItemClass.Service.HealthCare, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition HEALTHCARE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.HealthCare, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
         public static readonly ServiceSystemDefinition DEATHCARE_CAR = new ServiceSystemDefinition(ItemClass.Service.HealthCare, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition POLICE_CAR = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition POLICE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
+
+        internal bool GetAllowDistrictServiceRestrictions() => throw new NotImplementedException();
+
         public static readonly ServiceSystemDefinition ROAD_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition WATER_CAR = new ServiceSystemDefinition(ItemClass.Service.Water, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition PRISION_CAR = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
@@ -39,144 +46,92 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         //public static readonly ServiceSystemDefinition OUT_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1, true);
         //public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
         //public static readonly ServiceSystemDefinition OUT_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1, true);
-        //public static readonly ServiceSystemDefinition OUT_ROAD = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5, true);
+        //public static readonly ServiceSystemDefinition OUT_ROAD = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5, true);   
 
+        public bool AllowRestrictions { get; private set; }
 
-        public static Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> availableDefinitions
+        public long Idx
         {
-            get {
-                if (m_availableDefinitions.Count == 0)
-                {
-                    m_availableDefinitions[GARBAGE_CAR] = SVMServiceVehicleExtensionGarCar.instance;
-                    m_availableDefinitions[DEATHCARE_CAR] = SVMServiceVehicleExtensionDcrCar.instance;
-                    m_availableDefinitions[REG_TRAIN] = SVMServiceVehicleExtensionRegTra.instance;
-                    m_availableDefinitions[REG_SHIP] = SVMServiceVehicleExtensionRegShp.instance;
-                    m_availableDefinitions[REG_PLANE] = SVMServiceVehicleExtensionRegPln.instance;
-                    m_availableDefinitions[FIRE_CAR] = SVMServiceVehicleExtensionFirCar.instance;
-                    m_availableDefinitions[HEALTHCARE_CAR] = SVMServiceVehicleExtensionHcrCar.instance;
-                    m_availableDefinitions[POLICE_CAR] = SVMServiceVehicleExtensionPolCar.instance;
-
-
-                    m_availableDefinitions[CARG_TRAIN] = SVMServiceVehicleExtensionCrgTra.instance;
-                    m_availableDefinitions[CARG_SHIP] = SVMServiceVehicleExtensionCrgShp.instance;
-
-                    //m_availableDefinitions[OUT_TRAIN] = SVMServiceVehicleExtensionOutTra.instance;
-                    //m_availableDefinitions[OUT_SHIP] = SVMServiceVehicleExtensionOutShp.instance;
-                    //m_availableDefinitions[OUT_PLANE] = SVMServiceVehicleExtensionOutPln.instance;
-                    //m_availableDefinitions[OUT_ROAD] = SVMServiceVehicleExtensionOutCar.instance;
-
-                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
-                    //{
-                    m_availableDefinitions[PRISION_CAR] = SVMServiceVehicleExtensionPriCar.instance;
-                    m_availableDefinitions[TAXI_CAR] = SVMServiceVehicleExtensionTaxCar.instance;
-                    //}
-
-                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
-                    //{
-                    m_availableDefinitions[ROAD_CAR] = SVMServiceVehicleExtensionRoaCar.instance;
-                    m_availableDefinitions[SNOW_CAR] = SVMServiceVehicleExtensionSnwCar.instance;
-                    //}
-
-                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
-                    //{
-                    m_availableDefinitions[DISASTER_CAR] = SVMServiceVehicleExtensionDisCar.instance;
-                    m_availableDefinitions[DISASTER_HELICOPTER] = SVMServiceVehicleExtensionDisHel.instance;
-                    m_availableDefinitions[FIRE_HELICOPTER] = SVMServiceVehicleExtensionFirHel.instance;
-                    m_availableDefinitions[HEALTHCARE_HELICOPTER] = SVMServiceVehicleExtensionHcrHel.instance;
-                    m_availableDefinitions[POLICE_HELICOPTER] = SVMServiceVehicleExtensionPolHel.instance;
-                    m_availableDefinitions[WATER_CAR] = SVMServiceVehicleExtensionWatCar.instance;
-                    //}
-
-                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
-                    //{
-                    m_availableDefinitions[CABLECAR_CABLECAR] = SVMServiceVehicleExtensionCcrCcr.instance;
-                    //}
-
-                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
-                    //{
-                    m_availableDefinitions[GARBBIO_CAR] = SVMServiceVehicleExtensionGbcCar.instance;
-                    //}
-                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
-                    //{
-                    m_availableDefinitions[BEAU_CAR] = SVMServiceVehicleExtensionBeaCar.instance;
-                    //}
-                    //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Industry))
-                    //{
-                    m_availableDefinitions[POST_CAR] = SVMServiceVehicleExtensionPstCar.instance;
-                    m_availableDefinitions[POST_TRK] = SVMServiceVehicleExtensionPstTrk.instance;
-                    //}
-                }
-                return m_availableDefinitions;
-            }
+            get; private set;
         }
-        public static readonly Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension> m_availableDefinitions = new Dictionary<ServiceSystemDefinition, ISVMTransportTypeExtension>();
-        public static Dictionary<ServiceSystemDefinition, Type> sysDefinitions
+
+        internal ISVMDistrictExtension GetDistrictExtension() => sysDefinitions[this].GetExtensionDistrict();
+        internal ISVMBuildingExtension GetBuildingExtension() => sysDefinitions[this].GetExtensionBuilding();
+
+        public static readonly Dictionary<ServiceSystemDefinition, ISVMBuildingExtension> m_availableDefinitions = new Dictionary<ServiceSystemDefinition, ISVMBuildingExtension>();
+        public static Dictionary<ServiceSystemDefinition, ISVMSysDef> sysDefinitions
         {
             get {
                 if (m_sysDefinitions.Count == 0)
                 {
-                    m_sysDefinitions[GARBAGE_CAR] = typeof(SVMSysDefGarCar);
-                    m_sysDefinitions[DEATHCARE_CAR] = typeof(SVMSysDefDcrCar);
-                    m_sysDefinitions[REG_PLANE] = typeof(SVMSysDefRegPln);
-                    m_sysDefinitions[REG_TRAIN] = typeof(SVMSysDefRegTra);
-                    m_sysDefinitions[REG_SHIP] = typeof(SVMSysDefRegShp);
-                    m_sysDefinitions[FIRE_CAR] = typeof(SVMSysDefFirCar);
-                    m_sysDefinitions[HEALTHCARE_CAR] = typeof(SVMSysDefHcrCar);
-                    m_sysDefinitions[POLICE_CAR] = typeof(SVMSysDefPolCar);
-                    m_sysDefinitions[CARG_TRAIN] = typeof(SVMSysDefCrgTra);
-                    m_sysDefinitions[CARG_SHIP] = typeof(SVMSysDefCrgShp);
+                    m_sysDefinitions[GARBAGE_CAR] = SingletonLite<SVMSysDefGarCar>.instance;
+                    m_sysDefinitions[DEATHCARE_CAR] = SingletonLite<SVMSysDefDcrCar>.instance;
+                    m_sysDefinitions[REG_PLANE] = SingletonLite<SVMSysDefRegPln>.instance;
+                    m_sysDefinitions[REG_TRAIN] = SingletonLite<SVMSysDefRegTra>.instance;
+                    m_sysDefinitions[REG_SHIP] = SingletonLite<SVMSysDefRegShp>.instance;
+                    m_sysDefinitions[FIRE_CAR] = SingletonLite<SVMSysDefFirCar>.instance;
+                    m_sysDefinitions[HEALTHCARE_CAR] = SingletonLite<SVMSysDefHcrCar>.instance;
+                    m_sysDefinitions[POLICE_CAR] = SingletonLite<SVMSysDefPolCar>.instance;
+                    m_sysDefinitions[CARG_TRAIN] = SingletonLite<SVMSysDefCrgTra>.instance;
+                    m_sysDefinitions[CARG_SHIP] = SingletonLite<SVMSysDefCrgShp>.instance;
 
-                    //m_sysDefinitions[OUT_PLANE] = typeof(SVMSysDefOutPln);
-                    //m_sysDefinitions[OUT_TRAIN] = typeof(SVMSysDefOutTra);
-                    //m_sysDefinitions[OUT_SHIP] = typeof(SVMSysDefOutShp);
-                    //m_sysDefinitions[OUT_ROAD] = typeof(SVMSysDefOutCar);
+                    //m_sysDefinitions[OUT_PLANE] = SingletonLite<SVMSysDefOutPln>.instance;
+                    //m_sysDefinitions[OUT_TRAIN] = SingletonLite<SVMSysDefOutTra>.instance;
+                    //m_sysDefinitions[OUT_SHIP] = SingletonLite<SVMSysDefOutShp>.instance;
+                    //m_sysDefinitions[OUT_ROAD] = SingletonLite<SVMSysDefOutCar>.instance;
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
                     //{
-                    m_sysDefinitions[PRISION_CAR] = typeof(SVMSysDefPriCar);
-                    m_sysDefinitions[TAXI_CAR] = typeof(SVMSysDefTaxCar);
+                    m_sysDefinitions[PRISION_CAR] = SingletonLite<SVMSysDefPriCar>.instance;
+                    m_sysDefinitions[TAXI_CAR] = SingletonLite<SVMSysDefTaxCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
                     //{
-                    m_sysDefinitions[ROAD_CAR] = typeof(SVMSysDefRoaCar);
-                    m_sysDefinitions[SNOW_CAR] = typeof(SVMSysDefSnwCar);
+                    m_sysDefinitions[ROAD_CAR] = SingletonLite<SVMSysDefRoaCar>.instance;
+                    m_sysDefinitions[SNOW_CAR] = SingletonLite<SVMSysDefSnwCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
                     //{
-                    m_sysDefinitions[WATER_CAR] = typeof(SVMSysDefWatCar);
-                    m_sysDefinitions[DISASTER_CAR] = typeof(SVMSysDefDisCar);
-                    m_sysDefinitions[DISASTER_HELICOPTER] = typeof(SVMSysDefDisHel);
-                    m_sysDefinitions[FIRE_HELICOPTER] = typeof(SVMSysDefFirHel);
-                    m_sysDefinitions[HEALTHCARE_HELICOPTER] = typeof(SVMSysDefHcrHel);
-                    m_sysDefinitions[POLICE_HELICOPTER] = typeof(SVMSysDefPolHel);
+                    m_sysDefinitions[WATER_CAR] = SingletonLite<SVMSysDefWatCar>.instance;
+                    m_sysDefinitions[DISASTER_CAR] = SingletonLite<SVMSysDefDisCar>.instance;
+                    m_sysDefinitions[DISASTER_HELICOPTER] = SingletonLite<SVMSysDefDisHel>.instance;
+                    m_sysDefinitions[FIRE_HELICOPTER] = SingletonLite<SVMSysDefFirHel>.instance;
+                    m_sysDefinitions[HEALTHCARE_HELICOPTER] = SingletonLite<SVMSysDefHcrHel>.instance;
+                    m_sysDefinitions[POLICE_HELICOPTER] = SingletonLite<SVMSysDefPolHel>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
                     //{
-                    m_sysDefinitions[CABLECAR_CABLECAR] = typeof(SVMSysDefCcrCcr);
+                    m_sysDefinitions[CABLECAR_CABLECAR] = SingletonLite<SVMSysDefCcrCcr>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
                     //{
-                    m_sysDefinitions[GARBBIO_CAR] = typeof(SVMSysDefGbcCar);
+                    m_sysDefinitions[GARBBIO_CAR] = SingletonLite<SVMSysDefGbcCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
                     //{
-                    m_sysDefinitions[BEAU_CAR] = typeof(SVMSysDefBeaCar);
+                    m_sysDefinitions[BEAU_CAR] = SingletonLite<SVMSysDefBeaCar>.instance;
                     //}
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Industry))
                     //{
-                    m_sysDefinitions[POST_CAR] = typeof(SVMSysDefPstCar);
-                    m_sysDefinitions[POST_TRK] = typeof(SVMSysDefPstTrk);
+                    m_sysDefinitions[POST_CAR] = SingletonLite<SVMSysDefPstCar>.instance;
+                    m_sysDefinitions[POST_TRK] = SingletonLite<SVMSysDefPstTrk>.instance;
                     //}
                 }
                 return m_sysDefinitions;
             }
         }
-        private static readonly Dictionary<ServiceSystemDefinition, Type> m_sysDefinitions = new Dictionary<ServiceSystemDefinition, Type>();
+
+        internal CategoryTab getCategory() => throw new NotImplementedException();
+        internal string getNameForServiceSystem() => throw new NotImplementedException();
+        internal string getFgIconServiceSystem() => throw new NotImplementedException();
+        internal string getIconServiceSystem() => throw new NotImplementedException();
+
+        private static readonly Dictionary<ServiceSystemDefinition, ISVMSysDef> m_sysDefinitions = new Dictionary<ServiceSystemDefinition, ISVMSysDef>();
 
         public ItemClass.Service service
         {
@@ -213,56 +168,48 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             this.level = level;
             this.subService = subService;
             this.outsideConnection = outsideConnection;
+            Idx = ((int) service << 48) | ((int) subService << 40) | ((int) level << 32) | (Mathf.RoundToInt(Mathf.Log((int) vehicleType) / Mathf.Log(2)) << 8) | (outsideConnection ? 1 : 0);
+            AllowRestrictions = service != ItemClass.Service.PublicTransport || subService == ItemClass.SubService.PublicTransportTaxi;
         }
 
-        internal ISVMTransportTypeExtension GetTransportExtension()
-        {
-            return availableDefinitions[this];
-        }
+        public Type GetDefType() => sysDefinitions[this].GetType();
 
-        internal Type GetDefType()
-        {
-            return sysDefinitions[this];
-        }
-
-        public bool isFromSystem(VehicleInfo info)
-        {
-            return info.m_class.m_service == service && subService == info.m_class.m_subService && info.m_vehicleType == vehicleType && info.m_class.m_level == level;
-        }
+        public bool isFromSystem(VehicleInfo info) => info.m_class.m_service == service && subService == info.m_class.m_subService && info.m_vehicleType == vehicleType && info.m_class.m_level == level;
 
         public bool isFromSystem(BuildingInfo info)
         {
-            if (ServiceVehiclesManagerMod.debugMode)
+            if (ServiceVehiclesManagerMod.DebugMode)
             {
-                SVMUtils.doLog($"[{info?.GetAI()?.GetType()}->{this}]" +
-                    $" info.m_class.m_service == service = { info?.m_class?.m_service == service};" +
-                    $" subService == info.m_class.m_subService = { subService == info?.m_class?.m_subService };" +
-                    $" info?.GetAI() is OutsideConnectionAI == outsideConnection = {info?.GetAI() is OutsideConnectionAI == outsideConnection };" +
-                    $" info.m_class.m_level == level = {info?.m_class?.m_level} == {level} = {info?.m_class?.m_level == level};" +
-                    $" SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Count = {SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.Count};" +
-                    $" ExtraAllowedLevels = [{String.Join(",", SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).SelectMany(x => x?.ExtraAllowedLevels() ?? new List<ItemClass.Level>()).Select(x => x.ToString() ?? "<NULL>")?.ToArray())}];" +
-                    $" instance?.vehicleType ({this?.vehicleType}) ;" +
-                    $" aiOverride?.AllowVehicleType(vehicleType) = {this?.vehicleType}) ;" +
-                    $" SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Where = {ListAiOverrides(info).Count()} ");
+                //LogUtils.DoLog($"[{info?.GetAI()?.GetType()}->{this}]" +
+                //    $" info.m_class.m_service == service = { info?.m_class?.m_service == service};" +
+                //    $" subService == info.m_class.m_subService = { subService == info?.m_class?.m_subService };" +
+                //    $" info?.GetAI() is OutsideConnectionAI == outsideConnection = {info?.GetAI() is OutsideConnectionAI == outsideConnection };" +
+                //    $" info.m_class.m_level == level = {info?.m_class?.m_level} == {level} = {info?.m_class?.m_level == level};" +
+                //    $" SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Count = {SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.Count};" +
+                //    $" ExtraAllowedLevels = [{string.Join(",", SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).SelectMany(x => x?.ExtraAllowedLevels() ?? new List<ItemClass.Level>()).Select(x => x.ToString() ?? "<NULL>")?.ToArray())}];" +
+                //    $" instance?.vehicleType ({vehicleType}) ;" +
+                //    $" aiOverride?.AllowVehicleType(vehicleType) = {vehicleType}) ;" +
+                //    $" SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Where = {ListAiOverrides(info).Count()} ");
             }
             return ListAiOverrides(info).Count() > 0;
         }
 
-        private static IEnumerable<IBasicBuildingAIOverrides> ListAiOverrides(BuildingInfo info, ServiceSystemDefinition instance)
+        private static IEnumerable<IBasicBuildingAIOverrides> ListAiOverrides(BuildingInfo info, ref ServiceSystemDefinition ssd)
         {
-            if (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Count == 0) return new List<IBasicBuildingAIOverrides>();
+            if (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Count == 0)
+            {
+                return new List<IBasicBuildingAIOverrides>();
+            }
+            ServiceSystemDefinition instance = ssd;
             return SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Where(aiOverride =>
-               (info?.m_class?.m_service == instance?.service)
-            && instance?.subService == info?.m_class?.m_subService
-            && ((instance?.outsideConnection ?? false) || info?.m_class?.m_level == instance.level || (aiOverride?.ExtraAllowedLevels()?.Contains(instance.level) ?? false))
-            && info?.GetAI() is OutsideConnectionAI == instance?.outsideConnection
-            && SVMUtils.logAndReturn(aiOverride?.AllowVehicleType(SVMUtils.logAndReturn(instance?.vehicleType ?? VehicleInfo.VehicleType.None, "EFF VEHICLE TYPE TESTED"), info?.GetAI()) ?? SVMUtils.logAndReturn(false, "AI OVERRIDE NULL!!!!!"), "AllowVehicleType")
+               (info?.m_class?.m_service == instance.service)
+            && instance.subService == info?.m_class?.m_subService
+            && ((instance.outsideConnection) || info?.m_class?.m_level == instance.level || (aiOverride?.ExtraAllowedLevels()?.Contains(instance.level) ?? false))
+            && (info?.GetAI() is OutsideConnectionAI) == instance.outsideConnection
+            && SVMUtils.logAndReturn(aiOverride?.AllowVehicleType(SVMUtils.logAndReturn(instance.vehicleType, "EFF VEHICLE TYPE TESTED"), info?.GetAI()) ?? SVMUtils.logAndReturn(false, "AI OVERRIDE NULL!!!!!"), "AllowVehicleType")
             );
         }
-        private IEnumerable<IBasicBuildingAIOverrides> ListAiOverrides(BuildingInfo info)
-        {
-            return ListAiOverrides(info, this);
-        }
+        private IEnumerable<IBasicBuildingAIOverrides> ListAiOverrides(BuildingInfo info) => ListAiOverrides(info, ref this);
 
         public override bool Equals(object obj)
         {
@@ -274,40 +221,37 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 return false;
             }
-            ServiceSystemDefinition other = (ServiceSystemDefinition)obj;
+            var other = (ServiceSystemDefinition) obj;
 
             return level == other.level && service == other.service && subService == other.subService && vehicleType == other.vehicleType && outsideConnection == other.outsideConnection;
         }
 
         public static bool operator ==(ServiceSystemDefinition a, ServiceSystemDefinition b)
         {
-            if (Object.Equals(a, null) || Object.Equals(b, null))
+            if (Equals(a, null) || Equals(b, null))
             {
-                return Object.Equals(a, null) == Object.Equals(b, null);
+                return Equals(a, null) == Equals(b, null);
             }
             return a.Equals(b);
         }
-        public static bool operator !=(ServiceSystemDefinition a, ServiceSystemDefinition b)
-        {
-            return !(a == b);
-        }
+        public static bool operator !=(ServiceSystemDefinition a, ServiceSystemDefinition b) => !(a == b);
 
         public static ServiceSystemDefinition from(VehicleInfo info)
         {
             if (info == null)
             {
-                return default(ServiceSystemDefinition);
+                return default;
             }
-            return availableDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && x.vehicleType == info.m_vehicleType && x.level == info.m_class.m_level && !x.outsideConnection);
+            return sysDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && x.vehicleType == info.m_vehicleType && x.level == info.m_class.m_level && !x.outsideConnection);
         }
 
         public static ServiceSystemDefinition from(BuildingInfo info, VehicleInfo.VehicleType type)
         {
             if (info == null)
             {
-                return default(ServiceSystemDefinition);
+                return default;
             }
-            return availableDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && (x.level == info.m_class.m_level || x.outsideConnection) && x.vehicleType == type && x.outsideConnection == info.GetAI() is OutsideConnectionAI);
+            return sysDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && (x.level == info.m_class.m_level || x.outsideConnection) && x.vehicleType == type && x.outsideConnection == info.GetAI() is OutsideConnectionAI);
         }
 
         public static IEnumerable<ServiceSystemDefinition> from(BuildingInfo info)
@@ -316,66 +260,111 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 return new List<ServiceSystemDefinition>();
             }
-            return availableDefinitions.Keys.Where(x => x.isFromSystem(info));
+            return sysDefinitions.Keys.Where(x => x.isFromSystem(info));
         }
 
-        public SVMConfigWarehouse.ConfigIndex toConfigIndex()
-        {
-            var th = this;
-            return SVMConfigWarehouse.getConfigServiceSystemForDefinition(ref th);
-        }
+        //public SVMConfigWarehouse.ConfigIndex toConfigIndex()
+        //{
+        //    ServiceSystemDefinition th = this;
+        //    return SVMConfigWarehouse.getConfigServiceSystemForDefinition(ref th);
+        //}
 
-        public override string ToString()
-        {
-            return service.ToString() + "|" + subService.ToString() + "|" + level.ToString() + "|" + vehicleType.ToString() + "|" + outsideConnection;
-        }
+        public override string ToString() => service.ToString() + "|" + subService.ToString() + "|" + level.ToString() + "|" + vehicleType.ToString() + "|" + outsideConnection;
 
         public override int GetHashCode()
         {
-            var hashCode = 286451371;
+            int hashCode = 286451371;
             hashCode = hashCode * -1521134295 + service.GetHashCode();
             hashCode = hashCode * -1521134295 + vehicleType.GetHashCode();
             hashCode = hashCode * -1521134295 + subService.GetHashCode();
             hashCode = hashCode * -1521134295 + vehicleType.GetHashCode();
             return hashCode;
         }
+
+
+        public VehicleInfo GetAModel(ushort buildingId)
+        {
+            VehicleInfo info = null;
+            List<string> assetList = GetBuildingExtension().GetSelectedBasicAssets(buildingId);
+            if (assetList.Count == 0)
+            {
+                assetList = GetDistrictExtension().GetSelectedBasicAssets(BuildingUtils.GetBuildingDistrict(buildingId));
+            }
+            while (info == null && assetList.Count > 0)
+            {
+                info = VehicleUtils.GetRandomModel(assetList, out string modelName);
+                if (info == null)
+                {
+                    GetBuildingExtension().RemoveAsset(buildingId, modelName);
+                    GetDistrictExtension().RemoveAsset(BuildingUtils.GetBuildingDistrict(buildingId), modelName);
+                    assetList.Remove(modelName);
+                }
+            }
+            return info;
+        }
+        public Color GetModelColor(uint buildingId)
+        {
+            Color color = GetBuildingExtension().GetColor(buildingId);
+            if (color == default)
+            {
+                color = GetDistrictExtension().GetColor(BuildingUtils.GetBuildingDistrict(buildingId));
+            }
+            return color;
+        }
+        internal bool AllowColorChanging() => !notAllowedColorChange.Contains(this);
+
+
+        private static readonly ServiceSystemDefinition[] notAllowedColorChange = new ServiceSystemDefinition[]
+        {
+            FIRE_CAR                ,
+            HEALTHCARE_CAR          ,
+            POLICE_CAR              ,
+            ROAD_CAR                ,
+            SNOW_CAR                ,
+            PRISION_CAR             ,
+            TAXI_CAR                ,
+        };
     }
 
-    internal abstract class SVMSysDef<T> : Singleton<T> where T : SVMSysDef<T>
+    public interface ISVMSysDef
     {
-        internal abstract ServiceSystemDefinition GetSSD();
-        public void Awake()
-        {
-            this.transform.SetParent(ServiceVehiclesManagerMod.instance.controller.transform);
-        }
+        public abstract ServiceSystemDefinition GetSSD();
+        public ISVMBuildingExtension GetExtensionBuilding();
+        public ISVMDistrictExtension GetExtensionDistrict();
     }
-    internal sealed class SVMSysDefDisCar : SVMSysDef<SVMSysDefDisCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.DISASTER_CAR; } }
-    internal sealed class SVMSysDefDisHel : SVMSysDef<SVMSysDefDisHel> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.DISASTER_HELICOPTER; } }
-    internal sealed class SVMSysDefFirCar : SVMSysDef<SVMSysDefFirCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.FIRE_CAR; } }
-    internal sealed class SVMSysDefFirHel : SVMSysDef<SVMSysDefFirHel> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.FIRE_HELICOPTER; } }
-    internal sealed class SVMSysDefGarCar : SVMSysDef<SVMSysDefGarCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.GARBAGE_CAR; } }
-    internal sealed class SVMSysDefGbcCar : SVMSysDef<SVMSysDefGbcCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.GARBBIO_CAR; } }
-    internal sealed class SVMSysDefHcrCar : SVMSysDef<SVMSysDefHcrCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.HEALTHCARE_CAR; } }
-    internal sealed class SVMSysDefHcrHel : SVMSysDef<SVMSysDefHcrHel> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.HEALTHCARE_HELICOPTER; } }
-    internal sealed class SVMSysDefPolCar : SVMSysDef<SVMSysDefPolCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.POLICE_CAR; } }
-    internal sealed class SVMSysDefPolHel : SVMSysDef<SVMSysDefPolHel> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.POLICE_HELICOPTER; } }
-    internal sealed class SVMSysDefRoaCar : SVMSysDef<SVMSysDefRoaCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.ROAD_CAR; } }
-    internal sealed class SVMSysDefDcrCar : SVMSysDef<SVMSysDefDcrCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.DEATHCARE_CAR; } }
-    internal sealed class SVMSysDefWatCar : SVMSysDef<SVMSysDefWatCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.WATER_CAR; } }
-    internal sealed class SVMSysDefPriCar : SVMSysDef<SVMSysDefPriCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.PRISION_CAR; } }
-    internal sealed class SVMSysDefTaxCar : SVMSysDef<SVMSysDefTaxCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.TAXI_CAR; } }
-    internal sealed class SVMSysDefCcrCcr : SVMSysDef<SVMSysDefCcrCcr> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CABLECAR_CABLECAR; } }
-    internal sealed class SVMSysDefSnwCar : SVMSysDef<SVMSysDefSnwCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.SNOW_CAR; } }
-    internal sealed class SVMSysDefRegShp : SVMSysDef<SVMSysDefRegShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_SHIP; } }
-    internal sealed class SVMSysDefRegTra : SVMSysDef<SVMSysDefRegTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_TRAIN; } }
-    internal sealed class SVMSysDefRegPln : SVMSysDef<SVMSysDefRegPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.REG_PLANE; } }
-    internal sealed class SVMSysDefCrgTra : SVMSysDef<SVMSysDefCrgTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CARG_TRAIN; } }
-    internal sealed class SVMSysDefCrgShp : SVMSysDef<SVMSysDefCrgShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.CARG_SHIP; } }
-    //internal sealed class SVMSysDefOutShp : SVMSysDef<SVMSysDefOutShp> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_SHIP; } }
-    //internal sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_TRAIN; } }
-    //internal sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_PLANE; } }
-    //internal sealed class SVMSysDefOutCar : SVMSysDef<SVMSysDefOutCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_ROAD; } }
-    internal sealed class SVMSysDefBeaCar : SVMSysDef<SVMSysDefBeaCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.BEAU_CAR; } }
-    internal sealed class SVMSysDefPstCar : SVMSysDef<SVMSysDefPstCar> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.POST_CAR; } }
-    internal sealed class SVMSysDefPstTrk : SVMSysDef<SVMSysDefPstTrk> { internal override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.POST_TRK; } }
+    public abstract class SVMSysDef<T> : SingletonLite<T>, ISVMSysDef where T : SVMSysDef<T>, ISVMSysDef, new()
+    {
+        public abstract ServiceSystemDefinition GetSSD();
+        public ISVMBuildingExtension GetExtensionBuilding() => SVMBuildingInstanceExtensor<T>.Instance;
+        public ISVMDistrictExtension GetExtensionDistrict() => SVMDistrictExtensor<T>.Instance;
+    }
+    public sealed class SVMSysDefDisCar : SVMSysDef<SVMSysDefDisCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.DISASTER_CAR; }
+    public sealed class SVMSysDefDisHel : SVMSysDef<SVMSysDefDisHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.DISASTER_HELICOPTER; }
+    public sealed class SVMSysDefFirCar : SVMSysDef<SVMSysDefFirCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FIRE_CAR; }
+    public sealed class SVMSysDefFirHel : SVMSysDef<SVMSysDefFirHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FIRE_HELICOPTER; }
+    public sealed class SVMSysDefGarCar : SVMSysDef<SVMSysDefGarCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.GARBAGE_CAR; }
+    public sealed class SVMSysDefGbcCar : SVMSysDef<SVMSysDefGbcCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.GARBBIO_CAR; }
+    public sealed class SVMSysDefHcrCar : SVMSysDef<SVMSysDefHcrCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.HEALTHCARE_CAR; }
+    public sealed class SVMSysDefHcrHel : SVMSysDef<SVMSysDefHcrHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.HEALTHCARE_HELICOPTER; }
+    public sealed class SVMSysDefPolCar : SVMSysDef<SVMSysDefPolCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POLICE_CAR; }
+    public sealed class SVMSysDefPolHel : SVMSysDef<SVMSysDefPolHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POLICE_HELICOPTER; }
+    public sealed class SVMSysDefRoaCar : SVMSysDef<SVMSysDefRoaCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.ROAD_CAR; }
+    public sealed class SVMSysDefDcrCar : SVMSysDef<SVMSysDefDcrCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.DEATHCARE_CAR; }
+    public sealed class SVMSysDefWatCar : SVMSysDef<SVMSysDefWatCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.WATER_CAR; }
+    public sealed class SVMSysDefPriCar : SVMSysDef<SVMSysDefPriCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.PRISION_CAR; }
+    public sealed class SVMSysDefTaxCar : SVMSysDef<SVMSysDefTaxCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.TAXI_CAR; }
+    public sealed class SVMSysDefCcrCcr : SVMSysDef<SVMSysDefCcrCcr> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CABLECAR_CABLECAR; }
+    public sealed class SVMSysDefSnwCar : SVMSysDef<SVMSysDefSnwCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.SNOW_CAR; }
+    public sealed class SVMSysDefRegShp : SVMSysDef<SVMSysDefRegShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_SHIP; }
+    public sealed class SVMSysDefRegTra : SVMSysDef<SVMSysDefRegTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_TRAIN; }
+    public sealed class SVMSysDefRegPln : SVMSysDef<SVMSysDefRegPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_PLANE; }
+    public sealed class SVMSysDefCrgTra : SVMSysDef<SVMSysDefCrgTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CARG_TRAIN; }
+    public sealed class SVMSysDefCrgShp : SVMSysDef<SVMSysDefCrgShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CARG_SHIP; }
+    //public sealed class SVMSysDefOutShp : SVMSysDef<SVMSysDefOutShp> { public override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_SHIP; } }
+    //public sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { public override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_TRAIN; } }
+    //public sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { public override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_PLANE; } }
+    //public sealed class SVMSysDefOutCar : SVMSysDef<SVMSysDefOutCar> { public override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_ROAD; } }
+    public sealed class SVMSysDefBeaCar : SVMSysDef<SVMSysDefBeaCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.BEAU_CAR; }
+    public sealed class SVMSysDefPstCar : SVMSysDef<SVMSysDefPstCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_CAR; }
+    public sealed class SVMSysDefPstTrk : SVMSysDef<SVMSysDefPstTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_TRK; }
 }

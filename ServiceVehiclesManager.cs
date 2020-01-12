@@ -1,64 +1,51 @@
 using ColossalFramework;
-using ColossalFramework.DataBinding;
 using ColossalFramework.Globalization;
-using ColossalFramework.UI;
-using ICities;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.Interfaces;
-using Klyte.Commons.UI;
-using Klyte.ServiceVehiclesManager.i18n;
-using Klyte.ServiceVehiclesManager.TextureAtlas;
+using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.UI;
 using Klyte.ServiceVehiclesManager.Utils;
-using System;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion("2.0.1.0")]
+[assembly: AssemblyVersion("2.99.99.99")]
 
 namespace Klyte.ServiceVehiclesManager
 {
-    public class ServiceVehiclesManagerMod : BasicIUserMod<ServiceVehiclesManagerMod, SVMLocaleUtils, SVMResourceLoader, SVMController, SVMCommonTextureAtlas, SVMTabPanel>
+    public class ServiceVehiclesManagerMod : BasicIUserMod<ServiceVehiclesManagerMod, SVMController, SVMTabPanel>
     {
 
-        public ServiceVehiclesManagerMod()
-        {
-            Construct();
-        }
+        public ServiceVehiclesManagerMod() => Construct();
 
-        protected override ModTab? Tab => ModTab.ServiceVehiclesManager;
 
         private SavedBool m_allowOutsidersAsDefault = new SavedBool("SVMAllowGoOutsideAsDefault", Settings.gameSettingsFile, true, true);
         private SavedBool m_allowGoOutsideAsDefault = new SavedBool("SVMAllowOutsidersAsDefault", Settings.gameSettingsFile, true, true);
-        public static bool allowOutsidersAsDefault => instance.m_allowOutsidersAsDefault.value;
-        public static bool allowGoOutsideAsDefault => instance.m_allowGoOutsideAsDefault.value;
+
+        public static bool allowOutsidersAsDefault => Instance.m_allowOutsidersAsDefault.value;
+        public static bool allowServeOtherDistrictsAsDefault => Instance.m_allowGoOutsideAsDefault.value;
 
         public override string SimpleName => "Service Vehicles Manager";
         public override string Description => "Extension for managing the service vehicles. Requires Klyte Commons.";
 
-        public override void doErrorLog(string fmt, params object[] args)
-        {
-            SVMUtils.doErrorLog(fmt, args);
-        }
+        public override string IconName => "K45_SVMIcon";
 
-        public override void doLog(string fmt, params object[] args)
-        {
-            SVMUtils.doLog(fmt, args);
-        }
+        public override void DoErrorLog(string fmt, params object[] args) => LogUtils.DoErrorLog(fmt, args);
+
+        public override void DoLog(string fmt, params object[] args) => LogUtils.DoLog(fmt, args);
 
         public override void LoadSettings()
         {
         }
         public override void TopSettingsUI(UIHelperExtension helper)
         {
-            UIHelperExtension group8 = helper.AddGroupExtended(Locale.Get("SVM_DISTRICT_SERVICE_RESTRICTIONS"));
-            group8.AddCheckboxLocale("SVM_DEFAULT_ALLOW_OUTSIDERS", m_allowOutsidersAsDefault.value, (x) => { m_allowOutsidersAsDefault.value = x; });
-            group8.AddCheckboxLocale("SVM_DEFAULT_ALLOW_GO_OUTSIDE", m_allowGoOutsideAsDefault.value, (x) => { m_allowGoOutsideAsDefault.value = x; });
-            group8.AddLabel(Locale.Get("SVM_DEFAULT_RESTRICTIONS_NOTE2")).textColor = Color.white;
-            group8.AddLabel(Locale.Get("SVM_DEFAULT_RESTRICTIONS_NOTE")).textColor = Color.yellow;
-            group8.AddLabel(Locale.Get("SVM_DEFAULT_RESTRICTIONS_NOTE3")).textColor = Color.red;
+            UIHelperExtension group8 = helper.AddGroupExtended(Locale.Get("K45_SVM_DISTRICT_SERVICE_RESTRICTIONS"));
+            group8.AddCheckboxLocale("K45_SVM_DEFAULT_ALLOW_OUTSIDERS", m_allowOutsidersAsDefault.value, (x) => { m_allowOutsidersAsDefault.value = x; });
+            group8.AddCheckboxLocale("K45_SVM_DEFAULT_ALLOW_GO_OUTSIDE", m_allowGoOutsideAsDefault.value, (x) => { m_allowGoOutsideAsDefault.value = x; });
+            group8.AddLabel(Locale.Get("K45_SVM_DEFAULT_RESTRICTIONS_NOTE2")).textColor = Color.white;
+            group8.AddLabel(Locale.Get("K45_SVM_DEFAULT_RESTRICTIONS_NOTE")).textColor = Color.yellow;
+            group8.AddLabel(Locale.Get("K45_SVM_DEFAULT_RESTRICTIONS_NOTE3")).textColor = Color.red;
 
         }
+
     }
 }

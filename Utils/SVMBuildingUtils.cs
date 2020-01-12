@@ -1,4 +1,5 @@
 ﻿using ColossalFramework;
+using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.Overrides;
 using System;
@@ -9,7 +10,7 @@ using static ItemClass;
 
 namespace Klyte.ServiceVehiclesManager.Utils
 {
-    class SVMBuildingUtils
+    internal class SVMBuildingUtils
     {
         public static void CalculateOwnVehicles(ushort buildingID, ref Building data, IEnumerable<TransferManager.TransferReason> materials, ref int count, ref int cargo, ref int capacity, ref int inbound, ref int outbound)
         {
@@ -18,9 +19,9 @@ namespace Klyte.ServiceVehiclesManager.Utils
             int num2 = 0;
             while (num != 0)
             {
-                if (materials.Contains((TransferManager.TransferReason)instance.m_vehicles.m_buffer[num].m_transferType))
+                if (materials.Contains((TransferManager.TransferReason) instance.m_vehicles.m_buffer[num].m_transferType))
                 {
-                    VehicleInfo info = instance.m_vehicles.m_buffer[(int)num].Info;
+                    VehicleInfo info = instance.m_vehicles.m_buffer[num].Info;
                     info.m_vehicleAI.GetSize(num, ref instance.m_vehicles.m_buffer[num], out int a, out int num3);
                     cargo += Mathf.Min(a, num3);
                     capacity += num3;
@@ -46,13 +47,13 @@ namespace Klyte.ServiceVehiclesManager.Utils
         public static int GetMaxVehiclesBuilding(ushort buildingID, VehicleInfo.VehicleType type, Level level)
         {
             Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
-            var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
-            var maxField = ext.GetVehicleMaxCountField(type, level);
+            IBasicBuildingAIOverrides ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
+            string maxField = ext.GetVehicleMaxCountField(type, level);
             if (maxField == null)
             {
                 return 0xFFFFFF;
             }
-            return (SVMUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
+            return (ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
         }
 
         public static int GetProductionRate(ref Building b)
@@ -61,12 +62,12 @@ namespace Klyte.ServiceVehiclesManager.Utils
             return PlayerBuildingAI.GetProductionRate(100, budget);
         }
 
-        public static List<ushort> getAllBuildingsFromCity(ServiceSystemDefinition ssd, int? districtId = null, bool strict = false, bool mustAllowSpawn = false)
+        public static List<ushort> getAllBuildingsFromCity(ref ServiceSystemDefinition ssd, int? districtId = null, bool strict = false, bool mustAllowSpawn = false)
         {
-            List<ushort> saida = new List<ushort>();
-            var bm = Singleton<BuildingManager>.instance;
+            var saida = new List<ushort>();
+            BuildingManager bm = Singleton<BuildingManager>.instance;
             FastList<ushort> buildings;
-            var ext = ssd.GetTransportExtension();
+            ISVMDistrictExtension ext = ssd.GetDistrictExtension();
             if (ssd.outsideConnection)
             {
                 buildings = bm.GetOutsideConnections();
@@ -76,16 +77,16 @@ namespace Klyte.ServiceVehiclesManager.Utils
                 buildings = bm.GetServiceBuildings(ssd.service);
             }
 
-            SVMUtils.doLog("getAllBuildingsFromCity ({0}) buildings = {1} (s={2})", ssd, buildings.ToArray(), buildings.m_size);
+            LogUtils.DoLog("getAllBuildingsFromCity ({0}) buildings = {1} (s={2})", ssd, buildings.ToArray(), buildings.m_size);
 
             foreach (ushort i in buildings)
             {
                 if (ssd.isFromSystem(bm.m_buildings.m_buffer[i].Info))
                 {
-                    if (districtId != null && ext.GetAllowDistrictServiceRestrictions())
+                    if (districtId != null && ssd.AllowRestrictions)
                     {
-                        var buildingDistrict = DistrictManager.instance.GetDistrict(bm.m_buildings.m_buffer[i].m_position);
-                        if (districtId != buildingDistrict && (strict || !ext.GetAllowGoOutsideEffective(buildingDistrict)))
+                        byte buildingDistrict = DistrictManager.instance.GetDistrict(bm.m_buildings.m_buffer[i].m_position);
+                        if (districtId != buildingDistrict && (strict || (!ext.GetAllowServeOtherDistricts(buildingDistrict) ?? ServiceVehiclesManagerMod.allowServeOtherDistrictsAsDefault)))
                         {
                             continue;
                         }
@@ -99,12 +100,15 @@ namespace Klyte.ServiceVehiclesManager.Utils
                         int inbound = 0;
                         int outbound = 0;
                         SVMBuildingUtils.CalculateOwnVehicles(i, ref bm.m_buildings.m_buffer[i], SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(bm.m_buildings.m_buffer[i].Info).GetManagedReasons(bm.m_buildings.m_buffer[i].Info).Where(x => x.Value.vehicleLevel == null).Select(x => x.Key), ref count, ref cargo, ref capacity, ref inbound, ref outbound);
-                        if (count >= max) continue;
+                        if (count >= max)
+                        {
+                            continue;
+                        }
                     }
                     saida.Add(i);
                 }
             }
-            SVMUtils.doLog("getAllBuildingsFromCity ({0}) buildings = {1} (s={2}); saida.sz = {3}", ssd, buildings.ToArray(), buildings.m_size, saida.Count);
+            LogUtils.DoLog("getAllBuildingsFromCity ({0}) buildings = {1} (s={2}); saida.sz = {3}", ssd, buildings.ToArray(), buildings.m_size, saida.Count);
             return saida;
         }
     }

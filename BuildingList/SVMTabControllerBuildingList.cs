@@ -1,6 +1,6 @@
 ﻿using ColossalFramework;
 using ColossalFramework.UI;
-using Klyte.Commons.Extensors;
+using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.Utils;
@@ -11,13 +11,10 @@ using UnityEngine;
 namespace Klyte.ServiceVehiclesManager.UI
 {
 
-    internal abstract class SVMTabControllerBuildingList<T> : UICustomControl where T : SVMSysDef<T>
+    internal abstract class SVMTabControllerBuildingList<T> : UICustomControl where T : SVMSysDef<T>, new()
     {
         public static SVMTabControllerBuildingList<T> instance { get; private set; }
-        public static bool exists
-        {
-            get { return instance != null; }
-        }
+        public static bool exists => instance != null;
 
         public bool m_LinesUpdated = false;
         private UIScrollablePanel mainPanel;
@@ -41,26 +38,26 @@ namespace Klyte.ServiceVehiclesManager.UI
                 m_LinesUpdated = false;
                 return;
             }
-            if (!this.m_LinesUpdated)
+            if (!m_LinesUpdated)
             {
-                this.RefreshLines();
+                RefreshLines();
             }
         }
 
         private void AddToList(ushort buildingID, ref int count)
         {
             SVMBuildingInfoItem<T> buildingInfoItem;
-            Type implClassBuildingLine = SVMUtils.GetImplementationForGenericType(typeof(SVMBuildingInfoItem<>), typeof(T));
+            Type implClassBuildingLine = ReflectionUtils.GetImplementationForGenericType(typeof(SVMBuildingInfoItem<>), typeof(T));
             if (count >= mainPanel.components.Count)
             {
-                var temp = UITemplateManager.Get<PublicTransportLineInfo>(kLineTemplate).gameObject;
+                GameObject temp = UITemplateManager.Get<PublicTransportLineInfo>(kLineTemplate).gameObject;
                 GameObject.Destroy(temp.GetComponent<PublicTransportLineInfo>());
-                buildingInfoItem = (SVMBuildingInfoItem<T>)temp.AddComponent(implClassBuildingLine);
+                buildingInfoItem = (SVMBuildingInfoItem<T>) temp.AddComponent(implClassBuildingLine);
                 mainPanel.AttachUIComponent(buildingInfoItem.gameObject);
             }
             else
             {
-                buildingInfoItem = (SVMBuildingInfoItem<T>)mainPanel.components[count].GetComponent(implClassBuildingLine);
+                buildingInfoItem = (SVMBuildingInfoItem<T>) mainPanel.components[count].GetComponent(implClassBuildingLine);
             }
             buildingInfoItem.buildingId = buildingID;
             buildingInfoItem.RefreshData();
@@ -72,15 +69,16 @@ namespace Klyte.ServiceVehiclesManager.UI
             if (Singleton<BuildingManager>.exists)
             {
                 int count = 0;
-                var buildingList = SVMBuildingUtils.getAllBuildingsFromCity(Singleton<T>.instance.GetSSD());
+                ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
+                System.Collections.Generic.List<ushort> buildingList = SVMBuildingUtils.getAllBuildingsFromCity(ref ssd);
 
-                SVMUtils.doLog("{0} buildingList = [{1}] (s={2})", GetType(), string.Join(",", buildingList.Select(x => x.ToString()).ToArray()), buildingList.Count);
+                LogUtils.DoLog("{0} buildingList = [{1}] (s={2})", GetType(), string.Join(",", buildingList.Select(x => x.ToString()).ToArray()), buildingList.Count);
                 foreach (ushort buildingID in buildingList)
                 {
                     Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
-                    var ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
-                    var maxCountField = ext.GetVehicleMaxCountField(SVMSysDef<T>.instance.GetSSD().vehicleType, SVMSysDef<T>.instance.GetSSD().level);
-                    var maxVehicle = SVMUtils.GetPrivateField<int>(b.Info.GetAI(), maxCountField);
+                    IBasicBuildingAIOverrides ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
+                    string maxCountField = ext.GetVehicleMaxCountField(SVMSysDef<T>.instance.GetSSD().vehicleType, SVMSysDef<T>.instance.GetSSD().level);
+                    int maxVehicle = ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxCountField);
                     if (maxCountField == null || maxVehicle > 0)
                     {
                         AddToList(buildingID, ref count);
@@ -88,7 +86,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
                 }
                 RemoveExtraLines(count);
-                SVMUtils.doLog("{0} final count = {1}", GetType(), count);
+                LogUtils.DoLog("{0} final count = {1}", GetType(), count);
 
                 m_LinesUpdated = true;
             }

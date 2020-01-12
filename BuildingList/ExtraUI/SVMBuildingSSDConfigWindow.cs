@@ -5,8 +5,6 @@ using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.TextureAtlas;
-using Klyte.ServiceVehiclesManager.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +12,7 @@ using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 {
-    internal abstract class SVMBuildingSSDConfigWindow<T> : MonoBehaviour where T : SVMSysDef<T>
+    internal abstract class SVMBuildingSSDConfigWindow<T> : MonoBehaviour where T : SVMSysDef<T>, new()
     {
         private UIPanel m_mainPanel;
         private UIHelperExtension m_uiHelper;
@@ -46,25 +44,24 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
             PopulateCheckboxes();
 
-            var ssd = Singleton<T>.instance.GetSSD();
-            var extension = ssd.GetTransportExtension();
-            bool allowColorChange = SVMConfigWarehouse.allowColorChanging(extension.ConfigIndexKey);
+            ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
+            bool allowColorChange = ssd.AllowColorChanging();
             if (allowColorChange)
             {
-                SVMUtils.createUIElement(out UILabel lbl, m_mainPanel.transform, "DistrictColorLabel", new Vector4(5, m_mainPanel.height - 30, 120, 40));
-                SVMUtils.LimitWidth(lbl, 120);
+                KlyteMonoUtils.CreateUIElement(out UILabel lbl, m_mainPanel.transform, "DistrictColorLabel", new Vector4(5, m_mainPanel.height - 30, 120, 40));
+                KlyteMonoUtils.LimitWidth(lbl, 120);
                 lbl.autoSize = true;
-                lbl.localeID = "SVM_COLOR_LABEL";
+                lbl.localeID = "K45_SVM_COLOR_LABEL";
 
-                m_color = KlyteUtils.CreateColorField(m_mainPanel);
+                m_color = KlyteMonoUtils.CreateColorField(m_mainPanel);
                 m_color.eventSelectedColorChanged += onChangeColor;
 
-                SVMUtils.createUIElement(out UIButton resetColor, m_mainPanel.transform, "DistrictColorReset", new Vector4(m_mainPanel.width - 110, m_mainPanel.height - 35, 0, 0));
-                SVMUtils.initButton(resetColor, false, "ButtonMenu");
-                SVMUtils.LimitWidth(resetColor, 100);
+                KlyteMonoUtils.CreateUIElement(out UIButton resetColor, m_mainPanel.transform, "DistrictColorReset", new Vector4(m_mainPanel.width - 110, m_mainPanel.height - 35, 0, 0));
+                KlyteMonoUtils.InitButton(resetColor, false, "ButtonMenu");
+                KlyteMonoUtils.LimitWidth(resetColor, 100);
                 resetColor.textPadding = new RectOffset(5, 5, 5, 2);
                 resetColor.autoSize = true;
-                resetColor.localeID = "SVM_RESET_COLOR";
+                resetColor.localeID = "K45_SVM_RESET_COLOR";
                 resetColor.eventClick += onResetColor;
             }
             else
@@ -74,50 +71,47 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
         }
 
         #region Actions
-        private void onResetColor(UIComponent component, UIMouseEventParameter eventParam)
-        {
-            m_color.selectedColor = Color.clear;
-        }
+        private void onResetColor(UIComponent component, UIMouseEventParameter eventParam) => m_color.selectedColor = Color.clear;
         private void onChangeColor(UIComponent component, Color value)
         {
-            if (m_isLoading) return;
-            SVMUtils.doLog("onChangeColor");
-            var ssd = Singleton<T>.instance.GetSSD();
-            var ext = ssd.GetTransportExtension();
+            if (m_isLoading)
+            {
+                return;
+            }
+
+            LogUtils.DoLog("onChangeColor");
+            ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
+            ISVMBuildingExtension ext = ssd.GetBuildingExtension();
             ushort buildingId = m_buildingInfo.buildingIdSel.Building;
             if (ext.GetIgnoreDistrict(buildingId))
             {
-                ext.SetColorBuilding(buildingId, value);
+                ext.SetColor(buildingId, value);
             }
             else
             {
-                ext.SetColorDistrict(SVMUtils.GetBuildingDistrict(buildingId), value);
+                ssd.GetDistrictExtension().SetColor(BuildingUtils.GetBuildingDistrict(buildingId), value);
             }
         }
         #endregion
 
         private void CreateRemoveUndesiredModelsButton()
         {
-            SVMUtils.createUIElement<UIButton>(out UIButton removeUndesired, m_mainPanel.transform);
+            KlyteMonoUtils.CreateUIElement<UIButton>(out UIButton removeUndesired, m_mainPanel.transform);
             removeUndesired.relativePosition = new Vector3(m_mainPanel.width - 25f, 10f);
             removeUndesired.textScale = 0.6f;
             removeUndesired.width = 20;
             removeUndesired.height = 20;
-            removeUndesired.tooltip = Locale.Get("SVM_REMOVE_UNWANTED_TOOLTIP");
-            SVMUtils.initButton(removeUndesired, true, "ButtonMenu");
+            removeUndesired.tooltip = Locale.Get("K45_SVM_REMOVE_UNWANTED_TOOLTIP");
+            KlyteMonoUtils.InitButton(removeUndesired, true, "ButtonMenu");
             removeUndesired.name = "DeleteLineButton";
             removeUndesired.isVisible = true;
-            removeUndesired.eventClick += (component, eventParam) =>
-            {
-                SVMTransportExtensionUtils.RemoveAllUnwantedVehicles();
-            };
+            removeUndesired.eventClick += (component, eventParam) => SVMTransportExtensionUtils.RemoveAllUnwantedVehicles();
 
-            var icon = removeUndesired.AddUIComponent<UISprite>();
+            UISprite icon = removeUndesired.AddUIComponent<UISprite>();
             icon.relativePosition = new Vector3(2, 2);
-            icon.atlas = SVMCommonTextureAtlas.instance.atlas;
             icon.width = 18;
             icon.height = 18;
-            icon.spriteName = "RemoveUnwantedIcon";
+            icon.spriteName = "K45_RemoveUnwantedIcon";
         }
 
         private void CreateMainPanel()
@@ -140,7 +134,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
                 m_mainPanel.isVisible = value;
             };
 
-            SVMUtils.createUIElement(out m_title, m_mainPanel.transform);
+            KlyteMonoUtils.CreateUIElement(out m_title, m_mainPanel.transform);
             m_title.textAlignment = UIHorizontalAlignment.Center;
             m_title.autoSize = false;
             m_title.autoHeight = true;
@@ -151,49 +145,47 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
         private void CreateScrollPanel()
         {
-            m_uiHelper = SVMUtils.CreateScrollPanel(m_mainPanel, out m_scrollablePanel, out m_scrollbar, m_mainPanel.width - 20f, m_mainPanel.height - 90f, new Vector3(5, 45));
+            m_uiHelper = KlyteMonoUtils.CreateScrollPanel(m_mainPanel, out m_scrollablePanel, out m_scrollbar, m_mainPanel.width - 20f, m_mainPanel.height - 90f, new Vector3(5, 45));
             m_scrollablePanel.eventMouseLeave += (x, y) =>
             {
                 m_previewPanel.isVisible = false;
             };
         }
 
-        private void BindParentChanges()
-        {
-            m_buildingInfo.EventOnBuildingSelChanged += OnBuildingChange;
-        }
+        private void BindParentChanges() => m_buildingInfo.EventOnBuildingSelChanged += OnBuildingChange;
 
         private void OnBuildingChange(ushort buildingId)
         {
-            SVMUtils.doLog("EventOnBuildingSelChanged");
+            LogUtils.DoLog("EventOnBuildingSelChanged");
             m_isLoading = true;
             IEnumerable<ServiceSystemDefinition> ssds = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingId].Info);
-            if (!ssds.Contains(Singleton<T>.instance.GetSSD()))
+            if (!ssds.Contains(SingletonLite<T>.instance.GetSSD()))
             {
                 m_mainPanel.isVisible = false;
                 return;
             }
             m_mainPanel.isVisible = true;
-            var ssd = Singleton<T>.instance.GetSSD();
-            var ext = ssd.GetTransportExtension();
+            ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
+            ISVMBuildingExtension ext = ssd.GetBuildingExtension();
             bool isCustomConfig = ext.GetIgnoreDistrict(buildingId);
 
-            SVMUtils.doLog("ssd = {0}", ssd);
+            LogUtils.DoLog("ssd = {0}", ssd);
 
             List<string> selectedAssets;
             Color selectedColor;
             if (isCustomConfig)
             {
-                selectedAssets = ext.GetAssetListBuilding(buildingId);
-                selectedColor = ext.GetColorBuilding(buildingId);
+                selectedAssets = ext.GetAssetList(buildingId);
+                selectedColor = ext.GetColor(buildingId);
             }
             else
             {
-                var districtId = SVMUtils.GetBuildingDistrict(buildingId);
-                selectedAssets = ext.GetAssetListDistrict(districtId);
-                selectedColor = ext.GetColorDistrict(districtId);
+                ushort districtId = BuildingUtils.GetBuildingDistrict(buildingId);
+                ISVMDistrictExtension distExt = ssd.GetDistrictExtension();
+                selectedAssets = distExt.GetAssetList(districtId);
+                selectedColor = distExt.GetColor(districtId);
             }
-            foreach (var i in m_checkboxes.Keys)
+            foreach (string i in m_checkboxes.Keys)
             {
                 m_checkboxes[i].isChecked = selectedAssets.Contains(i);
             }
@@ -204,18 +196,18 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
             if (isCustomConfig)
             {
-                m_title.text = string.Format(Locale.Get("SVM_ASSET_SELECT_WINDOW_TITLE"), Singleton<BuildingManager>.instance.GetBuildingName(buildingId, default(InstanceID)), SVMConfigWarehouse.getNameForServiceSystem(ssd.toConfigIndex()));
+                m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE"), Singleton<BuildingManager>.instance.GetBuildingName(buildingId, default), ssd.getNameForServiceSystem());
             }
             else
             {
-                var districtId = SVMUtils.GetBuildingDistrict(buildingId);
+                ushort districtId = BuildingUtils.GetBuildingDistrict(buildingId);
                 if (districtId > 0)
                 {
-                    m_title.text = string.Format(Locale.Get("SVM_ASSET_SELECT_WINDOW_TITLE_DISTRICT"), Singleton<DistrictManager>.instance.GetDistrictName(SVMUtils.GetBuildingDistrict(buildingId)), SVMConfigWarehouse.getNameForServiceSystem(ssd.toConfigIndex()));
+                    m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE_DISTRICT"), Singleton<DistrictManager>.instance.GetDistrictName(districtId), ssd.getNameForServiceSystem());
                 }
                 else
                 {
-                    m_title.text = string.Format(Locale.Get("SVM_ASSET_SELECT_WINDOW_TITLE_CITY"), SVMConfigWarehouse.getNameForServiceSystem(ssd.toConfigIndex()));
+                    m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE_CITY"), ssd.getNameForServiceSystem());
                 }
             }
 
@@ -235,46 +227,50 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
         private void PopulateCheckboxes()
         {
-            foreach (var i in m_checkboxes.Keys)
+            foreach (string i in m_checkboxes.Keys)
             {
                 UnityEngine.Object.Destroy(m_checkboxes[i].gameObject);
             }
-            var ssd = Singleton<T>.instance.GetSSD();
-            m_defaultAssets = ssd.GetTransportExtension().GetAllBasicAssets();
+            ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
+            m_defaultAssets = ssd.GetBuildingExtension().GetAllBasicAssets();
             m_checkboxes = new Dictionary<string, UICheckBox>();
 
-            SVMUtils.doLog("m_defaultAssets Size = {0} ({1})", m_defaultAssets?.Count, string.Join(",", m_defaultAssets.Keys?.ToArray() ?? new string[0]));
-            foreach (var i in m_defaultAssets.Keys)
+            LogUtils.DoLog("m_defaultAssets Size = {0} ({1})", m_defaultAssets?.Count, string.Join(",", m_defaultAssets.Keys?.ToArray() ?? new string[0]));
+            foreach (string i in m_defaultAssets.Keys)
             {
-                var checkbox = (UICheckBox)m_uiHelper.AddCheckbox(m_defaultAssets[i], false, (x) =>
-                {
-                    var ext = Singleton<T>.instance.GetSSD().GetTransportExtension();
+                var checkbox = (UICheckBox) m_uiHelper.AddCheckbox(m_defaultAssets[i], false, (x) =>
+                 {
+                     ISVMBuildingExtension ext = SingletonLite<T>.instance.GetSSD().GetBuildingExtension();
 
-                    ushort buildingId = m_buildingInfo.buildingIdSel.Building;
-                    if (m_isLoading) return;
-                    if (x)
-                    {
-                        if (ext.GetIgnoreDistrict(buildingId))
-                        {
-                            ext.AddAssetBuilding(buildingId, i);
-                        }
-                        else
-                        {
-                            ext.AddAssetDistrict(SVMUtils.GetBuildingDistrict(buildingId), i);
-                        }
-                    }
-                    else
-                    {
-                        if (ext.GetIgnoreDistrict(buildingId))
-                        {
-                            ext.RemoveAssetBuilding(buildingId, i);
-                        }
-                        else
-                        {
-                            ext.RemoveAssetDistrict(SVMUtils.GetBuildingDistrict(buildingId), i);
-                        }
-                    }
-                });
+                     ushort buildingId = m_buildingInfo.buildingIdSel.Building;
+                     if (m_isLoading)
+                     {
+                         return;
+                     }
+
+                     if (x)
+                     {
+                         if (ext.GetIgnoreDistrict(buildingId))
+                         {
+                             ext.AddAsset(buildingId, i);
+                         }
+                         else
+                         {
+                             SingletonLite<T>.instance.GetSSD().GetDistrictExtension().AddAsset(BuildingUtils.GetBuildingDistrict(buildingId), i);
+                         }
+                     }
+                     else
+                     {
+                         if (ext.GetIgnoreDistrict(buildingId))
+                         {
+                             ext.RemoveAsset(buildingId, i);
+                         }
+                         else
+                         {
+                             SingletonLite<T>.instance.GetSSD().GetDistrictExtension().RemoveAsset(BuildingUtils.GetBuildingDistrict(buildingId), i);
+                         }
+                     }
+                 });
                 CreateModelCheckBox(i, checkbox);
                 checkbox.label.tooltip = checkbox.label.text;
                 checkbox.label.textScale = 0.9f;
@@ -285,19 +281,19 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
         private void SetPreviewWindow()
         {
-            SVMUtils.createUIElement(out m_previewPanel, m_mainPanel.transform);
+            KlyteMonoUtils.CreateUIElement(out m_previewPanel, m_mainPanel.transform);
             m_previewPanel.backgroundSprite = "GenericPanel";
             m_previewPanel.width = m_mainPanel.width + 100f;
             m_previewPanel.height = m_mainPanel.width;
             m_previewPanel.relativePosition = new Vector3(-50f, m_mainPanel.height);
-            SVMUtils.createUIElement(out m_preview, m_previewPanel.transform);
-            this.m_preview.size = m_previewPanel.size;
-            this.m_preview.relativePosition = Vector3.zero;
-            SVMUtils.createElement(out m_previewRenderer, m_mainPanel.transform);
-            this.m_previewRenderer.size = this.m_preview.size * 2f;
-            this.m_preview.texture = this.m_previewRenderer.texture;
-            m_previewRenderer.zoom = 3;
-            m_previewRenderer.cameraRotation = 40;
+            KlyteMonoUtils.CreateUIElement(out m_preview, m_previewPanel.transform);
+            m_preview.size = m_previewPanel.size;
+            m_preview.relativePosition = Vector3.zero;
+            KlyteMonoUtils.CreateElement(out m_previewRenderer, m_mainPanel.transform);
+            m_previewRenderer.Size = m_preview.size * 2f;
+            m_preview.texture = m_previewRenderer.Texture;
+            m_previewRenderer.Zoom = 3;
+            m_previewRenderer.CameraRotation = 40;
             m_previewPanel.isVisible = false;
         }
 
@@ -309,7 +305,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             }
             if (m_lastInfo != default(VehicleInfo) && m_previewPanel.isVisible)
             {
-                this.m_previewRenderer.cameraRotation -= 2;
+                m_previewRenderer.CameraRotation -= 2;
                 redrawModel();
             }
         }
@@ -322,7 +318,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
                 return;
             }
             m_previewPanel.isVisible = true;
-            m_previewRenderer.RenderVehicle(m_lastInfo, (m_color?.selectedColor ?? Color.clear) == Color.clear ? Color.HSVToRGB(Math.Abs(m_previewRenderer.cameraRotation) / 360f, .5f, .5f) : m_color.selectedColor, true);
+            m_previewRenderer.RenderVehicle(m_lastInfo, (m_color?.selectedColor ?? Color.clear) == Color.clear ? Color.HSVToRGB(Math.Abs(m_previewRenderer.CameraRotation) / 360f, .5f, .5f) : m_color.selectedColor, true);
         }
     }
     internal sealed class SVMBuildingSSDConfigWindowDisCar : SVMBuildingSSDConfigWindow<SVMSysDefDisCar> { }

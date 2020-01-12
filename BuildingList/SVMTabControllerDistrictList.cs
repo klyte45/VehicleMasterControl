@@ -5,13 +5,12 @@ using Klyte.Commons.Extensors;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI.ExtraUI;
-using Klyte.ServiceVehiclesManager.Utils;
 using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager.UI
 {
 
-    internal abstract class SVMTabControllerDistrictList<T> : UICustomControl where T : SVMSysDef<T>
+    internal abstract class SVMTabControllerDistrictList<T> : UICustomControl where T : SVMSysDef<T>, new()
     {
         public UIScrollablePanel mainPanel { get; private set; }
         public OnButtonSelect<int> eventOnDistrictSelectionChanged;
@@ -27,8 +26,6 @@ namespace Klyte.ServiceVehiclesManager.UI
         private bool allowColorChange;
         private bool isLoading = true;
 
-        private static ISVMTransportTypeExtension extension => Singleton<T>.instance.GetSSD().GetTransportExtension();
-
         #region Awake
         private void Awake()
         {
@@ -39,54 +36,68 @@ namespace Klyte.ServiceVehiclesManager.UI
             mainPanel.autoLayout = false;
             m_uiHelper = new UIHelperExtension(mainPanel);
 
-            SVMUtils.createUIElement(out UILabel lbl, mainPanel.transform, "DistrictColorLabel", new Vector4(5, 5, 250, 40));
+            KlyteMonoUtils.CreateUIElement(out UILabel lbl, mainPanel.transform, "DistrictColorLabel", new Vector4(5, 5, 250, 40));
 
-            allowColorChange = SVMConfigWarehouse.allowColorChanging(extension.ConfigIndexKey);
+            allowColorChange = SingletonLite<T>.instance.GetSSD().AllowColorChanging();
             if (allowColorChange)
             {
-                SVMUtils.LimitWidth(lbl, 250);
+                KlyteMonoUtils.LimitWidth(lbl, 250);
                 lbl.autoSize = true;
-                lbl.localeID = "SVM_DISTRICT_COLOR_LABEL";
+                lbl.localeID = "K45_SVM_DISTRICT_COLOR_LABEL";
 
-                m_districtColor = KlyteUtils.CreateColorField(mainPanel);
+                m_districtColor = KlyteMonoUtils.CreateColorField(mainPanel);
                 m_districtColor.eventSelectedColorChanged += onChangeDistrictColor;
 
-                SVMUtils.createUIElement(out UIButton resetColor, mainPanel.transform, "DistrictColorReset", new Vector4(290, 0, 0, 0));
-                SVMUtils.initButton(resetColor, false, "ButtonMenu");
-                SVMUtils.LimitWidth(resetColor, 200);
+                KlyteMonoUtils.CreateUIElement(out UIButton resetColor, mainPanel.transform, "DistrictColorReset", new Vector4(290, 0, 0, 0));
+                KlyteMonoUtils.InitButton(resetColor, false, "ButtonMenu");
+                KlyteMonoUtils.LimitWidth(resetColor, 200);
                 resetColor.textPadding = new RectOffset(5, 5, 5, 2);
                 resetColor.autoSize = true;
-                resetColor.localeID = "SVM_RESET_COLOR";
+                resetColor.localeID = "K45_SVM_RESET_COLOR";
                 resetColor.eventClick += onResetColor;
             }
-            if (extension.GetAllowDistrictServiceRestrictions())
+            ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
+            ISVMDistrictExtension extension = SingletonLite<T>.instance.GetExtensionDistrict();
+            if (ssd.GetAllowDistrictServiceRestrictions())
             {
-                m_districtAllowOutsiders = m_uiHelper.AddCheckboxLocale("SVM_ALLOW_OUTSIDERS", true, (x) =>
+                m_districtAllowOutsiders = m_uiHelper.AddCheckboxLocale("K45_SVM_ALLOW_OUTSIDERS", true, (x) =>
                 {
-                    if (!getCurrentSelectedId(out int currentDistrict) || isLoading) return;
-                    extension.SetAllowOutsiders((uint)currentDistrict, x);
+                    if (!getCurrentSelectedId(out int currentDistrict) || isLoading)
+                    {
+                        return;
+                    }
+
+                    extension.SetAllowOutsiders((uint) currentDistrict, x);
                     m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = Color.white;
                 });
-                m_districtAllowGoOutside = m_uiHelper.AddCheckboxLocale("SVM_ALLOW_GO_OUTSIDE", true, (x) =>
+                m_districtAllowGoOutside = m_uiHelper.AddCheckboxLocale("K45_SVM_ALLOW_GO_OUTSIDE", true, (x) =>
                 {
-                    if (!getCurrentSelectedId(out int currentDistrict) || isLoading) return;
-                    extension.SetAllowGoOutside((uint)currentDistrict, x);
+                    if (!getCurrentSelectedId(out int currentDistrict) || isLoading)
+                    {
+                        return;
+                    }
+
+                    extension.SetAllowServeOtherDistricts((uint) currentDistrict, x);
                     m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = Color.white;
                 });
 
-                m_resetValues = (UIButton)m_uiHelper.AddButton(Locale.Get("SVM_RESET_VALUE_CITY_DEFAULT"), () =>
-                {
-                    if (!getCurrentSelectedId(out int currentDistrict) || isLoading) return;
-                    extension.CleanAllowGoOutside((uint)currentDistrict);
-                    extension.CleanAllowOutsiders((uint)currentDistrict);
-                    onDistrictChanged();
-                });
+                m_resetValues = (UIButton) m_uiHelper.AddButton(Locale.Get("K45_SVM_RESET_VALUE_CITY_DEFAULT"), () =>
+                 {
+                     if (!getCurrentSelectedId(out int currentDistrict) || isLoading)
+                     {
+                         return;
+                     }
+
+                     extension.ClearServeOtherDistricts((uint) currentDistrict);
+                     extension.ClearAllowOutsiders((uint) currentDistrict);
+                     onDistrictChanged();
+                 });
 
                 m_districtAllowOutsiders.relativePosition = new Vector2(0, 30);
                 m_districtAllowGoOutside.relativePosition = new Vector2(0, 60);
                 m_resetValues.relativePosition = new Vector2(0, 90);
             }
-            SVMUtils.createElement(out m_assetSelectorWindow, mainPanel.transform);
+            KlyteMonoUtils.CreateElement(out m_assetSelectorWindow, mainPanel.transform);
             m_assetSelectorWindow.setTabContent(this);
 
         }
@@ -94,15 +105,16 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         #endregion
         #region Actions
-        private void onResetColor(UIComponent component, UIMouseEventParameter eventParam)
-        {
-            m_districtColor.selectedColor = Color.clear;
-        }
+        private void onResetColor(UIComponent component, UIMouseEventParameter eventParam) => m_districtColor.selectedColor = Color.clear;
         private void onChangeDistrictColor(UIComponent component, Color value)
         {
-            SVMUtils.doLog("onChangeDistrictColor");
-            if (!getCurrentSelectedId(out int currentDistrict)) return;
-            extension.SetColorDistrict((uint)currentDistrict, value);
+            LogUtils.DoLog("onChangeDistrictColor");
+            if (!getCurrentSelectedId(out int currentDistrict))
+            {
+                return;
+            }
+
+            SingletonLite<T>.instance.GetExtensionDistrict().SetColor((uint) currentDistrict, value);
             eventOnColorDistrictChanged?.Invoke(value);
         }
         #endregion
@@ -122,14 +134,14 @@ namespace Klyte.ServiceVehiclesManager.UI
                 mainPanel.isVisible = true;
                 if (m_districtColor != null)
                 {
-                    m_districtColor.selectedColor = Singleton<T>.instance.GetSSD().GetTransportExtension().GetColorDistrict((uint)currentDistrict);
+                    m_districtColor.selectedColor = SingletonLite<T>.instance.GetSSD().GetDistrictExtension().GetColor((uint) currentDistrict);
                 }
                 if (m_districtAllowOutsiders != null && m_districtAllowGoOutside != null)
                 {
-                    m_districtAllowOutsiders.isChecked = extension.GetAllowOutsiders((uint)currentDistrict) ?? extension.GetAllowOutsidersEffective((uint)currentDistrict);
-                    m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = extension.GetAllowOutsiders((uint)currentDistrict) == null ? Color.yellow : Color.white;
-                    m_districtAllowGoOutside.isChecked = extension.GetAllowGoOutside((uint)currentDistrict) ?? extension.GetAllowGoOutsideEffective((uint)currentDistrict);
-                    m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = extension.GetAllowGoOutside((uint)currentDistrict) == null ? Color.yellow : Color.white;
+                    m_districtAllowOutsiders.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowOutsiders((uint) currentDistrict) ?? ServiceVehiclesManagerMod.allowOutsidersAsDefault;
+                    m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowOutsiders((uint) currentDistrict) == null ? Color.yellow : Color.white;
+                    m_districtAllowGoOutside.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowServeOtherDistricts((uint) currentDistrict) ?? ServiceVehiclesManagerMod.allowServeOtherDistrictsAsDefault;
+                    m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowServeOtherDistricts((uint) currentDistrict) == null ? Color.yellow : Color.white;
                 }
                 eventOnDistrictSelectionChanged?.Invoke(currentDistrict);
                 isLoading = false;

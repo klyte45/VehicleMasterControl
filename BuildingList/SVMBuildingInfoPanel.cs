@@ -1,13 +1,11 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Globalization;
 using ColossalFramework.UI;
-using Klyte.Commons;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.Overrides;
-using Klyte.ServiceVehiclesManager.TextureAtlas;
 using Klyte.ServiceVehiclesManager.UI.ExtraUI;
 using Klyte.ServiceVehiclesManager.Utils;
 using System;
@@ -36,12 +34,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         private UIHelperExtension m_uiHelper;
         public event OnButtonSelect<ushort> EventOnBuildingSelChanged;
 
-        public Transform panelTransform
-        {
-            get {
-                return m_buildingInfoPanel.transform;
-            }
-        }
+        public Transform panelTransform => m_buildingInfoPanel.transform;
 
         public GameObject panelGameObject
         {
@@ -72,7 +65,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                 return;
             }
             instance = this;
-            GameObject gameObject = GameObject.FindGameObjectWithTag("MainCamera");
+            var gameObject = GameObject.FindGameObjectWithTag("MainCamera");
             if (gameObject != null)
             {
                 m_CameraController = gameObject.GetComponent<CameraController>();
@@ -80,17 +73,17 @@ namespace Klyte.ServiceVehiclesManager.UI
             createInfoView();
             CreateIgnoreDistrictOption();
 
-            SVMUtils.createUIElement(out UIPanel confContainer, panelTransform, "SubConfigContainer", new Vector4(m_buildingInfoPanel.width, 0, 0, m_buildingInfoPanel.height));
+            KlyteMonoUtils.CreateUIElement(out UIPanel confContainer, panelTransform, "SubConfigContainer", new Vector4(m_buildingInfoPanel.width, 0, 0, m_buildingInfoPanel.height));
             confContainer.autoLayout = true;
             confContainer.autoLayoutDirection = LayoutDirection.Horizontal;
             confContainer.wrapLayout = false;
             confContainer.height = m_buildingInfoPanel.height;
             confContainer.clipChildren = false;
 
-            foreach (var kv in ServiceSystemDefinition.sysDefinitions)
+            foreach (KeyValuePair<ServiceSystemDefinition, ISVMSysDef> kv in ServiceSystemDefinition.sysDefinitions)
             {
-                Type targetType = KlyteUtils.GetImplementationForGenericType(typeof(SVMBuildingSSDConfigWindow<>), kv.Value);
-                SVMUtils.createElement(targetType, confContainer.transform);
+                Type targetType = ReflectionUtils.GetImplementationForGenericType(typeof(SVMBuildingSSDConfigWindow<>), kv.Value.GetType());
+                KlyteMonoUtils.CreateElement(targetType, confContainer.transform);
             }
 
         }
@@ -98,17 +91,16 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private void CreateIgnoreDistrictOption()
         {
-            m_ignoreDistrict = m_uiHelper.AddCheckboxLocale("SVM_IGNORE_DISTRICT_CONFIG", false);
+            m_ignoreDistrict = m_uiHelper.AddCheckboxLocale("K45_SVM_IGNORE_DISTRICT_CONFIG", false);
             m_ignoreDistrict.relativePosition = new Vector3(5f, 150f);
             m_ignoreDistrict.eventCheckChanged += delegate (UIComponent comp, bool value)
             {
                 if (Singleton<BuildingManager>.exists && m_buildingIdSelecionado.Building != 0)
                 {
-                    var ssds = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingIdSelecionado.Building].Info);
-                    foreach (var ssd in ssds)
+                    IEnumerable<ServiceSystemDefinition> ssds = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingIdSelecionado.Building].Info);
+                    foreach (ServiceSystemDefinition ssd in ssds)
                     {
-                        var ext = ssd.GetTransportExtension();
-                        ext.SetIgnoreDistrict(m_buildingIdSelecionado.Building, value);
+                        ssd.GetBuildingExtension().SetIgnoreDistrict(m_buildingIdSelecionado.Building, value);
                     }
                     EventOnBuildingSelChanged?.Invoke(m_buildingIdSelecionado.Building);
                 }
@@ -122,7 +114,8 @@ namespace Klyte.ServiceVehiclesManager.UI
         public void Hide()
         {
             m_buildingInfoPanel.Hide();
-            SVMTabPanel.instance.OpenAt(ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingIdSel.Building].Info).FirstOrDefault());
+            ServiceSystemDefinition ssd = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingIdSel.Building].Info).FirstOrDefault();
+            SVMTabPanel.instance.OpenAt(ref ssd);
         }
 
 
@@ -133,7 +126,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         {
             string value = u.text;
 
-            Singleton<BuildingManager>.instance.StartCoroutine(SVMUtils.setBuildingName(m_buildingIdSelecionado.Building, value, () =>
+            Singleton<BuildingManager>.instance.StartCoroutine(BuildingUtils.SetBuildingName(m_buildingIdSelecionado.Building, value, () =>
             {
                 buildingNameField.text = Singleton<BuildingManager>.instance.GetBuildingName(m_buildingIdSelecionado.Building, default(InstanceID));
                 EventOnBuildingSelChanged?.Invoke(m_buildingIdSelecionado.Building);
@@ -144,7 +137,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         {
             //line info painel
 
-            SVMUtils.createUIElement(out m_buildingInfoPanel, gameObject.transform);
+            KlyteMonoUtils.CreateUIElement(out m_buildingInfoPanel, gameObject.transform);
             m_buildingInfoPanel.Hide();
             m_buildingInfoPanel.relativePosition = new Vector3(394.0f, 70.0f);
             m_buildingInfoPanel.width = 650;
@@ -158,11 +151,11 @@ namespace Klyte.ServiceVehiclesManager.UI
             m_buildingInfoPanel.useCenter = true;
             m_buildingInfoPanel.wrapLayout = false;
             m_buildingInfoPanel.canFocus = true;
-            SVMUtils.createDragHandle(m_buildingInfoPanel, m_buildingInfoPanel, 35f);
+            KlyteMonoUtils.CreateDragHandle(m_buildingInfoPanel, m_buildingInfoPanel, 35f);
 
 
 
-            SVMUtils.createUIElement(out buildingTypeIcon, m_buildingInfoPanel.transform);
+            KlyteMonoUtils.CreateUIElement(out buildingTypeIcon, m_buildingInfoPanel.transform);
             buildingTypeIcon.autoSize = false;
             buildingTypeIcon.relativePosition = new Vector3(10f, 7f);
             buildingTypeIcon.width = 30;
@@ -170,19 +163,18 @@ namespace Klyte.ServiceVehiclesManager.UI
             buildingTypeIcon.name = "BuildingTypeIcon";
             buildingTypeIcon.clipChildren = true;
             buildingTypeIcon.foregroundSpriteMode = UIForegroundSpriteMode.Scale;
-            SVMUtils.createDragHandle(buildingTypeIcon, m_buildingInfoPanel);
+            KlyteMonoUtils.CreateDragHandle(buildingTypeIcon, m_buildingInfoPanel);
 
-            SVMUtils.createUIElement(out buildingTypeIconFg, buildingTypeIcon.transform);
+            KlyteMonoUtils.CreateUIElement(out buildingTypeIconFg, buildingTypeIcon.transform);
             buildingTypeIconFg.autoSize = false;
             buildingTypeIconFg.relativePosition = new Vector3(0, 0);
             buildingTypeIconFg.width = 30;
             buildingTypeIconFg.height = 30;
             buildingTypeIconFg.name = "BuildingTypeIconFg";
             buildingTypeIconFg.clipChildren = true;
-            buildingTypeIconFg.atlas = SVMCommonTextureAtlas.instance.atlas;
-            SVMUtils.createDragHandle(buildingTypeIconFg, m_buildingInfoPanel);
+            KlyteMonoUtils.CreateDragHandle(buildingTypeIconFg, m_buildingInfoPanel);
 
-            SVMUtils.createUIElement(out buildingNameField, m_buildingInfoPanel.transform);
+            KlyteMonoUtils.CreateUIElement(out buildingNameField, m_buildingInfoPanel.transform);
             buildingNameField.autoSize = false;
             buildingNameField.relativePosition = new Vector3(160f, 10f);
             buildingNameField.horizontalAlignment = UIHorizontalAlignment.Center;
@@ -192,7 +184,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             buildingNameField.name = "BuildingNameLabel";
             buildingNameField.maxLength = 256;
             buildingNameField.textScale = 1.5f;
-            SVMUtils.uiTextFieldDefaults(buildingNameField);
+            KlyteMonoUtils.UiTextFieldDefaults(buildingNameField);
             buildingNameField.eventGotFocus += (component, eventParam) =>
             {
                 lastDepotName = buildingNameField.text;
@@ -205,7 +197,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                 }
             };
 
-            SVMUtils.createUIElement(out vehiclesInUseLabel, m_buildingInfoPanel.transform);
+            KlyteMonoUtils.CreateUIElement(out vehiclesInUseLabel, m_buildingInfoPanel.transform);
             vehiclesInUseLabel.autoSize = false;
             vehiclesInUseLabel.relativePosition = new Vector3(10f, 60f);
             vehiclesInUseLabel.textAlignment = UIHorizontalAlignment.Left;
@@ -214,9 +206,9 @@ namespace Klyte.ServiceVehiclesManager.UI
             vehiclesInUseLabel.height = 25;
             vehiclesInUseLabel.name = "VehiclesInUseLabel";
             vehiclesInUseLabel.textScale = 0.8f;
-            vehiclesInUseLabel.prefix = Locale.Get("SVM_VEHICLE_CAPACITY_LABEL") + ": ";
+            vehiclesInUseLabel.prefix = Locale.Get("K45_SVM_VEHICLE_CAPACITY_LABEL") + ": ";
 
-            SVMUtils.createUIElement(out upkeepCost, m_buildingInfoPanel.transform);
+            KlyteMonoUtils.CreateUIElement(out upkeepCost, m_buildingInfoPanel.transform);
             upkeepCost.autoSize = false;
             upkeepCost.relativePosition = new Vector3(10f, 75);
             upkeepCost.textAlignment = UIHorizontalAlignment.Left;
@@ -225,21 +217,25 @@ namespace Klyte.ServiceVehiclesManager.UI
             upkeepCost.name = "UpkeepLabel";
             upkeepCost.textScale = 0.8f;
 
-            SVMUtils.createUIElement(out UIButton voltarButton2, m_buildingInfoPanel.transform);
+            KlyteMonoUtils.CreateUIElement(out UIButton voltarButton2, m_buildingInfoPanel.transform);
             voltarButton2.relativePosition = new Vector3(m_buildingInfoPanel.width - 33f, 5f);
             voltarButton2.width = 28;
             voltarButton2.height = 28;
-            SVMUtils.initButton(voltarButton2, true, "DeleteLineButton");
+            KlyteMonoUtils.InitButton(voltarButton2, true, "DeleteLineButton");
             voltarButton2.name = "LineInfoCloseButton";
             voltarButton2.eventClick += closeBuildingInfo;
 
-            workerChart = new TLMWorkerChartPanel(this.panelTransform, new Vector3(400f, 90f));
+            workerChart = new TLMWorkerChartPanel(panelTransform, new Vector3(400f, 90f));
             m_uiHelper = new UIHelperExtension(m_buildingInfoPanel);
         }
 
         public void Update()
         {
-            if (!this.m_buildingInfoPanel.isVisible) return;
+            if (!m_buildingInfoPanel.isVisible)
+            {
+                return;
+            }
+
             Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingIdSelecionado.Building];
 
             if (!(b.Info.GetAI() is BuildingAI basicAI))
@@ -248,26 +244,26 @@ namespace Klyte.ServiceVehiclesManager.UI
                 return;
             }
 
-            var ssds = ServiceSystemDefinition.from(b.Info);
-            List<string> textVehicles = new List<string>();
-            foreach (var ssd in ssds)
+            IEnumerable<ServiceSystemDefinition> ssds = ServiceSystemDefinition.from(b.Info);
+            var textVehicles = new List<string>();
+            foreach (ServiceSystemDefinition ssd in ssds)
             {
-                var defLevel = Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)m_buildingIdSelecionado.Building].Info.m_class.m_level;
+                ItemClass.Level defLevel = Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingIdSelecionado.Building].Info.m_class.m_level;
 
                 int count = 0;
                 int cargo = 0;
                 int capacity = 0;
                 int inbound = 0;
                 int outbound = 0;
-                var extstr = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
+                IBasicBuildingAIOverrides extstr = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
                 SVMBuildingUtils.CalculateOwnVehicles(m_buildingIdSelecionado.Building, ref b, extstr.GetManagedReasons(b.Info).Where(x => (x.Value.vehicleLevel ?? defLevel) == ssd.level).Select(x => x.Key), ref count, ref cargo, ref capacity, ref inbound, ref outbound);
-                var maxField = extstr.GetVehicleMaxCountField(ssd.vehicleType, ssd.level);
-                int maxVehicles = (SVMUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
+                string maxField = extstr.GetVehicleMaxCountField(ssd.vehicleType, ssd.level);
+                int maxVehicles = (ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
                 string maxVehiclesStr = maxField == null || maxVehicles > 0x3FFF ? "∞" : maxVehicles.ToString();
-                textVehicles.Add($"{count}/{maxVehiclesStr} ({Locale.Get("SVM_VEHICLE_TYPE", ssd.vehicleType.ToString())})");
+                textVehicles.Add($"{count}/{maxVehiclesStr} ({Locale.Get("K45_SVM_VEHICLE_TYPE", ssd.vehicleType.ToString())})");
             }
             vehiclesInUseLabel.text = string.Join(" | ", textVehicles.ToArray());
-            upkeepCost.text = LocaleFormatter.FormatUpkeep(basicAI.GetResourceRate(m_buildingIdSelecionado.Building, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)m_buildingIdSelecionado.Building], EconomyManager.Resource.Maintenance), false);
+            upkeepCost.text = LocaleFormatter.FormatUpkeep(basicAI.GetResourceRate(m_buildingIdSelecionado.Building, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingIdSelecionado.Building], EconomyManager.Resource.Maintenance), false);
 
             uint num = Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingIdSelecionado.Building].m_citizenUnits;
             int num2 = 0;
@@ -280,16 +276,16 @@ namespace Klyte.ServiceVehiclesManager.UI
             CitizenManager instance = Singleton<CitizenManager>.instance;
             while (num != 0u)
             {
-                uint nextUnit = instance.m_units.m_buffer[(int)((UIntPtr)num)].m_nextUnit;
-                if ((ushort)(instance.m_units.m_buffer[(int)((UIntPtr)num)].m_flags & CitizenUnit.Flags.Work) != 0)
+                uint nextUnit = instance.m_units.m_buffer[(int) ((UIntPtr) num)].m_nextUnit;
+                if ((ushort) (instance.m_units.m_buffer[(int) ((UIntPtr) num)].m_flags & CitizenUnit.Flags.Work) != 0)
                 {
                     for (int i = 0; i < 5; i++)
                     {
-                        uint citizen = instance.m_units.m_buffer[(int)((UIntPtr)num)].GetCitizen(i);
-                        if (citizen != 0u && !instance.m_citizens.m_buffer[(int)((UIntPtr)citizen)].Dead && (instance.m_citizens.m_buffer[(int)((UIntPtr)citizen)].m_flags & Citizen.Flags.MovingIn) == Citizen.Flags.None)
+                        uint citizen = instance.m_units.m_buffer[(int) ((UIntPtr) num)].GetCitizen(i);
+                        if (citizen != 0u && !instance.m_citizens.m_buffer[(int) ((UIntPtr) citizen)].Dead && (instance.m_citizens.m_buffer[(int) ((UIntPtr) citizen)].m_flags & Citizen.Flags.MovingIn) == Citizen.Flags.None)
                         {
                             num3++;
-                            switch (instance.m_citizens.m_buffer[(int)((UIntPtr)citizen)].EducationLevel)
+                            switch (instance.m_citizens.m_buffer[(int) ((UIntPtr) citizen)].EducationLevel)
                             {
                                 case Citizen.Education.Uneducated:
                                     unskill++;
@@ -315,7 +311,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                 }
             }
 
-            workerChart.SetValues(new int[] { unskill, oneSchool, twoSchool, threeSchool }, new int[] { SVMUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount0"), SVMUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount1"), SVMUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount2"), SVMUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount3") });
+            workerChart.SetValues(new int[] { unskill, oneSchool, twoSchool, threeSchool }, new int[] { ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount0"), ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount1"), ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount2"), ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount3") });
         }
 
 
@@ -326,25 +322,24 @@ namespace Klyte.ServiceVehiclesManager.UI
         {
             WorldInfoPanel.HideAllWorldInfoPanels();
 
-            var ssds = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID].Info);
-            var ext = ssds.First().GetTransportExtension();
+            IEnumerable<ServiceSystemDefinition> ssds = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID].Info);
+            ServiceSystemDefinition ssd = ssds.First();
+            ISVMBuildingExtension ext = ssd.GetBuildingExtension();
 
-            m_buildingIdSelecionado = default(InstanceID);
+            m_buildingIdSelecionado = default;
             m_ignoreDistrict.isChecked = ext.GetIgnoreDistrict(buildingID);
             m_buildingIdSelecionado.Building = buildingID;
             buildingNameField.text = Singleton<BuildingManager>.instance.GetBuildingName(buildingID, default(InstanceID));
 
 
-            var configIdx = ssds.First().toConfigIndex();
 
-
-            String bgIcon = SVMConfigWarehouse.getIconServiceSystem(configIdx);
-            String fgIcon = SVMConfigWarehouse.getFgIconServiceSystem(configIdx);
+            string bgIcon = ssd.getIconServiceSystem();
+            string fgIcon = ssd.getFgIconServiceSystem();
 
             buildingTypeIcon.normalFgSprite = bgIcon;
             buildingTypeIconFg.spriteName = fgIcon;
 
-            KlyteCommonsMod.CloseKCPanel();
+            ServiceVehiclesManagerMod.Instance.ClosePanel();
             Show();
             EventOnBuildingSelChanged?.Invoke(buildingID);
         }

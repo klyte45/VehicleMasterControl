@@ -10,7 +10,7 @@
     using System.Linq;
     using UnityEngine;
     using Utils;
-    internal abstract class SVMBuildingInfoItem<T> : ToolsModifierControl where T : SVMSysDef<T>
+    internal abstract class SVMBuildingInfoItem<T> : ToolsModifierControl where T : SVMSysDef<T>, new()
     {
         private ushort m_buildingID;
 
@@ -34,50 +34,24 @@
 
         public ushort buildingId
         {
-            get {
-                return this.m_buildingID;
-            }
-            set {
-                this.SetBuildingID(value);
-            }
+            get => m_buildingID;
+            set => SetBuildingID(value);
         }
 
         public bool secondary
         {
-            get {
-                return this.m_secondary;
-            }
-            set {
-                m_secondary = value;
-            }
+            get => m_secondary;
+            set => m_secondary = value;
         }
-        public string districtName
-        {
-            get {
-                return this.m_districtName.text;
-            }
-        }
+        public string districtName => m_districtName.text;
 
-        public string buidingName
-        {
-            get {
-                return this.m_buildingName.text;
-            }
-        }
+        public string buidingName => m_buildingName.text;
 
-        public string prefixesServed
-        {
-            get {
-                return this.m_totalVehicles.text;
-            }
-        }
+        public string prefixesServed => m_totalVehicles.text;
 
-        private void SetBuildingID(ushort id)
-        {
-            this.m_buildingID = id;
-        }
+        private void SetBuildingID(ushort id) => m_buildingID = id;
 
-        private ServiceSystemDefinition sysDef = Singleton<T>.instance.GetSSD();
+        private ServiceSystemDefinition sysDef = SingletonLite<T>.instance.GetSSD();
 
 
 
@@ -86,92 +60,92 @@
             if (Singleton<BuildingManager>.exists && transform.parent.gameObject.GetComponent<UIComponent>().isVisible)
             {
                 GetComponent<UIComponent>().isVisible = true;
-                Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[this.m_buildingID];
-                this.m_buildingName.text = Singleton<BuildingManager>.instance.GetBuildingName(this.m_buildingID, default(InstanceID));
+                Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingID];
+                m_buildingName.text = Singleton<BuildingManager>.instance.GetBuildingName(m_buildingID, default(InstanceID));
                 byte districtID = Singleton<DistrictManager>.instance.GetDistrict(b.m_position);
-                string districtName = districtID == 0 ? Locale.Get("SVM_DISTRICT_NONE") : Singleton<DistrictManager>.instance.GetDistrictName(districtID);
-                this.m_districtName.text = districtName;
+                string districtName = districtID == 0 ? Locale.Get("K45_SVM_DISTRICT_NONE") : Singleton<DistrictManager>.instance.GetDistrictName(districtID);
+                m_districtName.text = districtName;
 
                 int count = 0;
                 int cargo = 0;
                 int capacity = 0;
                 int inbound = 0;
                 int outbound = 0;
-                var extstr = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
-                var defLevel = b.Info.m_class.m_level;
+                IBasicBuildingAIOverrides extstr = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
+                ItemClass.Level defLevel = b.Info.m_class.m_level;
                 SVMBuildingUtils.CalculateOwnVehicles(buildingId, ref b, extstr.GetManagedReasons(b.Info).Where(x => (x.Value.vehicleLevel ?? defLevel) == sysDef.level).Select(x => x.Key), ref count, ref cargo, ref capacity, ref inbound, ref outbound);
 
                 int maxCount = SVMBuildingUtils.GetMaxVehiclesBuilding(buildingId, sysDef.vehicleType, sysDef.level);
                 m_totalVehicles.prefix = count.ToString();
                 m_totalVehicles.suffix = maxCount > 0x3FFF ? "∞" : maxCount.ToString();
-                if (Singleton<T>.instance.GetSSD().outsideConnection)
+                if (sysDef.outsideConnection)
                 {
                     float angle = Vector2.zero.GetAngleToPoint(VectorUtils.XZ(b.m_position));
                     m_directionLabel.prefix = $"{angle:n1}°";
                     m_directionLabel.text = " - ";
-                    m_directionLabel.suffix = CardinalPoint.getCardinalPoint(angle).ToString();
+                    m_directionLabel.suffix = CardinalPoint.GetCardinalPoint(angle).ToString();
                 }
             }
         }
 
         public void SetBackgroundColor()
         {
-            Color32 backgroundColor = this.m_BackgroundColor;
-            backgroundColor.a = (byte)((base.component.zOrder % 2 != 0) ? 127 : 255);
-            if (this.m_mouseIsOver)
+            Color32 backgroundColor = m_BackgroundColor;
+            backgroundColor.a = (byte) ((base.component.zOrder % 2 != 0) ? 127 : 255);
+            if (m_mouseIsOver)
             {
-                backgroundColor.r = (byte)Mathf.Min(255, backgroundColor.r * 3 >> 1);
-                backgroundColor.g = (byte)Mathf.Min(255, backgroundColor.g * 3 >> 1);
-                backgroundColor.b = (byte)Mathf.Min(255, backgroundColor.b * 3 >> 1);
+                backgroundColor.r = (byte) Mathf.Min(255, backgroundColor.r * 3 >> 1);
+                backgroundColor.g = (byte) Mathf.Min(255, backgroundColor.g * 3 >> 1);
+                backgroundColor.b = (byte) Mathf.Min(255, backgroundColor.b * 3 >> 1);
             }
-            this.m_Background.color = backgroundColor;
+            m_Background.color = backgroundColor;
         }
 
         private void LateUpdate()
         {
             if (base.component.parent.isVisible)
             {
-                this.RefreshData();
+                RefreshData();
             }
         }
 
         private void Awake()
         {
-            SVMUtils.clearAllVisibilityEvents(this.GetComponent<UIPanel>());
+            KlyteMonoUtils.ClearAllVisibilityEvents(GetComponent<UIPanel>());
             base.component.eventZOrderChanged += delegate (UIComponent c, int r)
             {
-                this.SetBackgroundColor();
+                SetBackgroundColor();
             };
             GameObject.Destroy(base.Find<UICheckBox>("LineVisible").gameObject);
             GameObject.Destroy(base.Find<UIColorField>("LineColor").gameObject);
             GameObject.Destroy(base.Find<UIPanel>("WarningIncomplete"));
             GameObject.Destroy(base.Find<UIPanel>("LineModelSelectorContainer"));
 
-            this.m_buildingName = base.Find<UILabel>("LineName");
-            this.m_buildingName.area = new Vector4(200, 2, 198, 35);
-            this.m_buildingNameField = this.m_buildingName.Find<UITextField>("LineNameField");
-            this.m_buildingNameField.maxLength = 256;
-            this.m_buildingNameField.eventTextChanged += new PropertyChangedEventHandler<string>(this.OnRename);
-            this.m_buildingName.eventMouseEnter += delegate (UIComponent c, UIMouseEventParameter r)
+            m_buildingName = base.Find<UILabel>("LineName");
+            m_buildingName.area = new Vector4(200, 2, 198, 35);
+            m_buildingNameField = m_buildingName.Find<UITextField>("LineNameField");
+            m_buildingNameField.maxLength = 256;
+            m_buildingNameField.eventTextChanged += new PropertyChangedEventHandler<string>(OnRename);
+            m_buildingName.eventMouseEnter += delegate (UIComponent c, UIMouseEventParameter r)
             {
-                this.m_buildingName.backgroundSprite = "TextFieldPanelHovered";
+                m_buildingName.backgroundSprite = "TextFieldPanelHovered";
             };
-            this.m_buildingName.eventMouseLeave += delegate (UIComponent c, UIMouseEventParameter r)
+            m_buildingName.eventMouseLeave += delegate (UIComponent c, UIMouseEventParameter r)
             {
-                this.m_buildingName.backgroundSprite = string.Empty;
+                m_buildingName.backgroundSprite = string.Empty;
             };
-            this.m_buildingName.eventClick += delegate (UIComponent c, UIMouseEventParameter r)
+            m_buildingName.eventClick += delegate (UIComponent c, UIMouseEventParameter r)
             {
-                this.m_buildingNameField.Show();
-                this.m_buildingNameField.text = this.m_buildingName.text;
-                this.m_buildingNameField.Focus();
+                m_buildingNameField.Show();
+                m_buildingNameField.text = m_buildingName.text;
+                m_buildingNameField.Focus();
             };
-            this.m_buildingNameField.eventLeaveFocus += delegate (UIComponent c, UIFocusEventParameter r)
+            m_buildingNameField.eventLeaveFocus += delegate (UIComponent c, UIFocusEventParameter r)
             {
-                this.m_buildingNameField.Hide();
-                Singleton<BuildingManager>.instance.StartCoroutine(SVMUtils.setBuildingName(this.m_buildingID, this.m_buildingNameField.text, () =>
+                m_buildingNameField.Hide();
+                Singleton<BuildingManager>.instance.StartCoroutine(BuildingUtils.SetBuildingName(m_buildingID, m_buildingNameField.text, () =>
                 {
-                    this.m_buildingName.text = this.m_buildingNameField.text;
+                    m_buildingName.text = m_buildingNameField.text;
                 }));
             };
 
@@ -179,7 +153,7 @@
             GameObject.Destroy(base.Find<UICheckBox>("NightLine").gameObject);
             GameObject.Destroy(base.Find<UICheckBox>("DayNightLine").gameObject);
 
-            var m_DayLine = base.Find<UICheckBox>("DayLine");
+            UICheckBox m_DayLine = base.Find<UICheckBox>("DayLine");
 
             GameObject.Destroy(base.Find<UICheckBox>("NightLine").gameObject);
             GameObject.Destroy(base.Find<UICheckBox>("DayNightLine").gameObject);
@@ -194,7 +168,7 @@
 
 
             m_directionLabel = base.Find<UILabel>("LinePassengers");
-            if (Singleton<T>.instance.GetSSD().outsideConnection)
+            if (sysDef.outsideConnection)
             {
                 m_directionLabel.size = new Vector2(200, 18);
                 m_directionLabel.relativePosition = new Vector3(600, 10);
@@ -208,21 +182,21 @@
 
 
 
-            this.m_totalVehicles = base.Find<UILabel>("LineVehicles");
+            m_totalVehicles = base.Find<UILabel>("LineVehicles");
             m_totalVehicles.text = "/";
 
-            this.m_Background = base.Find("Background");
-            this.m_BackgroundColor = this.m_Background.color;
-            this.m_mouseIsOver = false;
-            base.component.eventMouseEnter += new MouseEventHandler(this.OnMouseEnter);
-            base.component.eventMouseLeave += new MouseEventHandler(this.OnMouseLeave);
+            m_Background = base.Find("Background");
+            m_BackgroundColor = m_Background.color;
+            m_mouseIsOver = false;
+            base.component.eventMouseEnter += new MouseEventHandler(OnMouseEnter);
+            base.component.eventMouseLeave += new MouseEventHandler(OnMouseLeave);
             GameObject.Destroy(base.Find<UIButton>("DeleteLine").gameObject);
             base.Find<UIButton>("ViewLine").eventClick += delegate (UIComponent c, UIMouseEventParameter r)
             {
-                if (this.m_buildingID != 0)
+                if (m_buildingID != 0)
                 {
-                    Vector3 position = Singleton<BuildingManager>.instance.m_buildings.m_buffer[(int)this.m_buildingID].m_position;
-                    InstanceID instanceID = default(InstanceID);
+                    Vector3 position = Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingID].m_position;
+                    var instanceID = default(InstanceID);
                     instanceID.Building = m_buildingID;
                     SVMBuildingInfoPanel.instance.openInfo(m_buildingID);
                     ToolsModifierControl.cameraController.m_unlimitedCamera = true;
@@ -233,26 +207,26 @@
             {
                 if (v)
                 {
-                    this.RefreshData();
+                    RefreshData();
                 }
             };
         }
 
         private void OnMouseEnter(UIComponent comp, UIMouseEventParameter param)
         {
-            if (!this.m_mouseIsOver)
+            if (!m_mouseIsOver)
             {
-                this.m_mouseIsOver = true;
-                this.SetBackgroundColor();
+                m_mouseIsOver = true;
+                SetBackgroundColor();
             }
         }
 
         private void OnMouseLeave(UIComponent comp, UIMouseEventParameter param)
         {
-            if (this.m_mouseIsOver)
+            if (m_mouseIsOver)
             {
-                this.m_mouseIsOver = false;
-                this.SetBackgroundColor();
+                m_mouseIsOver = false;
+                SetBackgroundColor();
             }
         }
 
@@ -264,16 +238,13 @@
         {
         }
 
-        private void OnRename(UIComponent comp, string text)
-        {
-            Singleton<BuildingManager>.instance.StartCoroutine(SVMUtils.setBuildingName(this.m_buildingID, text, () => { }));
-        }
+        private void OnRename(UIComponent comp, string text) => Singleton<BuildingManager>.instance.StartCoroutine(BuildingUtils.SetBuildingName(m_buildingID, text, () => { }));
 
         private void OnLineChanged(ushort id)
         {
-            if (id == this.m_buildingID)
+            if (id == m_buildingID)
             {
-                this.RefreshData();
+                RefreshData();
             }
         }
 
