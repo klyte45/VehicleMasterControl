@@ -71,9 +71,8 @@
                 int capacity = 0;
                 int inbound = 0;
                 int outbound = 0;
-                IBasicBuildingAIOverrides extstr = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
                 ItemClass.Level defLevel = b.Info.m_class.m_level;
-                SVMBuildingUtils.CalculateOwnVehicles(buildingId, ref b, extstr.GetManagedReasons(b.Info).Where(x => (x.Value.vehicleLevel ?? defLevel) == sysDef.level).Select(x => x.Key), ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                SVMBuildingUtils.CalculateOwnVehicles(buildingId, ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
 
                 int maxCount = SVMBuildingUtils.GetMaxVehiclesBuilding(buildingId, sysDef.vehicleType, sysDef.level);
                 m_totalVehicles.prefix = count.ToString();

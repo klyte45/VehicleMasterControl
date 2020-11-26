@@ -1,9 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Globalization;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.UI;
-using Klyte.ServiceVehiclesManager.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -207,7 +205,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             this.level = level;
             this.subService = subService;
             this.outsideConnection = outsideConnection;
-            Idx = ((int) service << 48) | ((int) subService << 40) | ((int) level << 32) | (Mathf.RoundToInt(Mathf.Log((int) vehicleType) / Mathf.Log(2)) << 8) | (outsideConnection ? 1 : 0);
+            Idx = ((int)service << 48) | ((int)subService << 40) | ((int)level << 32) | (Mathf.RoundToInt(Mathf.Log((int)vehicleType) / Mathf.Log(2)) << 8) | (outsideConnection ? 1 : 0);
             AllowRestrictions = service != ItemClass.Service.PublicTransport || subService == ItemClass.SubService.PublicTransportTaxi;
             Category = SetCategory(service, outsideConnection);
             NameForServiceSystem = SetNameForServiceSystem(service, subService, vehicleType, level, outsideConnection);
@@ -478,42 +476,8 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         public Type GetDefType() => sysDefinitions[this].GetType();
 
-        public bool isFromSystem(VehicleInfo info) => info.m_class.m_service == service && subService == info.m_class.m_subService && info.m_vehicleType == vehicleType && info.m_class.m_level == level;
-
-        public bool isFromSystem(BuildingInfo info)
-        {
-            if (ServiceVehiclesManagerMod.DebugMode)
-            {
-                //LogUtils.DoLog($"[{info?.GetAI()?.GetType()}->{this}]" +
-                //    $" info.m_class.m_service == service = { info?.m_class?.m_service == service};" +
-                //    $" subService == info.m_class.m_subService = { subService == info?.m_class?.m_subService };" +
-                //    $" info?.GetAI() is OutsideConnectionAI == outsideConnection = {info?.GetAI() is OutsideConnectionAI == outsideConnection };" +
-                //    $" info.m_class.m_level == level = {info?.m_class?.m_level} == {level} = {info?.m_class?.m_level == level};" +
-                //    $" SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Count = {SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info)?.Count};" +
-                //    $" ExtraAllowedLevels = [{string.Join(",", SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).SelectMany(x => x?.ExtraAllowedLevels() ?? new List<ItemClass.Level>()).Select(x => x.ToString() ?? "<NULL>")?.ToArray())}];" +
-                //    $" instance?.vehicleType ({vehicleType}) ;" +
-                //    $" aiOverride?.AllowVehicleType(vehicleType) = {vehicleType}) ;" +
-                //    $" SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Where = {ListAiOverrides(info).Count()} ");
-            }
-            return ListAiOverrides(info).Count() > 0;
-        }
-
-        private static IEnumerable<IBasicBuildingAIOverrides> ListAiOverrides(BuildingInfo info, ref ServiceSystemDefinition ssd)
-        {
-            if (SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Count == 0)
-            {
-                return new List<IBasicBuildingAIOverrides>();
-            }
-            ServiceSystemDefinition instance = ssd;
-            return SVMBuildingAIOverrideUtils.getBuildingOverrideExtension(info).Where(aiOverride =>
-               (info?.m_class?.m_service == instance.service)
-            && instance.subService == info?.m_class?.m_subService
-            && ((instance.outsideConnection) || info?.m_class?.m_level == instance.level || (aiOverride?.ExtraAllowedLevels()?.Contains(instance.level) ?? false))
-            && (info?.GetAI() is OutsideConnectionAI) == instance.outsideConnection
-            && SVMUtils.logAndReturn(aiOverride?.AllowVehicleType(SVMUtils.logAndReturn(instance.vehicleType, "EFF VEHICLE TYPE TESTED"), info?.GetAI()) ?? SVMUtils.logAndReturn(false, "AI OVERRIDE NULL!!!!!"), "AllowVehicleType")
-            );
-        }
-        private IEnumerable<IBasicBuildingAIOverrides> ListAiOverrides(BuildingInfo info) => ListAiOverrides(info, ref this);
+        public bool isFromSystem(VehicleInfo info) => info != null && info.m_class.m_service == service && subService == info.m_class.m_subService && info.m_vehicleType == vehicleType && info.m_class.m_level == level;
+        public bool isFromSystem(BuildingInfo info) => info != null && info.m_class.m_service == service && subService == info.m_class.m_subService && info.m_class.m_level == level;
 
         public override bool Equals(object obj)
         {
@@ -525,7 +489,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 return false;
             }
-            var other = (ServiceSystemDefinition) obj;
+            var other = (ServiceSystemDefinition)obj;
 
             return level == other.level && service == other.service && subService == other.subService && vehicleType == other.vehicleType && outsideConnection == other.outsideConnection;
         }
@@ -555,7 +519,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 return default;
             }
-            return sysDefinitions.Keys.FirstOrDefault(x => x.service == info.m_class.m_service && x.subService == info.m_class.m_subService && (x.level == info.m_class.m_level || x.outsideConnection) && x.vehicleType == type && x.outsideConnection == info.GetAI() is OutsideConnectionAI);
+            return from(info.GetService(), info.GetSubService(), info.GetClassLevel(), type);
         }
 
         public static IEnumerable<ServiceSystemDefinition> from(BuildingInfo info)
@@ -564,8 +528,11 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             {
                 return new List<ServiceSystemDefinition>();
             }
-            return sysDefinitions.Keys.Where(x => x.isFromSystem(info));
+            return from(info.GetService(), info.GetSubService(), info.GetClassLevel());
         }
+
+        public static IEnumerable<ServiceSystemDefinition> from(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level) => sysDefinitions.Keys.Where(x => x.service == service && x.subService == subService && x.level == level);
+        public static ServiceSystemDefinition from(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, VehicleInfo.VehicleType type) => sysDefinitions.Keys.Where(x => x.service == service && x.subService == subService && x.level == level && x.vehicleType == type).FirstOrDefault();
 
         public static ServiceSystemDefinition from(SSD index) => m_indexMap.Where(x => x.Value == index).FirstOrDefault().Key;
 

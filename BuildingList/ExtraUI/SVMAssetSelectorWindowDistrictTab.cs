@@ -96,7 +96,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             {
                 var checkbox = (UICheckBox) m_uiHelper.AddCheckbox(m_defaultAssets[i], false, (x) =>
                  {
-                     int districtIdx = SVMTabPanel.instance.getCurrentSelectedDistrictId();
+                     int districtIdx = SVMTabPanel.Instance.getCurrentSelectedDistrictId();
                      if (m_isLoading || districtIdx < 0)
                      {
                          return;

@@ -1,5 +1,6 @@
 ﻿using ColossalFramework;
 using ColossalFramework.UI;
+using Klyte.Commons.Interfaces;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.UI;
@@ -11,12 +12,11 @@ using UnityEngine;
 
 namespace Klyte.ServiceVehiclesManager
 {
-    public class SVMController : MonoBehaviour
+    public class SVMController : BaseController<ServiceVehiclesManagerMod, SVMController>
     {
 
         public static readonly string FOLDER_NAME = "ServiceVehicleManager";
         public static readonly string FOLDER_PATH = FileUtils.BASE_FOLDER_PATH + FOLDER_NAME;
-        internal static SVMController instance => ServiceVehiclesManagerMod.Instance.Controller;
 
         public void Start()
         {

@@ -12,15 +12,13 @@ namespace Klyte.ServiceVehiclesManager.Utils
 {
     internal class SVMBuildingUtils
     {
-        public static void CalculateOwnVehicles(ushort buildingID, ref Building data, IEnumerable<TransferManager.TransferReason> materials, ref int count, ref int cargo, ref int capacity, ref int inbound, ref int outbound)
+        public static void CalculateOwnVehicles(ushort buildingID, ref Building data, ref int count, ref int cargo, ref int capacity, ref int inbound, ref int outbound)
         {
             VehicleManager instance = Singleton<VehicleManager>.instance;
             ushort num = data.m_ownVehicles;
             int num2 = 0;
             while (num != 0)
             {
-                if (materials.Contains((TransferManager.TransferReason) instance.m_vehicles.m_buffer[num].m_transferType))
-                {
                     VehicleInfo info = instance.m_vehicles.m_buffer[num].Info;
                     info.m_vehicleAI.GetSize(num, ref instance.m_vehicles.m_buffer[num], out int a, out int num3);
                     cargo += Mathf.Min(a, num3);
@@ -34,7 +32,7 @@ namespace Klyte.ServiceVehiclesManager.Utils
                     {
                         outbound++;
                     }
-                }
+                
                 num = instance.m_vehicles.m_buffer[num].m_nextOwnVehicle;
                 if (++num2 > 16384)
                 {
@@ -46,14 +44,7 @@ namespace Klyte.ServiceVehiclesManager.Utils
 
         public static int GetMaxVehiclesBuilding(ushort buildingID, VehicleInfo.VehicleType type, Level level)
         {
-            Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
-            IBasicBuildingAIOverrides ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
-            string maxField = ext.GetVehicleMaxCountField(type, level);
-            if (maxField == null)
-            {
-                return 0xFFFFFF;
-            }
-            return (ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
+            return 0;
         }
 
         public static int GetProductionRate(ref Building b)
@@ -99,7 +90,7 @@ namespace Klyte.ServiceVehiclesManager.Utils
                         int capacity = 0;
                         int inbound = 0;
                         int outbound = 0;
-                        SVMBuildingUtils.CalculateOwnVehicles(i, ref bm.m_buildings.m_buffer[i], SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(bm.m_buildings.m_buffer[i].Info).GetManagedReasons(bm.m_buildings.m_buffer[i].Info).Where(x => x.Value.vehicleLevel == null).Select(x => x.Key), ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                        SVMBuildingUtils.CalculateOwnVehicles(i, ref bm.m_buildings.m_buffer[i], ref count, ref cargo, ref capacity, ref inbound, ref outbound);
                         if (count >= max)
                         {
                             continue;

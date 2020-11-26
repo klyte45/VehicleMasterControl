@@ -76,10 +76,8 @@ namespace Klyte.ServiceVehiclesManager.UI
                 foreach (ushort buildingID in buildingList)
                 {
                     Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
-                    IBasicBuildingAIOverrides ext = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
-                    string maxCountField = ext.GetVehicleMaxCountField(SVMSysDef<T>.instance.GetSSD().vehicleType, SVMSysDef<T>.instance.GetSSD().level);
-                    int maxVehicle = ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxCountField);
-                    if (maxCountField == null || maxVehicle > 0)
+                    int maxVehicle =99;
+                    if ( maxVehicle > 0)
                     {
                         AddToList(buildingID, ref count);
                     }

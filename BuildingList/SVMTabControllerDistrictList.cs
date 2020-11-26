@@ -121,7 +121,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private static bool getCurrentSelectedId(out int currentDistrict)
         {
-            currentDistrict = SVMTabPanel.instance.getCurrentSelectedDistrictId();
+            currentDistrict = SVMTabPanel.Instance.getCurrentSelectedDistrictId();
             return currentDistrict >= 0;
         }
 
@@ -152,10 +152,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             }
         }
         #endregion
-
-        private void Start()
-        {
-        }
+          
 
         private void Update()
         {

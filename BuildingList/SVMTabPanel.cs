@@ -2,6 +2,7 @@
 using ColossalFramework.UI;
 using ICities;
 using Klyte.Commons.Extensors;
+using Klyte.Commons.Interfaces;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
 using Klyte.ServiceVehiclesManager.Utils;
@@ -13,12 +14,14 @@ using UnityEngine;
 namespace Klyte.ServiceVehiclesManager.UI
 {
 
-    public class SVMTabPanel : UICustomControl
+    public class SVMTabPanel : BasicKPanel<ServiceVehiclesManagerMod, SVMController, SVMTabPanel>
     {
-        private const int NUM_SERVICES = 0;
-        public static SVMTabPanel instance { get; private set; }
-
         public UIPanel controlContainer { get; private set; }
+
+        public override float PanelWidth => 875;
+
+        public override float PanelHeight => 550;
+
         private UIPanel mainPanel;
         private UIPanel m_titleLineBuildings;
 
@@ -40,8 +43,6 @@ namespace Klyte.ServiceVehiclesManager.UI
         #region Awake
         private void Awake()
         {
-            instance = this;
-
             controlContainer = GetComponent<UIPanel>();
             controlContainer.area = new Vector4(0, 0, 0, 0);
             controlContainer.isVisible = false;
@@ -128,7 +129,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                 m_StripBuilings.selectedIndex = (int)catIdx;
                 m_StripBuilingsStrips[catIdx].selectedIndex = m_StripBuilingsStrips[catIdx].Find<UIComponent>(ssd.GetDefType().Name)?.zOrder ?? 0;
             }
-            ServiceVehiclesManagerMod.Instance.Controller.OpenSVMPanel();
+            ServiceVehiclesManagerMod.Controller.OpenSVMPanel();
         }
 
         private void OnDistrictSelect(int x)
@@ -382,6 +383,8 @@ namespace Klyte.ServiceVehiclesManager.UI
         private void Update()
         {
         }
+
+        protected override void AwakeActions() => throw new NotImplementedException();
     }
 
     public enum CategoryTab

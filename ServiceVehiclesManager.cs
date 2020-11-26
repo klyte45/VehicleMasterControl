@@ -8,34 +8,27 @@ using Klyte.ServiceVehiclesManager.Utils;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion("2.99.99.99")]
+[assembly: AssemblyVersion("0.0.0.*")]
 
 namespace Klyte.ServiceVehiclesManager
 {
     public class ServiceVehiclesManagerMod : BasicIUserMod<ServiceVehiclesManagerMod, SVMController, SVMTabPanel>
-    {
-
-        public ServiceVehiclesManagerMod() => Construct();
-
-
+    {        
         private SavedBool m_allowOutsidersAsDefault = new SavedBool("SVMAllowGoOutsideAsDefault", Settings.gameSettingsFile, true, true);
         private SavedBool m_allowGoOutsideAsDefault = new SavedBool("SVMAllowOutsidersAsDefault", Settings.gameSettingsFile, true, true);
 
         public static bool allowOutsidersAsDefault => Instance.m_allowOutsidersAsDefault.value;
         public static bool allowServeOtherDistrictsAsDefault => Instance.m_allowGoOutsideAsDefault.value;
 
-        public override string SimpleName => "Service Vehicles Manager";
-        public override string Description => "Extension for managing the service vehicles. Requires Klyte Commons.";
+        public override string SimpleName => "Vehicle Master Control";
+        public override string Description => "Extension for managing service & industries vehicles.";
 
         public override string IconName => "K45_SVMIcon";
 
         public override void DoErrorLog(string fmt, params object[] args) => LogUtils.DoErrorLog(fmt, args);
 
         public override void DoLog(string fmt, params object[] args) => LogUtils.DoLog(fmt, args);
-
-        public override void LoadSettings()
-        {
-        }
+      
         public override void TopSettingsUI(UIHelperExtension helper)
         {
             UIHelperExtension group8 = helper.AddGroupExtended(Locale.Get("K45_SVM_DISTRICT_SERVICE_RESTRICTIONS"));

@@ -115,7 +115,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         {
             m_buildingInfoPanel.Hide();
             ServiceSystemDefinition ssd = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingIdSel.Building].Info).FirstOrDefault();
-            SVMTabPanel.instance.OpenAt(ref ssd);
+            SVMTabPanel.Instance.OpenAt(ref ssd);
         }
 
 
@@ -255,11 +255,9 @@ namespace Klyte.ServiceVehiclesManager.UI
                 int capacity = 0;
                 int inbound = 0;
                 int outbound = 0;
-                IBasicBuildingAIOverrides extstr = SVMBuildingAIOverrideUtils.getBuildingOverrideExtensionStrict(b.Info);
-                SVMBuildingUtils.CalculateOwnVehicles(m_buildingIdSelecionado.Building, ref b, extstr.GetManagedReasons(b.Info).Where(x => (x.Value.vehicleLevel ?? defLevel) == ssd.level).Select(x => x.Key), ref count, ref cargo, ref capacity, ref inbound, ref outbound);
-                string maxField = extstr.GetVehicleMaxCountField(ssd.vehicleType, ssd.level);
-                int maxVehicles = (ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
-                string maxVehiclesStr = maxField == null || maxVehicles > 0x3FFF ? "∞" : maxVehicles.ToString();
+                SVMBuildingUtils.CalculateOwnVehicles(m_buildingIdSelecionado.Building, ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                int maxVehicles = 0;//(ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
+                string maxVehiclesStr = maxVehicles > 0x3FFF ? "∞" : maxVehicles.ToString();
                 textVehicles.Add($"{count}/{maxVehiclesStr} ({Locale.Get("K45_SVM_VEHICLE_TYPE", ssd.vehicleType.ToString())})");
             }
             vehiclesInUseLabel.text = string.Join(" | ", textVehicles.ToArray());
