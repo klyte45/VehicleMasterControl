@@ -1,13 +1,13 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Globalization;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.UI;
+using Klyte.VehiclesMasterControl.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
+namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
 {
     public struct ServiceSystemDefinition
     {
@@ -56,8 +56,8 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             get; private set;
         }
 
-        internal ISVMDistrictExtension GetDistrictExtension() => sysDefinitions[this].GetExtensionDistrict();
-        internal ISVMBuildingExtension GetBuildingExtension() => sysDefinitions[this].GetExtensionBuilding();
+        internal IVMCDistrictExtension GetDistrictExtension() => sysDefinitions[this].GetExtensionDistrict();
+        internal IVMCBuildingExtension GetBuildingExtension() => sysDefinitions[this].GetExtensionBuilding();
 
         internal SSD ToIndex => m_indexMap[this];
 
@@ -94,67 +94,67 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             [OUT_ROAD] = SSD.OUT_ROAD,
         };
 
-        public static Dictionary<ServiceSystemDefinition, ISVMSysDef> sysDefinitions
+        public static Dictionary<ServiceSystemDefinition, IVMCSysDef> sysDefinitions
         {
             get {
                 if (m_sysDefinitions.Count == 0)
                 {
-                    m_sysDefinitions[GARBAGE_CAR] = SingletonLite<SVMSysDefGarCar>.instance;
-                    m_sysDefinitions[DEATHCARE_CAR] = SingletonLite<SVMSysDefDcrCar>.instance;
-                    m_sysDefinitions[REG_PLANE] = SingletonLite<SVMSysDefRegPln>.instance;
-                    m_sysDefinitions[REG_TRAIN] = SingletonLite<SVMSysDefRegTra>.instance;
-                    m_sysDefinitions[REG_SHIP] = SingletonLite<SVMSysDefRegShp>.instance;
-                    m_sysDefinitions[FIRE_CAR] = SingletonLite<SVMSysDefFirCar>.instance;
-                    m_sysDefinitions[HEALTHCARE_CAR] = SingletonLite<SVMSysDefHcrCar>.instance;
-                    m_sysDefinitions[POLICE_CAR] = SingletonLite<SVMSysDefPolCar>.instance;
-                    m_sysDefinitions[CARG_TRAIN] = SingletonLite<SVMSysDefCrgTra>.instance;
-                    m_sysDefinitions[CARG_SHIP] = SingletonLite<SVMSysDefCrgShp>.instance;
+                    m_sysDefinitions[GARBAGE_CAR] = SingletonLite<VMCSysDefGarCar>.instance;
+                    m_sysDefinitions[DEATHCARE_CAR] = SingletonLite<VMCSysDefDcrCar>.instance;
+                    m_sysDefinitions[REG_PLANE] = SingletonLite<VMCSysDefRegPln>.instance;
+                    m_sysDefinitions[REG_TRAIN] = SingletonLite<VMCSysDefRegTra>.instance;
+                    m_sysDefinitions[REG_SHIP] = SingletonLite<VMCSysDefRegShp>.instance;
+                    m_sysDefinitions[FIRE_CAR] = SingletonLite<VMCSysDefFirCar>.instance;
+                    m_sysDefinitions[HEALTHCARE_CAR] = SingletonLite<VMCSysDefHcrCar>.instance;
+                    m_sysDefinitions[POLICE_CAR] = SingletonLite<VMCSysDefPolCar>.instance;
+                    m_sysDefinitions[CARG_TRAIN] = SingletonLite<VMCSysDefCrgTra>.instance;
+                    m_sysDefinitions[CARG_SHIP] = SingletonLite<VMCSysDefCrgShp>.instance;
 
-                    //m_sysDefinitions[OUT_PLANE] = SingletonLite<SVMSysDefOutPln>.instance;
-                    //m_sysDefinitions[OUT_TRAIN] = SingletonLite<SVMSysDefOutTra>.instance;
-                    //m_sysDefinitions[OUT_SHIP] = SingletonLite<SVMSysDefOutShp>.instance;
-                    //m_sysDefinitions[OUT_ROAD] = SingletonLite<SVMSysDefOutCar>.instance;
+                    //m_sysDefinitions[OUT_PLANE] = SingletonLite<VMCSysDefOutPln>.instance;
+                    //m_sysDefinitions[OUT_TRAIN] = SingletonLite<VMCSysDefOutTra>.instance;
+                    //m_sysDefinitions[OUT_SHIP] = SingletonLite<VMCSysDefOutShp>.instance;
+                    //m_sysDefinitions[OUT_ROAD] = SingletonLite<VMCSysDefOutCar>.instance;
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
                     //{
-                    m_sysDefinitions[PRISION_CAR] = SingletonLite<SVMSysDefPriCar>.instance;
-                    m_sysDefinitions[TAXI_CAR] = SingletonLite<SVMSysDefTaxCar>.instance;
+                    m_sysDefinitions[PRISION_CAR] = SingletonLite<VMCSysDefPriCar>.instance;
+                    m_sysDefinitions[TAXI_CAR] = SingletonLite<VMCSysDefTaxCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
                     //{
-                    m_sysDefinitions[ROAD_CAR] = SingletonLite<SVMSysDefRoaCar>.instance;
-                    m_sysDefinitions[SNOW_CAR] = SingletonLite<SVMSysDefSnwCar>.instance;
+                    m_sysDefinitions[ROAD_CAR] = SingletonLite<VMCSysDefRoaCar>.instance;
+                    m_sysDefinitions[SNOW_CAR] = SingletonLite<VMCSysDefSnwCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
                     //{
-                    m_sysDefinitions[WATER_CAR] = SingletonLite<SVMSysDefWatCar>.instance;
-                    m_sysDefinitions[DISASTER_CAR] = SingletonLite<SVMSysDefDisCar>.instance;
-                    m_sysDefinitions[DISASTER_HELICOPTER] = SingletonLite<SVMSysDefDisHel>.instance;
-                    m_sysDefinitions[FIRE_HELICOPTER] = SingletonLite<SVMSysDefFirHel>.instance;
-                    m_sysDefinitions[HEALTHCARE_HELICOPTER] = SingletonLite<SVMSysDefHcrHel>.instance;
-                    m_sysDefinitions[POLICE_HELICOPTER] = SingletonLite<SVMSysDefPolHel>.instance;
+                    m_sysDefinitions[WATER_CAR] = SingletonLite<VMCSysDefWatCar>.instance;
+                    m_sysDefinitions[DISASTER_CAR] = SingletonLite<VMCSysDefDisCar>.instance;
+                    m_sysDefinitions[DISASTER_HELICOPTER] = SingletonLite<VMCSysDefDisHel>.instance;
+                    m_sysDefinitions[FIRE_HELICOPTER] = SingletonLite<VMCSysDefFirHel>.instance;
+                    m_sysDefinitions[HEALTHCARE_HELICOPTER] = SingletonLite<VMCSysDefHcrHel>.instance;
+                    m_sysDefinitions[POLICE_HELICOPTER] = SingletonLite<VMCSysDefPolHel>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
                     //{
-                    m_sysDefinitions[CABLECAR_CABLECAR] = SingletonLite<SVMSysDefCcrCcr>.instance;
+                    m_sysDefinitions[CABLECAR_CABLECAR] = SingletonLite<VMCSysDefCcrCcr>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
                     //{
-                    m_sysDefinitions[GARBBIO_CAR] = SingletonLite<SVMSysDefGbcCar>.instance;
+                    m_sysDefinitions[GARBBIO_CAR] = SingletonLite<VMCSysDefGbcCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
                     //{
-                    m_sysDefinitions[BEAU_CAR] = SingletonLite<SVMSysDefBeaCar>.instance;
+                    m_sysDefinitions[BEAU_CAR] = SingletonLite<VMCSysDefBeaCar>.instance;
                     //}
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Industry))
                     //{
-                    m_sysDefinitions[POST_CAR] = SingletonLite<SVMSysDefPstCar>.instance;
-                    m_sysDefinitions[POST_TRK] = SingletonLite<SVMSysDefPstTrk>.instance;
+                    m_sysDefinitions[POST_CAR] = SingletonLite<VMCSysDefPstCar>.instance;
+                    m_sysDefinitions[POST_TRK] = SingletonLite<VMCSysDefPstTrk>.instance;
                     //}
                 }
                 return m_sysDefinitions;
@@ -168,7 +168,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public string FgIconServiceSystem { get; }
         public string IconServiceSystem { get; }
 
-        private static readonly Dictionary<ServiceSystemDefinition, ISVMSysDef> m_sysDefinitions = new Dictionary<ServiceSystemDefinition, ISVMSysDef>();
+        private static readonly Dictionary<ServiceSystemDefinition, IVMCSysDef> m_sysDefinitions = new Dictionary<ServiceSystemDefinition, IVMCSysDef>();
 
         public ItemClass.Service service
         {
@@ -215,7 +215,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         private static string SetFgIcon(ItemClass.Service service, ItemClass.SubService subService, VehicleInfo.VehicleType vehicleType, ItemClass.Level level, bool outsideConnection)
         {
-            return "K45_SVM_" + outsideConnection switch
+            return "K45_VMC_" + outsideConnection switch
             {
                 true => "OutsideIndicator",
                 false => vehicleType switch
@@ -554,11 +554,11 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         {
             VehicleInfo info = null;
             List<string> assetList = GetBuildingExtension().GetSelectedBasicAssets(buildingId);
-            if (assetList.Count == 0)
+            if (assetList == null || assetList.Count == 0)
             {
                 assetList = GetDistrictExtension().GetSelectedBasicAssets(BuildingUtils.GetBuildingDistrict(buildingId));
             }
-            while (info == null && assetList.Count > 0)
+            while (info == null && assetList != null && assetList.Count > 0)
             {
                 info = VehicleUtils.GetRandomModel(assetList, out string modelName);
                 if (info == null)
@@ -641,45 +641,45 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         OUT_SHIP,
         OUT_ROAD,
     }
-    public interface ISVMSysDef
+    public interface IVMCSysDef
     {
         public abstract ServiceSystemDefinition GetSSD();
-        public ISVMBuildingExtension GetExtensionBuilding();
-        public ISVMDistrictExtension GetExtensionDistrict();
+        public IVMCBuildingExtension GetExtensionBuilding();
+        public IVMCDistrictExtension GetExtensionDistrict();
     }
-    public abstract class SVMSysDef<T> : SingletonLite<T>, ISVMSysDef where T : SVMSysDef<T>, ISVMSysDef, new()
+    public abstract class VMCSysDef<SSD> : SingletonLite<SSD>, IVMCSysDef where SSD : VMCSysDef<SSD>, IVMCSysDef, new()
     {
         public abstract ServiceSystemDefinition GetSSD();
-        public ISVMBuildingExtension GetExtensionBuilding() => SVMBuildingInstanceExtensor<T>.Instance;
-        public ISVMDistrictExtension GetExtensionDistrict() => SVMDistrictExtensor<T>.Instance;
+        public IVMCBuildingExtension GetExtensionBuilding() => VMCBuildingInstanceExtensor<SSD>.Instance;
+        public IVMCDistrictExtension GetExtensionDistrict() => VMCDistrictExtensor<SSD>.Instance;
     }
-    public sealed class SVMSysDefDisCar : SVMSysDef<SVMSysDefDisCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.DISASTER_CAR; }
-    public sealed class SVMSysDefDisHel : SVMSysDef<SVMSysDefDisHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.DISASTER_HELICOPTER; }
-    public sealed class SVMSysDefFirCar : SVMSysDef<SVMSysDefFirCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FIRE_CAR; }
-    public sealed class SVMSysDefFirHel : SVMSysDef<SVMSysDefFirHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FIRE_HELICOPTER; }
-    public sealed class SVMSysDefGarCar : SVMSysDef<SVMSysDefGarCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.GARBAGE_CAR; }
-    public sealed class SVMSysDefGbcCar : SVMSysDef<SVMSysDefGbcCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.GARBBIO_CAR; }
-    public sealed class SVMSysDefHcrCar : SVMSysDef<SVMSysDefHcrCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.HEALTHCARE_CAR; }
-    public sealed class SVMSysDefHcrHel : SVMSysDef<SVMSysDefHcrHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.HEALTHCARE_HELICOPTER; }
-    public sealed class SVMSysDefPolCar : SVMSysDef<SVMSysDefPolCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POLICE_CAR; }
-    public sealed class SVMSysDefPolHel : SVMSysDef<SVMSysDefPolHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POLICE_HELICOPTER; }
-    public sealed class SVMSysDefRoaCar : SVMSysDef<SVMSysDefRoaCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.ROAD_CAR; }
-    public sealed class SVMSysDefDcrCar : SVMSysDef<SVMSysDefDcrCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.DEATHCARE_CAR; }
-    public sealed class SVMSysDefWatCar : SVMSysDef<SVMSysDefWatCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.WATER_CAR; }
-    public sealed class SVMSysDefPriCar : SVMSysDef<SVMSysDefPriCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.PRISION_CAR; }
-    public sealed class SVMSysDefTaxCar : SVMSysDef<SVMSysDefTaxCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.TAXI_CAR; }
-    public sealed class SVMSysDefCcrCcr : SVMSysDef<SVMSysDefCcrCcr> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CABLECAR_CABLECAR; }
-    public sealed class SVMSysDefSnwCar : SVMSysDef<SVMSysDefSnwCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.SNOW_CAR; }
-    public sealed class SVMSysDefRegShp : SVMSysDef<SVMSysDefRegShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_SHIP; }
-    public sealed class SVMSysDefRegTra : SVMSysDef<SVMSysDefRegTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_TRAIN; }
-    public sealed class SVMSysDefRegPln : SVMSysDef<SVMSysDefRegPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_PLANE; }
-    public sealed class SVMSysDefCrgTra : SVMSysDef<SVMSysDefCrgTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CARG_TRAIN; }
-    public sealed class SVMSysDefCrgShp : SVMSysDef<SVMSysDefCrgShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CARG_SHIP; }
-    public sealed class SVMSysDefOutShp : SVMSysDef<SVMSysDefOutShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_SHIP; }
-    public sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_TRAIN; }
-    public sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_PLANE; }
-    public sealed class SVMSysDefOutCar : SVMSysDef<SVMSysDefOutCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_ROAD; }
-    public sealed class SVMSysDefBeaCar : SVMSysDef<SVMSysDefBeaCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.BEAU_CAR; }
-    public sealed class SVMSysDefPstCar : SVMSysDef<SVMSysDefPstCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_CAR; }
-    public sealed class SVMSysDefPstTrk : SVMSysDef<SVMSysDefPstTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_TRK; }
+    public sealed class VMCSysDefDisCar : VMCSysDef<VMCSysDefDisCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.DISASTER_CAR; }
+    public sealed class VMCSysDefDisHel : VMCSysDef<VMCSysDefDisHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.DISASTER_HELICOPTER; }
+    public sealed class VMCSysDefFirCar : VMCSysDef<VMCSysDefFirCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FIRE_CAR; }
+    public sealed class VMCSysDefFirHel : VMCSysDef<VMCSysDefFirHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FIRE_HELICOPTER; }
+    public sealed class VMCSysDefGarCar : VMCSysDef<VMCSysDefGarCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.GARBAGE_CAR; }
+    public sealed class VMCSysDefGbcCar : VMCSysDef<VMCSysDefGbcCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.GARBBIO_CAR; }
+    public sealed class VMCSysDefHcrCar : VMCSysDef<VMCSysDefHcrCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.HEALTHCARE_CAR; }
+    public sealed class VMCSysDefHcrHel : VMCSysDef<VMCSysDefHcrHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.HEALTHCARE_HELICOPTER; }
+    public sealed class VMCSysDefPolCar : VMCSysDef<VMCSysDefPolCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POLICE_CAR; }
+    public sealed class VMCSysDefPolHel : VMCSysDef<VMCSysDefPolHel> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POLICE_HELICOPTER; }
+    public sealed class VMCSysDefRoaCar : VMCSysDef<VMCSysDefRoaCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.ROAD_CAR; }
+    public sealed class VMCSysDefDcrCar : VMCSysDef<VMCSysDefDcrCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.DEATHCARE_CAR; }
+    public sealed class VMCSysDefWatCar : VMCSysDef<VMCSysDefWatCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.WATER_CAR; }
+    public sealed class VMCSysDefPriCar : VMCSysDef<VMCSysDefPriCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.PRISION_CAR; }
+    public sealed class VMCSysDefTaxCar : VMCSysDef<VMCSysDefTaxCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.TAXI_CAR; }
+    public sealed class VMCSysDefCcrCcr : VMCSysDef<VMCSysDefCcrCcr> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CABLECAR_CABLECAR; }
+    public sealed class VMCSysDefSnwCar : VMCSysDef<VMCSysDefSnwCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.SNOW_CAR; }
+    public sealed class VMCSysDefRegShp : VMCSysDef<VMCSysDefRegShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_SHIP; }
+    public sealed class VMCSysDefRegTra : VMCSysDef<VMCSysDefRegTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_TRAIN; }
+    public sealed class VMCSysDefRegPln : VMCSysDef<VMCSysDefRegPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_PLANE; }
+    public sealed class VMCSysDefCrgTra : VMCSysDef<VMCSysDefCrgTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CARG_TRAIN; }
+    public sealed class VMCSysDefCrgShp : VMCSysDef<VMCSysDefCrgShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CARG_SHIP; }
+    public sealed class VMCSysDefOutShp : VMCSysDef<VMCSysDefOutShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_SHIP; }
+    public sealed class VMCSysDefOutTra : VMCSysDef<VMCSysDefOutTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_TRAIN; }
+    public sealed class VMCSysDefOutPln : VMCSysDef<VMCSysDefOutPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_PLANE; }
+    public sealed class VMCSysDefOutCar : VMCSysDef<VMCSysDefOutCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_ROAD; }
+    public sealed class VMCSysDefBeaCar : VMCSysDef<VMCSysDefBeaCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.BEAU_CAR; }
+    public sealed class VMCSysDefPstCar : VMCSysDef<VMCSysDefPstCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_CAR; }
+    public sealed class VMCSysDefPstTrk : VMCSysDef<VMCSysDefPstTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_TRK; }
 }

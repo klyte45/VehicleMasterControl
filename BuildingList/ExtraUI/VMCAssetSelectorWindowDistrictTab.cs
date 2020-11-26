@@ -4,15 +4,15 @@ using ColossalFramework.UI;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
+namespace Klyte.VehiclesMasterControl.UI.ExtraUI
 {
-    internal class SVMAssetSelectorWindowDistrictTab : MonoBehaviour
+    internal class VMCAssetSelectorWindowDistrictTab : MonoBehaviour
     {
         private UIScrollablePanel m_parent;
         private UIPanel m_mainPanel;
@@ -20,7 +20,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
         private UILabel m_title;
         private ServiceSystemDefinition m_system;
         private Color m_lastColor = Color.clear;
-        public void setTabContent<T>(SVMTabControllerDistrictList<T> tabContent) where T : SVMSysDef<T>, new()
+        public void setTabContent<T>(VMCTabControllerDistrictList<T> tabContent) where T : VMCSysDef<T>, new()
         {
             if (m_system == null)
             {
@@ -53,7 +53,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             {
                 m_checkboxes[i].isChecked = selectedAssets.Contains(i);
             }
-            m_title.text = Locale.Get("K45_SVM_DISTRICT_ASSET_SELECT_WINDOW_TITLE_PREFIX");
+            m_title.text = Locale.Get("K45_VMC_DISTRICT_ASSET_SELECT_WINDOW_TITLE_PREFIX");
 
             m_isLoading = false;
         }
@@ -67,7 +67,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
         private Dictionary<string, string> m_defaultAssets = new Dictionary<string, string>();
         private Dictionary<string, UICheckBox> m_checkboxes = new Dictionary<string, UICheckBox>();
         private bool m_isLoading;
-        private ISVMDistrictExtension extension => m_system.GetDistrictExtension();
+        private IVMCDistrictExtension extension => m_system.GetDistrictExtension();
 
         private void CreateWindow()
         {
@@ -96,7 +96,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             {
                 var checkbox = (UICheckBox) m_uiHelper.AddCheckbox(m_defaultAssets[i], false, (x) =>
                  {
-                     int districtIdx = SVMTabPanel.Instance.getCurrentSelectedDistrictId();
+                     int districtIdx = VMCTabPanel.Instance.getCurrentSelectedDistrictId();
                      if (m_isLoading || districtIdx < 0)
                      {
                          return;
@@ -126,13 +126,13 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             removeUndesired.textScale = 0.6f;
             removeUndesired.width = 20;
             removeUndesired.height = 20;
-            removeUndesired.tooltip = Locale.Get("K45_SVM_REMOVE_UNWANTED_TOOLTIP");
+            removeUndesired.tooltip = Locale.Get("K45_VMC_REMOVE_UNWANTED_TOOLTIP");
             KlyteMonoUtils.InitButton(removeUndesired, true, "ButtonMenu");
             removeUndesired.name = "DeleteLineButton";
             removeUndesired.isVisible = true;
             removeUndesired.eventClick += (component, eventParam) =>
             {
-                SVMTransportExtensionUtils.RemoveAllUnwantedVehicles();
+                VMCTransportExtensionUtils.RemoveAllUnwantedVehicles();
             };
 
             UISprite icon = removeUndesired.AddUIComponent<UISprite>();
@@ -169,7 +169,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             m_title.width = m_mainPanel.width - 30f;
             m_title.relativePosition = new Vector3(5, 5);
             m_title.textScale = 0.9f;
-            m_title.localeID = "K45_SVM_DISTRICT_ASSET_SELECT_WINDOW_TITLE_PREFIX";
+            m_title.localeID = "K45_VMC_DISTRICT_ASSET_SELECT_WINDOW_TITLE_PREFIX";
         }
 
         private void CreateScrollPanel()

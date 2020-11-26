@@ -4,20 +4,20 @@ using ColossalFramework.UI;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.Overrides;
-using Klyte.ServiceVehiclesManager.UI.ExtraUI;
-using Klyte.ServiceVehiclesManager.Utils;
+using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
+using Klyte.VehiclesMasterControl.Overrides;
+using Klyte.VehiclesMasterControl.UI.ExtraUI;
+using Klyte.VehiclesMasterControl.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Klyte.ServiceVehiclesManager.UI
+namespace Klyte.VehiclesMasterControl.UI
 {
-    internal class SVMBuildingInfoPanel : MonoBehaviour
+    internal class VMCBuildingInfoPanel : MonoBehaviour
     {
-        public static SVMBuildingInfoPanel instance;
+        public static VMCBuildingInfoPanel instance;
         //line info	
         public UIPanel buildingInfoPanel => m_buildingInfoPanel;
         private UIPanel m_buildingInfoPanel;
@@ -80,9 +80,9 @@ namespace Klyte.ServiceVehiclesManager.UI
             confContainer.height = m_buildingInfoPanel.height;
             confContainer.clipChildren = false;
 
-            foreach (KeyValuePair<ServiceSystemDefinition, ISVMSysDef> kv in ServiceSystemDefinition.sysDefinitions)
+            foreach (KeyValuePair<ServiceSystemDefinition, IVMCSysDef> kv in ServiceSystemDefinition.sysDefinitions)
             {
-                Type targetType = ReflectionUtils.GetImplementationForGenericType(typeof(SVMBuildingSSDConfigWindow<>), kv.Value.GetType());
+                Type targetType = ReflectionUtils.GetImplementationForGenericType(typeof(VMCBuildingSSDConfigWindow<>), kv.Value.GetType());
                 KlyteMonoUtils.CreateElement(targetType, confContainer.transform);
             }
 
@@ -91,7 +91,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private void CreateIgnoreDistrictOption()
         {
-            m_ignoreDistrict = m_uiHelper.AddCheckboxLocale("K45_SVM_IGNORE_DISTRICT_CONFIG", false);
+            m_ignoreDistrict = m_uiHelper.AddCheckboxLocale("K45_VMC_IGNORE_DISTRICT_CONFIG", false);
             m_ignoreDistrict.relativePosition = new Vector3(5f, 150f);
             m_ignoreDistrict.eventCheckChanged += delegate (UIComponent comp, bool value)
             {
@@ -115,7 +115,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         {
             m_buildingInfoPanel.Hide();
             ServiceSystemDefinition ssd = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingIdSel.Building].Info).FirstOrDefault();
-            SVMTabPanel.Instance.OpenAt(ref ssd);
+            VMCTabPanel.Instance.OpenAt(ref ssd);
         }
 
 
@@ -206,7 +206,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             vehiclesInUseLabel.height = 25;
             vehiclesInUseLabel.name = "VehiclesInUseLabel";
             vehiclesInUseLabel.textScale = 0.8f;
-            vehiclesInUseLabel.prefix = Locale.Get("K45_SVM_VEHICLE_CAPACITY_LABEL") + ": ";
+            vehiclesInUseLabel.prefix = Locale.Get("K45_VMC_VEHICLE_CAPACITY_LABEL") + ": ";
 
             KlyteMonoUtils.CreateUIElement(out upkeepCost, m_buildingInfoPanel.transform);
             upkeepCost.autoSize = false;
@@ -255,10 +255,10 @@ namespace Klyte.ServiceVehiclesManager.UI
                 int capacity = 0;
                 int inbound = 0;
                 int outbound = 0;
-                SVMBuildingUtils.CalculateOwnVehicles(m_buildingIdSelecionado.Building, ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
-                int maxVehicles = 0;//(ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * SVMBuildingUtils.GetProductionRate(ref b) / 100);
+                VMCBuildingUtils.CalculateOwnVehicles(m_buildingIdSelecionado.Building, ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                int maxVehicles = 0;//(ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * VMCBuildingUtils.GetProductionRate(ref b) / 100);
                 string maxVehiclesStr = maxVehicles > 0x3FFF ? "∞" : maxVehicles.ToString();
-                textVehicles.Add($"{count}/{maxVehiclesStr} ({Locale.Get("K45_SVM_VEHICLE_TYPE", ssd.vehicleType.ToString())})");
+                textVehicles.Add($"{count}/{maxVehiclesStr} ({Locale.Get("K45_VMC_VEHICLE_TYPE", ssd.vehicleType.ToString())})");
             }
             vehiclesInUseLabel.text = string.Join(" | ", textVehicles.ToArray());
             upkeepCost.text = LocaleFormatter.FormatUpkeep(basicAI.GetResourceRate(m_buildingIdSelecionado.Building, ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingIdSelecionado.Building], EconomyManager.Resource.Maintenance), false);
@@ -322,7 +322,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
             IEnumerable<ServiceSystemDefinition> ssds = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID].Info);
             ServiceSystemDefinition ssd = ssds.First();
-            ISVMBuildingExtension ext = ssd.GetBuildingExtension();
+            IVMCBuildingExtension ext = ssd.GetBuildingExtension();
 
             m_buildingIdSelecionado = default;
             m_ignoreDistrict.isChecked = ext.GetIgnoreDistrict(buildingID);
@@ -337,7 +337,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             buildingTypeIcon.normalFgSprite = bgIcon;
             buildingTypeIconFg.spriteName = fgIcon;
 
-            ServiceVehiclesManagerMod.Instance.ClosePanel();
+            VehiclesMasterControlMod.Instance.ClosePanel();
             Show();
             EventOnBuildingSelChanged?.Invoke(buildingID);
         }

@@ -1,11 +1,11 @@
 ﻿using Klyte.Commons.Extensors;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
 using System;
 using System.Reflection;
 using UnityEngine;
 
-namespace Klyte.ServiceVehiclesManager.Overrides
+namespace Klyte.VehiclesMasterControl.Overrides
 {
     internal class VehicleAIOverrides : Redirector, IRedirectable
     {

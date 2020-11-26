@@ -4,20 +4,20 @@ using ColossalFramework.UI;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
+namespace Klyte.VehiclesMasterControl.UI.ExtraUI
 {
-    internal abstract class SVMBuildingSSDConfigWindow<T> : MonoBehaviour where T : SVMSysDef<T>, new()
+    internal abstract class VMCBuildingSSDConfigWindow<T> : MonoBehaviour where T : VMCSysDef<T>, new()
     {
         private UIPanel m_mainPanel;
         private UIHelperExtension m_uiHelper;
         private UILabel m_title;
-        private SVMBuildingInfoPanel m_buildingInfo => SVMBuildingInfoPanel.instance;
+        private VMCBuildingInfoPanel m_buildingInfo => VMCBuildingInfoPanel.instance;
         private UIColorField m_color;
 
         private UIScrollablePanel m_scrollablePanel;
@@ -51,7 +51,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
                 KlyteMonoUtils.CreateUIElement(out UILabel lbl, m_mainPanel.transform, "DistrictColorLabel", new Vector4(5, m_mainPanel.height - 30, 120, 40));
                 KlyteMonoUtils.LimitWidth(lbl, 120);
                 lbl.autoSize = true;
-                lbl.localeID = "K45_SVM_COLOR_LABEL";
+                lbl.localeID = "K45_VMC_COLOR_LABEL";
 
                 m_color = KlyteMonoUtils.CreateColorField(m_mainPanel);
                 m_color.eventSelectedColorChanged += onChangeColor;
@@ -61,7 +61,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
                 KlyteMonoUtils.LimitWidth(resetColor, 100);
                 resetColor.textPadding = new RectOffset(5, 5, 5, 2);
                 resetColor.autoSize = true;
-                resetColor.localeID = "K45_SVM_RESET_COLOR";
+                resetColor.localeID = "K45_VMC_RESET_COLOR";
                 resetColor.eventClick += onResetColor;
             }
             else
@@ -81,7 +81,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
             LogUtils.DoLog("onChangeColor");
             ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
-            ISVMBuildingExtension ext = ssd.GetBuildingExtension();
+            IVMCBuildingExtension ext = ssd.GetBuildingExtension();
             ushort buildingId = m_buildingInfo.buildingIdSel.Building;
             if (ext.GetIgnoreDistrict(buildingId))
             {
@@ -101,11 +101,11 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             removeUndesired.textScale = 0.6f;
             removeUndesired.width = 20;
             removeUndesired.height = 20;
-            removeUndesired.tooltip = Locale.Get("K45_SVM_REMOVE_UNWANTED_TOOLTIP");
+            removeUndesired.tooltip = Locale.Get("K45_VMC_REMOVE_UNWANTED_TOOLTIP");
             KlyteMonoUtils.InitButton(removeUndesired, true, "ButtonMenu");
             removeUndesired.name = "DeleteLineButton";
             removeUndesired.isVisible = true;
-            removeUndesired.eventClick += (component, eventParam) => SVMTransportExtensionUtils.RemoveAllUnwantedVehicles();
+            removeUndesired.eventClick += (component, eventParam) => VMCTransportExtensionUtils.RemoveAllUnwantedVehicles();
 
             UISprite icon = removeUndesired.AddUIComponent<UISprite>();
             icon.relativePosition = new Vector3(2, 2);
@@ -166,7 +166,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             }
             m_mainPanel.isVisible = true;
             ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
-            ISVMBuildingExtension ext = ssd.GetBuildingExtension();
+            IVMCBuildingExtension ext = ssd.GetBuildingExtension();
             bool isCustomConfig = ext.GetIgnoreDistrict(buildingId);
 
             LogUtils.DoLog("ssd = {0}", ssd);
@@ -181,7 +181,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             else
             {
                 ushort districtId = BuildingUtils.GetBuildingDistrict(buildingId);
-                ISVMDistrictExtension distExt = ssd.GetDistrictExtension();
+                IVMCDistrictExtension distExt = ssd.GetDistrictExtension();
                 selectedAssets = distExt.GetAssetList(districtId);
                 selectedColor = distExt.GetColor(districtId);
             }
@@ -196,18 +196,18 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
             if (isCustomConfig)
             {
-                m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE"), Singleton<BuildingManager>.instance.GetBuildingName(buildingId, default), ssd.NameForServiceSystem);
+                m_title.text = string.Format(Locale.Get("K45_VMC_ASSET_SELECT_WINDOW_TITLE"), Singleton<BuildingManager>.instance.GetBuildingName(buildingId, default), ssd.NameForServiceSystem);
             }
             else
             {
                 ushort districtId = BuildingUtils.GetBuildingDistrict(buildingId);
                 if (districtId > 0)
                 {
-                    m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE_DISTRICT"), Singleton<DistrictManager>.instance.GetDistrictName(districtId), ssd.NameForServiceSystem);
+                    m_title.text = string.Format(Locale.Get("K45_VMC_ASSET_SELECT_WINDOW_TITLE_DISTRICT"), Singleton<DistrictManager>.instance.GetDistrictName(districtId), ssd.NameForServiceSystem);
                 }
                 else
                 {
-                    m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE_CITY"), ssd.NameForServiceSystem);
+                    m_title.text = string.Format(Locale.Get("K45_VMC_ASSET_SELECT_WINDOW_TITLE_CITY"), ssd.NameForServiceSystem);
                 }
             }
 
@@ -240,7 +240,7 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             {
                 var checkbox = (UICheckBox) m_uiHelper.AddCheckbox(m_defaultAssets[i], false, (x) =>
                  {
-                     ISVMBuildingExtension ext = SingletonLite<T>.instance.GetSSD().GetBuildingExtension();
+                     IVMCBuildingExtension ext = SingletonLite<T>.instance.GetSSD().GetBuildingExtension();
 
                      ushort buildingId = m_buildingInfo.buildingIdSel.Building;
                      if (m_isLoading)
@@ -321,33 +321,33 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
             m_previewRenderer.RenderVehicle(m_lastInfo, (m_color?.selectedColor ?? Color.clear) == Color.clear ? Color.HSVToRGB(Math.Abs(m_previewRenderer.CameraRotation) / 360f, .5f, .5f) : m_color.selectedColor, true);
         }
     }
-    internal sealed class SVMBuildingSSDConfigWindowDisCar : SVMBuildingSSDConfigWindow<SVMSysDefDisCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowDisHel : SVMBuildingSSDConfigWindow<SVMSysDefDisHel> { }
-    internal sealed class SVMBuildingSSDConfigWindowFirCar : SVMBuildingSSDConfigWindow<SVMSysDefFirCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowFirHel : SVMBuildingSSDConfigWindow<SVMSysDefFirHel> { }
-    internal sealed class SVMBuildingSSDConfigWindowGarCar : SVMBuildingSSDConfigWindow<SVMSysDefGarCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowGbcCar : SVMBuildingSSDConfigWindow<SVMSysDefGbcCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowHcrCar : SVMBuildingSSDConfigWindow<SVMSysDefHcrCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowHcrHel : SVMBuildingSSDConfigWindow<SVMSysDefHcrHel> { }
-    internal sealed class SVMBuildingSSDConfigWindowPolCar : SVMBuildingSSDConfigWindow<SVMSysDefPolCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowPolHel : SVMBuildingSSDConfigWindow<SVMSysDefPolHel> { }
-    internal sealed class SVMBuildingSSDConfigWindowRoaCar : SVMBuildingSSDConfigWindow<SVMSysDefRoaCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowWatCar : SVMBuildingSSDConfigWindow<SVMSysDefWatCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowPriCar : SVMBuildingSSDConfigWindow<SVMSysDefPriCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowDcrCar : SVMBuildingSSDConfigWindow<SVMSysDefDcrCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowTaxCar : SVMBuildingSSDConfigWindow<SVMSysDefTaxCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowCcrCcr : SVMBuildingSSDConfigWindow<SVMSysDefCcrCcr> { }
-    internal sealed class SVMBuildingSSDConfigWindowSnwCar : SVMBuildingSSDConfigWindow<SVMSysDefSnwCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowRegTra : SVMBuildingSSDConfigWindow<SVMSysDefRegTra> { }
-    internal sealed class SVMBuildingSSDConfigWindowRegShp : SVMBuildingSSDConfigWindow<SVMSysDefRegShp> { }
-    internal sealed class SVMBuildingSSDConfigWindowRegPln : SVMBuildingSSDConfigWindow<SVMSysDefRegPln> { }
-    internal sealed class SVMBuildingSSDConfigWindowCrgTra : SVMBuildingSSDConfigWindow<SVMSysDefCrgTra> { }
-    internal sealed class SVMBuildingSSDConfigWindowCrgShp : SVMBuildingSSDConfigWindow<SVMSysDefCrgShp> { }
-    //internal sealed class SVMBuildingSSDConfigWindowOutTra : SVMBuildingSSDConfigWindow<SVMSysDefOutTra> { }
-    //internal sealed class SVMBuildingSSDConfigWindowOutShp : SVMBuildingSSDConfigWindow<SVMSysDefOutShp> { }
-    //internal sealed class SVMBuildingSSDConfigWindowOutPln : SVMBuildingSSDConfigWindow<SVMSysDefOutPln> { }
-    //internal sealed class SVMBuildingSSDConfigWindowOutCar : SVMBuildingSSDConfigWindow<SVMSysDefOutCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowBeaCar : SVMBuildingSSDConfigWindow<SVMSysDefBeaCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowPstCar : SVMBuildingSSDConfigWindow<SVMSysDefPstCar> { }
-    internal sealed class SVMBuildingSSDConfigWindowPstTrk : SVMBuildingSSDConfigWindow<SVMSysDefPstTrk> { }
+    internal sealed class VMCBuildingSSDConfigWindowDisCar : VMCBuildingSSDConfigWindow<VMCSysDefDisCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowDisHel : VMCBuildingSSDConfigWindow<VMCSysDefDisHel> { }
+    internal sealed class VMCBuildingSSDConfigWindowFirCar : VMCBuildingSSDConfigWindow<VMCSysDefFirCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowFirHel : VMCBuildingSSDConfigWindow<VMCSysDefFirHel> { }
+    internal sealed class VMCBuildingSSDConfigWindowGarCar : VMCBuildingSSDConfigWindow<VMCSysDefGarCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowGbcCar : VMCBuildingSSDConfigWindow<VMCSysDefGbcCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowHcrCar : VMCBuildingSSDConfigWindow<VMCSysDefHcrCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowHcrHel : VMCBuildingSSDConfigWindow<VMCSysDefHcrHel> { }
+    internal sealed class VMCBuildingSSDConfigWindowPolCar : VMCBuildingSSDConfigWindow<VMCSysDefPolCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowPolHel : VMCBuildingSSDConfigWindow<VMCSysDefPolHel> { }
+    internal sealed class VMCBuildingSSDConfigWindowRoaCar : VMCBuildingSSDConfigWindow<VMCSysDefRoaCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowWatCar : VMCBuildingSSDConfigWindow<VMCSysDefWatCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowPriCar : VMCBuildingSSDConfigWindow<VMCSysDefPriCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowDcrCar : VMCBuildingSSDConfigWindow<VMCSysDefDcrCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowTaxCar : VMCBuildingSSDConfigWindow<VMCSysDefTaxCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowCcrCcr : VMCBuildingSSDConfigWindow<VMCSysDefCcrCcr> { }
+    internal sealed class VMCBuildingSSDConfigWindowSnwCar : VMCBuildingSSDConfigWindow<VMCSysDefSnwCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowRegTra : VMCBuildingSSDConfigWindow<VMCSysDefRegTra> { }
+    internal sealed class VMCBuildingSSDConfigWindowRegShp : VMCBuildingSSDConfigWindow<VMCSysDefRegShp> { }
+    internal sealed class VMCBuildingSSDConfigWindowRegPln : VMCBuildingSSDConfigWindow<VMCSysDefRegPln> { }
+    internal sealed class VMCBuildingSSDConfigWindowCrgTra : VMCBuildingSSDConfigWindow<VMCSysDefCrgTra> { }
+    internal sealed class VMCBuildingSSDConfigWindowCrgShp : VMCBuildingSSDConfigWindow<VMCSysDefCrgShp> { }
+    //internal sealed class VMCBuildingSSDConfigWindowOutTra : VMCBuildingSSDConfigWindow<VMCSysDefOutTra> { }
+    //internal sealed class VMCBuildingSSDConfigWindowOutShp : VMCBuildingSSDConfigWindow<VMCSysDefOutShp> { }
+    //internal sealed class VMCBuildingSSDConfigWindowOutPln : VMCBuildingSSDConfigWindow<VMCSysDefOutPln> { }
+    //internal sealed class VMCBuildingSSDConfigWindowOutCar : VMCBuildingSSDConfigWindow<VMCSysDefOutCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowBeaCar : VMCBuildingSSDConfigWindow<VMCSysDefBeaCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowPstCar : VMCBuildingSSDConfigWindow<VMCSysDefPstCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowPstTrk : VMCBuildingSSDConfigWindow<VMCSysDefPstTrk> { }
 }

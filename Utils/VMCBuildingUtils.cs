@@ -1,16 +1,16 @@
 ﻿using ColossalFramework;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.Overrides;
+using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
+using Klyte.VehiclesMasterControl.Overrides;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static ItemClass;
 
-namespace Klyte.ServiceVehiclesManager.Utils
+namespace Klyte.VehiclesMasterControl.Utils
 {
-    internal class SVMBuildingUtils
+    internal class VMCBuildingUtils
     {
         public static void CalculateOwnVehicles(ushort buildingID, ref Building data, ref int count, ref int cargo, ref int capacity, ref int inbound, ref int outbound)
         {
@@ -58,7 +58,7 @@ namespace Klyte.ServiceVehiclesManager.Utils
             var saida = new List<ushort>();
             BuildingManager bm = Singleton<BuildingManager>.instance;
             FastList<ushort> buildings;
-            ISVMDistrictExtension ext = ssd.GetDistrictExtension();
+            IVMCDistrictExtension ext = ssd.GetDistrictExtension();
             if (ssd.outsideConnection)
             {
                 buildings = bm.GetOutsideConnections();
@@ -77,7 +77,7 @@ namespace Klyte.ServiceVehiclesManager.Utils
                     if (districtId != null && ssd.AllowRestrictions)
                     {
                         byte buildingDistrict = DistrictManager.instance.GetDistrict(bm.m_buildings.m_buffer[i].m_position);
-                        if (districtId != buildingDistrict && (strict || (!ext.GetAllowServeOtherDistricts(buildingDistrict) ?? ServiceVehiclesManagerMod.allowServeOtherDistrictsAsDefault)))
+                        if (districtId != buildingDistrict && (strict || (!ext.GetAllowServeOtherDistricts(buildingDistrict) ?? VehiclesMasterControlMod.allowServeOtherDistrictsAsDefault)))
                         {
                             continue;
                         }
@@ -90,7 +90,7 @@ namespace Klyte.ServiceVehiclesManager.Utils
                         int capacity = 0;
                         int inbound = 0;
                         int outbound = 0;
-                        SVMBuildingUtils.CalculateOwnVehicles(i, ref bm.m_buildings.m_buffer[i], ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                        VMCBuildingUtils.CalculateOwnVehicles(i, ref bm.m_buildings.m_buffer[i], ref count, ref cargo, ref capacity, ref inbound, ref outbound);
                         if (count >= max)
                         {
                             continue;

@@ -1,16 +1,16 @@
-﻿namespace Klyte.ServiceVehiclesManager.UI
+﻿namespace Klyte.VehiclesMasterControl.UI
 {
     using ColossalFramework;
     using ColossalFramework.Globalization;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
     using Klyte.Commons.Utils;
-    using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-    using Klyte.ServiceVehiclesManager.Overrides;
+    using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
+    using Klyte.VehiclesMasterControl.Overrides;
     using System.Linq;
     using UnityEngine;
     using Utils;
-    internal abstract class SVMBuildingInfoItem<T> : ToolsModifierControl where T : SVMSysDef<T>, new()
+    internal abstract class VMCBuildingInfoItem<T> : ToolsModifierControl where T : VMCSysDef<T>, new()
     {
         private ushort m_buildingID;
 
@@ -63,7 +63,7 @@
                 Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingID];
                 m_buildingName.text = Singleton<BuildingManager>.instance.GetBuildingName(m_buildingID, default(InstanceID));
                 byte districtID = Singleton<DistrictManager>.instance.GetDistrict(b.m_position);
-                string districtName = districtID == 0 ? Locale.Get("K45_SVM_DISTRICT_NONE") : Singleton<DistrictManager>.instance.GetDistrictName(districtID);
+                string districtName = districtID == 0 ? Locale.Get("K45_VMC_DISTRICT_NONE") : Singleton<DistrictManager>.instance.GetDistrictName(districtID);
                 m_districtName.text = districtName;
 
                 int count = 0;
@@ -72,9 +72,9 @@
                 int inbound = 0;
                 int outbound = 0;
                 ItemClass.Level defLevel = b.Info.m_class.m_level;
-                SVMBuildingUtils.CalculateOwnVehicles(buildingId, ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                VMCBuildingUtils.CalculateOwnVehicles(buildingId, ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
 
-                int maxCount = SVMBuildingUtils.GetMaxVehiclesBuilding(buildingId, sysDef.vehicleType, sysDef.level);
+                int maxCount = VMCBuildingUtils.GetMaxVehiclesBuilding(buildingId, sysDef.vehicleType, sysDef.level);
                 m_totalVehicles.prefix = count.ToString();
                 m_totalVehicles.suffix = maxCount > 0x3FFF ? "∞" : maxCount.ToString();
                 if (sysDef.outsideConnection)
@@ -197,7 +197,7 @@
                     Vector3 position = Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingID].m_position;
                     var instanceID = default(InstanceID);
                     instanceID.Building = m_buildingID;
-                    SVMBuildingInfoPanel.instance.openInfo(m_buildingID);
+                    VMCBuildingInfoPanel.instance.openInfo(m_buildingID);
                     ToolsModifierControl.cameraController.m_unlimitedCamera = true;
                     ToolsModifierControl.cameraController.SetTarget(instanceID, position, true);
                 }
@@ -249,33 +249,33 @@
 
     }
 
-    internal sealed class SVMBuildingInfoItemDisCar : SVMBuildingInfoItem<SVMSysDefDisCar> { }
-    internal sealed class SVMBuildingInfoItemDisHel : SVMBuildingInfoItem<SVMSysDefDisHel> { }
-    internal sealed class SVMBuildingInfoItemFirCar : SVMBuildingInfoItem<SVMSysDefFirCar> { }
-    internal sealed class SVMBuildingInfoItemFirHel : SVMBuildingInfoItem<SVMSysDefFirHel> { }
-    internal sealed class SVMBuildingInfoItemGarCar : SVMBuildingInfoItem<SVMSysDefGarCar> { }
-    internal sealed class SVMBuildingInfoItemGbcCar : SVMBuildingInfoItem<SVMSysDefGbcCar> { }
-    internal sealed class SVMBuildingInfoItemHcrCar : SVMBuildingInfoItem<SVMSysDefHcrCar> { }
-    internal sealed class SVMBuildingInfoItemHcrHel : SVMBuildingInfoItem<SVMSysDefHcrHel> { }
-    internal sealed class SVMBuildingInfoItemPolCar : SVMBuildingInfoItem<SVMSysDefPolCar> { }
-    internal sealed class SVMBuildingInfoItemPolHel : SVMBuildingInfoItem<SVMSysDefPolHel> { }
-    internal sealed class SVMBuildingInfoItemRoaCar : SVMBuildingInfoItem<SVMSysDefRoaCar> { }
-    internal sealed class SVMBuildingInfoItemWatCar : SVMBuildingInfoItem<SVMSysDefWatCar> { }
-    internal sealed class SVMBuildingInfoItemPriCar : SVMBuildingInfoItem<SVMSysDefPriCar> { }
-    internal sealed class SVMBuildingInfoItemDcrCar : SVMBuildingInfoItem<SVMSysDefDcrCar> { }
-    internal sealed class SVMBuildingInfoItemTaxCar : SVMBuildingInfoItem<SVMSysDefTaxCar> { }
-    internal sealed class SVMBuildingInfoItemCcrCcr : SVMBuildingInfoItem<SVMSysDefCcrCcr> { }
-    internal sealed class SVMBuildingInfoItemSnwCar : SVMBuildingInfoItem<SVMSysDefSnwCar> { }
-    internal sealed class SVMBuildingInfoItemRegTra : SVMBuildingInfoItem<SVMSysDefRegTra> { }
-    internal sealed class SVMBuildingInfoItemRegShp : SVMBuildingInfoItem<SVMSysDefRegShp> { }
-    internal sealed class SVMBuildingInfoItemRegPln : SVMBuildingInfoItem<SVMSysDefRegPln> { }
-    internal sealed class SVMBuildingInfoItemCrgTra : SVMBuildingInfoItem<SVMSysDefCrgTra> { }
-    internal sealed class SVMBuildingInfoItemCrgShp : SVMBuildingInfoItem<SVMSysDefCrgShp> { }
-    //internal sealed class SVMBuildingInfoItemOutTra : SVMBuildingInfoItem<SVMSysDefOutTra> { }
-    //internal sealed class SVMBuildingInfoItemOutShp : SVMBuildingInfoItem<SVMSysDefOutShp> { }
-    //internal sealed class SVMBuildingInfoItemOutPln : SVMBuildingInfoItem<SVMSysDefOutPln> { }
-    //internal sealed class SVMBuildingInfoItemOutCar : SVMBuildingInfoItem<SVMSysDefOutCar> { }
-    internal sealed class SVMBuildingInfoItemBeaCar : SVMBuildingInfoItem<SVMSysDefBeaCar> { }
-    internal sealed class SVMBuildingInfoItemPstCar : SVMBuildingInfoItem<SVMSysDefPstCar> { }
-    internal sealed class SVMBuildingInfoItemPstTrk : SVMBuildingInfoItem<SVMSysDefPstTrk> { }
+    internal sealed class VMCBuildingInfoItemDisCar : VMCBuildingInfoItem<VMCSysDefDisCar> { }
+    internal sealed class VMCBuildingInfoItemDisHel : VMCBuildingInfoItem<VMCSysDefDisHel> { }
+    internal sealed class VMCBuildingInfoItemFirCar : VMCBuildingInfoItem<VMCSysDefFirCar> { }
+    internal sealed class VMCBuildingInfoItemFirHel : VMCBuildingInfoItem<VMCSysDefFirHel> { }
+    internal sealed class VMCBuildingInfoItemGarCar : VMCBuildingInfoItem<VMCSysDefGarCar> { }
+    internal sealed class VMCBuildingInfoItemGbcCar : VMCBuildingInfoItem<VMCSysDefGbcCar> { }
+    internal sealed class VMCBuildingInfoItemHcrCar : VMCBuildingInfoItem<VMCSysDefHcrCar> { }
+    internal sealed class VMCBuildingInfoItemHcrHel : VMCBuildingInfoItem<VMCSysDefHcrHel> { }
+    internal sealed class VMCBuildingInfoItemPolCar : VMCBuildingInfoItem<VMCSysDefPolCar> { }
+    internal sealed class VMCBuildingInfoItemPolHel : VMCBuildingInfoItem<VMCSysDefPolHel> { }
+    internal sealed class VMCBuildingInfoItemRoaCar : VMCBuildingInfoItem<VMCSysDefRoaCar> { }
+    internal sealed class VMCBuildingInfoItemWatCar : VMCBuildingInfoItem<VMCSysDefWatCar> { }
+    internal sealed class VMCBuildingInfoItemPriCar : VMCBuildingInfoItem<VMCSysDefPriCar> { }
+    internal sealed class VMCBuildingInfoItemDcrCar : VMCBuildingInfoItem<VMCSysDefDcrCar> { }
+    internal sealed class VMCBuildingInfoItemTaxCar : VMCBuildingInfoItem<VMCSysDefTaxCar> { }
+    internal sealed class VMCBuildingInfoItemCcrCcr : VMCBuildingInfoItem<VMCSysDefCcrCcr> { }
+    internal sealed class VMCBuildingInfoItemSnwCar : VMCBuildingInfoItem<VMCSysDefSnwCar> { }
+    internal sealed class VMCBuildingInfoItemRegTra : VMCBuildingInfoItem<VMCSysDefRegTra> { }
+    internal sealed class VMCBuildingInfoItemRegShp : VMCBuildingInfoItem<VMCSysDefRegShp> { }
+    internal sealed class VMCBuildingInfoItemRegPln : VMCBuildingInfoItem<VMCSysDefRegPln> { }
+    internal sealed class VMCBuildingInfoItemCrgTra : VMCBuildingInfoItem<VMCSysDefCrgTra> { }
+    internal sealed class VMCBuildingInfoItemCrgShp : VMCBuildingInfoItem<VMCSysDefCrgShp> { }
+    //internal sealed class VMCBuildingInfoItemOutTra : VMCBuildingInfoItem<VMCSysDefOutTra> { }
+    //internal sealed class VMCBuildingInfoItemOutShp : VMCBuildingInfoItem<VMCSysDefOutShp> { }
+    //internal sealed class VMCBuildingInfoItemOutPln : VMCBuildingInfoItem<VMCSysDefOutPln> { }
+    //internal sealed class VMCBuildingInfoItemOutCar : VMCBuildingInfoItem<VMCSysDefOutCar> { }
+    internal sealed class VMCBuildingInfoItemBeaCar : VMCBuildingInfoItem<VMCSysDefBeaCar> { }
+    internal sealed class VMCBuildingInfoItemPstCar : VMCBuildingInfoItem<VMCSysDefPstCar> { }
+    internal sealed class VMCBuildingInfoItemPstTrk : VMCBuildingInfoItem<VMCSysDefPstTrk> { }
 }

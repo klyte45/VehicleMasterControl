@@ -3,7 +3,7 @@ using ColossalFramework.Globalization;
 using ColossalFramework.Threading;
 using Klyte.Commons.Interfaces;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Utils;
+using Klyte.VehiclesMasterControl.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,22 +11,22 @@ using System.Linq;
 using System.Xml.Serialization;
 using UnityEngine;
 
-namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
+namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
 {
-    public interface ISVMBuildingExtension : IAssetSelectorExtension, ISVMIgnorableDistrictExtensionValue, IColorSelectableExtension
+    public interface IVMCBuildingExtension : IAssetSelectorExtension, IVMCIgnorableDistrictExtensionValue, IColorSelectableExtension
     {
     }
-    public interface ISVMDistrictExtension : IColorSelectableExtension, IAssetSelectorExtension, ISVMDistrictServiceRestrictionsExtension
+    public interface IVMCDistrictExtension : IColorSelectableExtension, IAssetSelectorExtension, IVMCDistrictServiceRestrictionsExtension
     {
     }
-    public interface ISVMBuildingStorage : IAssetSelectorStorage, ISVMIgnorableDistrictStorage, IColorSelectableStorage
+    public interface IVMCBuildingStorage : IAssetSelectorStorage, IVMCIgnorableDistrictStorage, IColorSelectableStorage
     {
     }
-    public interface ISVMDistrictStorage : IAssetSelectorStorage, IColorSelectableStorage, ISVMDistrictServiceRestrictionsStorage
+    public interface IVMCDistrictStorage : IAssetSelectorStorage, IColorSelectableStorage, IVMCDistrictServiceRestrictionsStorage
     {
     }
 
-    public abstract class SVMServiceVehicleExtension<SSD, STR, SG> : DataExtensorBase<SG>, IAssetSelectorExtension, IColorSelectableExtension where SSD : SVMSysDef<SSD>, new() where STR : IAssetSelectorStorage, IColorSelectableStorage, new() where SG : SVMServiceVehicleExtension<SSD, STR, SG>, new()
+    public abstract class VMCServiceVehicleExtension<SSD, STR, SG> : DataExtensorBase<SG>, IAssetSelectorExtension, IColorSelectableExtension where SSD : VMCSysDef<SSD>, new() where STR : IAssetSelectorStorage, IColorSelectableStorage, new() where SG : VMCServiceVehicleExtension<SSD, STR, SG>, new()
     {
         private Dictionary<string, string> m_basicAssetsList;
 
@@ -70,28 +70,28 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         private void LoadBasicAssets()
         {
             ServiceSystemDefinition ssd = definition;
-            m_basicAssetsList = SVMUtils.LoadBasicAssets(ref ssd).ToDictionary(x => x, x => Locale.Get("VEHICLE_TITLE", x));
+            m_basicAssetsList = VMCUtils.LoadBasicAssets(ref ssd).ToDictionary(x => x, x => Locale.Get("VEHICLE_TITLE", x));
         }
 
         #endregion
 
     }
 
-    public class SVMBuildingInstanceExtensor<SSD> : SVMServiceVehicleExtension<SSD, SVMBuildingInstanceConfigStorage, SVMBuildingInstanceExtensor<SSD>>, ISVMBuildingExtension where SSD : SVMSysDef<SSD>, new()
+    public class VMCBuildingInstanceExtensor<SSD> : VMCServiceVehicleExtension<SSD, VMCBuildingInstanceConfigStorage, VMCBuildingInstanceExtensor<SSD>>, IVMCBuildingExtension where SSD : VMCSysDef<SSD>, new()
     {
-        public override string SaveId => $"K45_SVM_BuildingInstanceConfig_{typeof(SSD).Name}";
-        ISVMIgnorableDistrictStorage ISafeGettable<ISVMIgnorableDistrictStorage>.SafeGet(uint index) => SafeGet(index);
+        public override string SaveId => $"K45_VMC_BuildingInstanceConfig_{typeof(SSD).Name}";
+        IVMCIgnorableDistrictStorage ISafeGettable<IVMCIgnorableDistrictStorage>.SafeGet(uint index) => SafeGet(index);
     }
-    public class SVMDistrictExtensor<SSD> : SVMServiceVehicleExtension<SSD, SVMDistrictConfigStorage, SVMDistrictExtensor<SSD>>, ISVMDistrictExtension where SSD : SVMSysDef<SSD>, new()
+    public class VMCDistrictExtensor<SSD> : VMCServiceVehicleExtension<SSD, VMCDistrictConfigStorage, VMCDistrictExtensor<SSD>>, IVMCDistrictExtension where SSD : VMCSysDef<SSD>, new()
     {
-        public override string SaveId => $"K45_SVM_DistricteConfig_{typeof(SSD).Name}";
+        public override string SaveId => $"K45_VMC_DistricteConfig_{typeof(SSD).Name}";
 
-        ISVMDistrictServiceRestrictionsStorage ISafeGettable<ISVMDistrictServiceRestrictionsStorage>.SafeGet(uint index) => SafeGet(index);
+        IVMCDistrictServiceRestrictionsStorage ISafeGettable<IVMCDistrictServiceRestrictionsStorage>.SafeGet(uint index) => SafeGet(index);
     }
 
 
     [XmlRoot("DistrictConfig")]
-    public class SVMDistrictConfigStorage : ISVMDistrictStorage
+    public class VMCDistrictConfigStorage : IVMCDistrictStorage
     {
         [XmlAttribute("allowOutsiders")]
         public bool? AllowOutsiders { get; set; }
@@ -111,7 +111,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     }
 
     [XmlRoot("BuildingInstanceConfig")]
-    public class SVMBuildingInstanceConfigStorage : ISVMBuildingStorage
+    public class VMCBuildingInstanceConfigStorage : IVMCBuildingStorage
     {
         [XmlAttribute("ignoreDistrict")]
         public bool IgnoreDistrict { get; set; }
@@ -126,19 +126,19 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public string PropColorStr { get => m_cachedColor == default ? null : ColorExtensions.ToRGB(Color); set => m_cachedColor = value.IsNullOrWhiteSpace() ? default : (Color) ColorExtensions.FromRGB(value); }
     }
 
-    public interface ISVMIgnorableDistrictExtensionValue : ISafeGettable<ISVMIgnorableDistrictStorage>
+    public interface IVMCIgnorableDistrictExtensionValue : ISafeGettable<IVMCIgnorableDistrictStorage>
     {
     }
-    public interface ISVMIgnorableDistrictStorage
+    public interface IVMCIgnorableDistrictStorage
     {
         bool IgnoreDistrict { get; set; }
     }
 
-    public interface ISVMDistrictServiceRestrictionsExtension : ISafeGettable<ISVMDistrictServiceRestrictionsStorage>
+    public interface IVMCDistrictServiceRestrictionsExtension : ISafeGettable<IVMCDistrictServiceRestrictionsStorage>
     {
     }
 
-    public interface ISVMDistrictServiceRestrictionsStorage
+    public interface IVMCDistrictServiceRestrictionsStorage
     {
         bool? AllowOutsiders { get; set; }
         bool? ServeOtherDistricts { get; set; }
@@ -146,41 +146,41 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
 
 
-    //public sealed class SVMServiceVehicleExtensionDisCar : SVMServiceVehicleExtension<SVMSysDefDisCar, SVMServiceVehicleExtensionDisCar> { }
-    //public sealed class SVMServiceVehicleExtensionDisHel : SVMServiceVehicleExtension<SVMSysDefDisHel, SVMServiceVehicleExtensionDisHel> { }
-    //public sealed class SVMServiceVehicleExtensionFirCar : SVMServiceVehicleExtension<SVMSysDefFirCar, SVMServiceVehicleExtensionFirCar> { }
-    //public sealed class SVMServiceVehicleExtensionFirHel : SVMServiceVehicleExtension<SVMSysDefFirHel, SVMServiceVehicleExtensionFirHel> { }
-    //public sealed class SVMServiceVehicleExtensionGarCar : SVMServiceVehicleExtension<SVMSysDefGarCar, SVMServiceVehicleExtensionGarCar> { }
-    //public sealed class SVMServiceVehicleExtensionGbcCar : SVMServiceVehicleExtension<SVMSysDefGbcCar, SVMServiceVehicleExtensionGbcCar> { }
-    //public sealed class SVMServiceVehicleExtensionHcrCar : SVMServiceVehicleExtension<SVMSysDefHcrCar, SVMServiceVehicleExtensionHcrCar> { }
-    //public sealed class SVMServiceVehicleExtensionHcrHel : SVMServiceVehicleExtension<SVMSysDefHcrHel, SVMServiceVehicleExtensionHcrHel> { }
-    //public sealed class SVMServiceVehicleExtensionPolCar : SVMServiceVehicleExtension<SVMSysDefPolCar, SVMServiceVehicleExtensionPolCar> { }
-    //public sealed class SVMServiceVehicleExtensionPolHel : SVMServiceVehicleExtension<SVMSysDefPolHel, SVMServiceVehicleExtensionPolHel> { }
-    //public sealed class SVMServiceVehicleExtensionRoaCar : SVMServiceVehicleExtension<SVMSysDefRoaCar, SVMServiceVehicleExtensionRoaCar> { }
-    //public sealed class SVMServiceVehicleExtensionWatCar : SVMServiceVehicleExtension<SVMSysDefWatCar, SVMServiceVehicleExtensionWatCar> { }
-    //public sealed class SVMServiceVehicleExtensionPriCar : SVMServiceVehicleExtension<SVMSysDefPriCar, SVMServiceVehicleExtensionPriCar> { }
-    //public sealed class SVMServiceVehicleExtensionDcrCar : SVMServiceVehicleExtension<SVMSysDefDcrCar, SVMServiceVehicleExtensionDcrCar> { }
-    //public sealed class SVMServiceVehicleExtensionTaxCar : SVMServiceVehicleExtension<SVMSysDefTaxCar, SVMServiceVehicleExtensionTaxCar> { }
-    //public sealed class SVMServiceVehicleExtensionCcrCcr : SVMServiceVehicleExtension<SVMSysDefCcrCcr, SVMServiceVehicleExtensionCcrCcr> { }
-    //public sealed class SVMServiceVehicleExtensionSnwCar : SVMServiceVehicleExtension<SVMSysDefSnwCar, SVMServiceVehicleExtensionSnwCar> { }
-    //public sealed class SVMServiceVehicleExtensionRegTra : SVMServiceVehicleExtension<SVMSysDefRegTra, SVMServiceVehicleExtensionRegTra> { }
-    //public sealed class SVMServiceVehicleExtensionRegShp : SVMServiceVehicleExtension<SVMSysDefRegShp, SVMServiceVehicleExtensionRegShp> { }
-    //public sealed class SVMServiceVehicleExtensionRegPln : SVMServiceVehicleExtension<SVMSysDefRegPln, SVMServiceVehicleExtensionRegPln> { }
-    //public sealed class SVMServiceVehicleExtensionCrgTra : SVMServiceVehicleExtension<SVMSysDefCrgTra, SVMServiceVehicleExtensionCrgTra> { }
-    //public sealed class SVMServiceVehicleExtensionCrgShp : SVMServiceVehicleExtension<SVMSysDefCrgShp, SVMServiceVehicleExtensionCrgShp> { }
-    ////public sealed class SVMServiceVehicleExtensionOutTra : SVMServiceVehicleExtension<SVMSysDefOutTra, SVMServiceVehicleExtensionOutTra> { }
-    ////public sealed class SVMServiceVehicleExtensionOutShp : SVMServiceVehicleExtension<SVMSysDefOutShp, SVMServiceVehicleExtensionOutShp> { }
-    ////public sealed class SVMServiceVehicleExtensionOutPln : SVMServiceVehicleExtension<SVMSysDefOutPln, SVMServiceVehicleExtensionOutPln> { }
-    ////public sealed class SVMServiceVehicleExtensionOutCar : SVMServiceVehicleExtension<SVMSysDefOutPln, SVMServiceVehicleExtensionOutCar> { }
-    //public sealed class SVMServiceVehicleExtensionBeaCar : SVMServiceVehicleExtension<SVMSysDefBeaCar, SVMServiceVehicleExtensionBeaCar> { }
-    //public sealed class SVMServiceVehicleExtensionPstCar : SVMServiceVehicleExtension<SVMSysDefPstCar, SVMServiceVehicleExtensionPstCar> { }
-    //public sealed class SVMServiceVehicleExtensionPstTrk : SVMServiceVehicleExtension<SVMSysDefPstTrk, SVMServiceVehicleExtensionPstTrk> { }
+    //public sealed class VMCServiceVehicleExtensionDisCar : VMCServiceVehicleExtension<VMCSysDefDisCar, VMCServiceVehicleExtensionDisCar> { }
+    //public sealed class VMCServiceVehicleExtensionDisHel : VMCServiceVehicleExtension<VMCSysDefDisHel, VMCServiceVehicleExtensionDisHel> { }
+    //public sealed class VMCServiceVehicleExtensionFirCar : VMCServiceVehicleExtension<VMCSysDefFirCar, VMCServiceVehicleExtensionFirCar> { }
+    //public sealed class VMCServiceVehicleExtensionFirHel : VMCServiceVehicleExtension<VMCSysDefFirHel, VMCServiceVehicleExtensionFirHel> { }
+    //public sealed class VMCServiceVehicleExtensionGarCar : VMCServiceVehicleExtension<VMCSysDefGarCar, VMCServiceVehicleExtensionGarCar> { }
+    //public sealed class VMCServiceVehicleExtensionGbcCar : VMCServiceVehicleExtension<VMCSysDefGbcCar, VMCServiceVehicleExtensionGbcCar> { }
+    //public sealed class VMCServiceVehicleExtensionHcrCar : VMCServiceVehicleExtension<VMCSysDefHcrCar, VMCServiceVehicleExtensionHcrCar> { }
+    //public sealed class VMCServiceVehicleExtensionHcrHel : VMCServiceVehicleExtension<VMCSysDefHcrHel, VMCServiceVehicleExtensionHcrHel> { }
+    //public sealed class VMCServiceVehicleExtensionPolCar : VMCServiceVehicleExtension<VMCSysDefPolCar, VMCServiceVehicleExtensionPolCar> { }
+    //public sealed class VMCServiceVehicleExtensionPolHel : VMCServiceVehicleExtension<VMCSysDefPolHel, VMCServiceVehicleExtensionPolHel> { }
+    //public sealed class VMCServiceVehicleExtensionRoaCar : VMCServiceVehicleExtension<VMCSysDefRoaCar, VMCServiceVehicleExtensionRoaCar> { }
+    //public sealed class VMCServiceVehicleExtensionWatCar : VMCServiceVehicleExtension<VMCSysDefWatCar, VMCServiceVehicleExtensionWatCar> { }
+    //public sealed class VMCServiceVehicleExtensionPriCar : VMCServiceVehicleExtension<VMCSysDefPriCar, VMCServiceVehicleExtensionPriCar> { }
+    //public sealed class VMCServiceVehicleExtensionDcrCar : VMCServiceVehicleExtension<VMCSysDefDcrCar, VMCServiceVehicleExtensionDcrCar> { }
+    //public sealed class VMCServiceVehicleExtensionTaxCar : VMCServiceVehicleExtension<VMCSysDefTaxCar, VMCServiceVehicleExtensionTaxCar> { }
+    //public sealed class VMCServiceVehicleExtensionCcrCcr : VMCServiceVehicleExtension<VMCSysDefCcrCcr, VMCServiceVehicleExtensionCcrCcr> { }
+    //public sealed class VMCServiceVehicleExtensionSnwCar : VMCServiceVehicleExtension<VMCSysDefSnwCar, VMCServiceVehicleExtensionSnwCar> { }
+    //public sealed class VMCServiceVehicleExtensionRegTra : VMCServiceVehicleExtension<VMCSysDefRegTra, VMCServiceVehicleExtensionRegTra> { }
+    //public sealed class VMCServiceVehicleExtensionRegShp : VMCServiceVehicleExtension<VMCSysDefRegShp, VMCServiceVehicleExtensionRegShp> { }
+    //public sealed class VMCServiceVehicleExtensionRegPln : VMCServiceVehicleExtension<VMCSysDefRegPln, VMCServiceVehicleExtensionRegPln> { }
+    //public sealed class VMCServiceVehicleExtensionCrgTra : VMCServiceVehicleExtension<VMCSysDefCrgTra, VMCServiceVehicleExtensionCrgTra> { }
+    //public sealed class VMCServiceVehicleExtensionCrgShp : VMCServiceVehicleExtension<VMCSysDefCrgShp, VMCServiceVehicleExtensionCrgShp> { }
+    ////public sealed class VMCServiceVehicleExtensionOutTra : VMCServiceVehicleExtension<VMCSysDefOutTra, VMCServiceVehicleExtensionOutTra> { }
+    ////public sealed class VMCServiceVehicleExtensionOutShp : VMCServiceVehicleExtension<VMCSysDefOutShp, VMCServiceVehicleExtensionOutShp> { }
+    ////public sealed class VMCServiceVehicleExtensionOutPln : VMCServiceVehicleExtension<VMCSysDefOutPln, VMCServiceVehicleExtensionOutPln> { }
+    ////public sealed class VMCServiceVehicleExtensionOutCar : VMCServiceVehicleExtension<VMCSysDefOutPln, VMCServiceVehicleExtensionOutCar> { }
+    //public sealed class VMCServiceVehicleExtensionBeaCar : VMCServiceVehicleExtension<VMCSysDefBeaCar, VMCServiceVehicleExtensionBeaCar> { }
+    //public sealed class VMCServiceVehicleExtensionPstCar : VMCServiceVehicleExtension<VMCSysDefPstCar, VMCServiceVehicleExtensionPstCar> { }
+    //public sealed class VMCServiceVehicleExtensionPstTrk : VMCServiceVehicleExtension<VMCSysDefPstTrk, VMCServiceVehicleExtensionPstTrk> { }
 
     public static class ExtensionStaticExtensionMethods
     {
         #region Assets List
         public static List<string> GetAssetList<T>(this T it, uint idx) where T : IAssetSelectorExtension => it.SafeGet(idx).AssetList;
-        public static List<string> GetSelectedBasicAssets<T>(this T it, uint idx) where T : IAssetSelectorExtension => it.GetAssetList(idx).Intersect(it.GetAllBasicAssets().Keys).ToList();
+        public static List<string> GetSelectedBasicAssets<T>(this T it, uint idx) where T : IAssetSelectorExtension => it.GetAssetList(idx)?.Intersect(it.GetAllBasicAssets().Keys).ToList();
         public static void AddAsset<T>(this T it, uint idx, string assetId) where T : IAssetSelectorExtension
         {
             List<string> list = it.GetAssetList(idx);
@@ -203,12 +203,12 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
 
         private static List<string> GetEffectiveAssetList(uint buildingId, ref ServiceSystemDefinition ssd)
         {
-            ISVMBuildingExtension buildingExtension = ssd.GetBuildingExtension();
+            IVMCBuildingExtension buildingExtension = ssd.GetBuildingExtension();
 
             List<string> assetList = buildingExtension.GetSelectedBasicAssets(buildingId);
             if (assetList.Count == 0)
             {
-                ISVMDistrictExtension districtExtension = ssd.GetDistrictExtension();
+                IVMCDistrictExtension districtExtension = ssd.GetDistrictExtension();
                 assetList = districtExtension.GetSelectedBasicAssets(buildingId);
             }
             return assetList;
@@ -235,16 +235,16 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static void CleanColor<T>(this T it, uint prefix) where T : IColorSelectableExtension => it.SafeGet(prefix).Color = default;
         #endregion
         #region District ServiceRestrictions
-        public static bool? GetAllowOutsiders<T>(this T it, uint prefix) where T : ISVMDistrictServiceRestrictionsExtension => it.SafeGet(prefix).AllowOutsiders;
-        public static void SetAllowOutsiders<T>(this T it, uint prefix, bool value) where T : ISVMDistrictServiceRestrictionsExtension => it.SafeGet(prefix).AllowOutsiders = value;
-        public static void ClearAllowOutsiders<T>(this T it, uint prefix) where T : ISVMDistrictServiceRestrictionsExtension => it.SafeGet(prefix).AllowOutsiders = null;
-        public static bool? GetAllowServeOtherDistricts<T>(this T it, uint prefix) where T : ISVMDistrictServiceRestrictionsExtension => it.SafeGet(prefix).ServeOtherDistricts;
-        public static void SetAllowServeOtherDistricts<T>(this T it, uint prefix, bool value) where T : ISVMDistrictServiceRestrictionsExtension => it.SafeGet(prefix).ServeOtherDistricts = value;
-        public static void ClearServeOtherDistricts<T>(this T it, uint prefix) where T : ISVMDistrictServiceRestrictionsExtension => it.SafeGet(prefix).ServeOtherDistricts = null;
+        public static bool? GetAllowOutsiders<T>(this T it, uint prefix) where T : IVMCDistrictServiceRestrictionsExtension => it.SafeGet(prefix).AllowOutsiders;
+        public static void SetAllowOutsiders<T>(this T it, uint prefix, bool value) where T : IVMCDistrictServiceRestrictionsExtension => it.SafeGet(prefix).AllowOutsiders = value;
+        public static void ClearAllowOutsiders<T>(this T it, uint prefix) where T : IVMCDistrictServiceRestrictionsExtension => it.SafeGet(prefix).AllowOutsiders = null;
+        public static bool? GetAllowServeOtherDistricts<T>(this T it, uint prefix) where T : IVMCDistrictServiceRestrictionsExtension => it.SafeGet(prefix).ServeOtherDistricts;
+        public static void SetAllowServeOtherDistricts<T>(this T it, uint prefix, bool value) where T : IVMCDistrictServiceRestrictionsExtension => it.SafeGet(prefix).ServeOtherDistricts = value;
+        public static void ClearServeOtherDistricts<T>(this T it, uint prefix) where T : IVMCDistrictServiceRestrictionsExtension => it.SafeGet(prefix).ServeOtherDistricts = null;
         #endregion
         #region Ignore District
-        public static bool GetIgnoreDistrict<T>(this T it, uint prefix) where T : ISVMIgnorableDistrictExtensionValue => it.SafeGet(prefix).IgnoreDistrict;
-        public static void SetIgnoreDistrict<T>(this T it, uint prefix, bool value) where T : ISVMIgnorableDistrictExtensionValue => it.SafeGet(prefix).IgnoreDistrict = value;
+        public static bool GetIgnoreDistrict<T>(this T it, uint prefix) where T : IVMCIgnorableDistrictExtensionValue => it.SafeGet(prefix).IgnoreDistrict;
+        public static void SetIgnoreDistrict<T>(this T it, uint prefix, bool value) where T : IVMCIgnorableDistrictExtensionValue => it.SafeGet(prefix).IgnoreDistrict = value;
         #endregion
         //#region District service restrictions
         //private bool? m_allowDistrictServiceRestrictions;
@@ -316,7 +316,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         //    bool? value = GetAllowOutsiders(district);
         //    if (value == null)
         //    {
-        //        return GetAllowOutsiders(0) ?? ServiceVehiclesManagerMod.allowOutsidersAsDefault;
+        //        return GetAllowOutsiders(0) ?? VehiclesMasterControlMod.allowOutsidersAsDefault;
         //    }
         //    return value ?? true;
         //}
@@ -331,7 +331,7 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         //    bool? value = GetAllowGoOutside(district);
         //    if (value == null)
         //    {
-        //        return GetAllowGoOutside(0) ?? ServiceVehiclesManagerMod.allowGoOutsideAsDefault;
+        //        return GetAllowGoOutside(0) ?? VehiclesMasterControlMod.allowGoOutsideAsDefault;
         //    }
         //    return value ?? true;
         //}
@@ -343,10 +343,10 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     }
 
 
-    public sealed class SVMTransportExtensionUtils
+    public sealed class VMCTransportExtensionUtils
     {
 
-        public static void RemoveAllUnwantedVehicles() => new EnumerableActionThread(new Func<ThreadBase, IEnumerator>(SVMTransportExtensionUtils.RemoveAllUnwantedVehicles));
+        public static void RemoveAllUnwantedVehicles() => new EnumerableActionThread(new Func<ThreadBase, IEnumerator>(VMCTransportExtensionUtils.RemoveAllUnwantedVehicles));
         public static IEnumerator RemoveAllUnwantedVehicles(ThreadBase t)
         {
             ushort num = 0;

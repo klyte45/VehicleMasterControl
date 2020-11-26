@@ -2,18 +2,18 @@
 using Harmony;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
+using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Klyte.ServiceVehiclesManager.Overrides
+namespace Klyte.VehiclesMasterControl.Overrides
 {
     internal class BuildingAIOverrides : Redirector, IRedirectable
     {
-        public static VehicleInfo GetRandomVehicleInfoNoVehicle(ref Randomizer randomizer, ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, ushort buildingId)
+        public static VehicleInfo GetRandomVehicleInfoNoVehicle(VehicleManager vm, ref Randomizer randomizer, ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, ushort buildingId)
         {
             // A
             var ssds = ServiceSystemDefinition.from(service, subService, level).FirstOrDefault();
@@ -28,7 +28,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             return VehicleManager.instance.GetRandomVehicleInfo(ref randomizer, service, subService, level);
         }
 
-        public static VehicleInfo GetRandomVehicleInfoWithVehicle(ref Randomizer randomizer, ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, VehicleInfo.VehicleType vehicleType, ushort buildingId)
+        public static VehicleInfo GetRandomVehicleInfoWithVehicle(VehicleManager vm, ref Randomizer randomizer, ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, VehicleInfo.VehicleType vehicleType, ushort buildingId)
         {
             // A
             var ssds = ServiceSystemDefinition.from(service, subService, level, vehicleType);
@@ -43,7 +43,29 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             return VehicleManager.instance.GetRandomVehicleInfo(ref randomizer, service, subService, level, vehicleType);
         }
 
-        public static IEnumerable<CodeInstruction> TranspileGetVehicle(IEnumerable<CodeInstruction> instr, ILGenerator il)
+        private static OpCode[] stlocCodes = new OpCode[]
+        {
+            OpCodes.Stloc,
+            OpCodes.Stloc_0,
+            OpCodes.Stloc_1,
+            OpCodes.Stloc_2,
+            OpCodes.Stloc_3,
+            OpCodes.Stloc_S,
+        };
+
+        private static OpCode[] ldlocCodes = new OpCode[]
+        {
+            OpCodes.Ldloc,
+            OpCodes.Ldloc_0,
+            OpCodes.Ldloc_1,
+            OpCodes.Ldloc_2,
+            OpCodes.Ldloc_3,
+            OpCodes.Ldloc_S,
+        };
+
+        public static IEnumerable<CodeInstruction> TranspileGetVehicleStatic(IEnumerable<CodeInstruction> instr, ILGenerator il) => TranspileGetVehicleImpl(instr, il, OpCodes.Ldarg_0);
+        public static IEnumerable<CodeInstruction> TranspileGetVehicle(IEnumerable<CodeInstruction> instr, ILGenerator il) => TranspileGetVehicleImpl(instr, il, OpCodes.Ldarg_1);
+        public static IEnumerable<CodeInstruction> TranspileGetVehicleImpl(IEnumerable<CodeInstruction> instr, ILGenerator il, OpCode argOpcode) 
         {
             var instrList = new List<CodeInstruction>(instr);
 
@@ -51,7 +73,8 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             {
                 if (instrList[i].opcode == OpCodes.Callvirt && instrList[i].operand is MethodInfo mi && mi.DeclaringType == typeof(VehicleManager) && mi.Name == "GetRandomVehicleInfo")
                 {
-                    instrList[i] = new CodeInstruction(OpCodes.Ldarg_1);
+                    instrList[i].opcode = argOpcode;
+                    instrList[i].operand = null;
                     if (mi.GetParameters().Where(x => x.ParameterType == typeof(VehicleInfo.VehicleType)).Count() > 0)
                     {
                         instrList.Insert(i + 1, new CodeInstruction(OpCodes.Call, typeof(BuildingAIOverrides).GetMethod("GetRandomVehicleInfoWithVehicle")));
@@ -87,7 +110,6 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             Tuple.New(typeof(IndustrialExtractorAI),"StartTransfer"             ),
             Tuple.New(typeof(LandfillSiteAI),"StartTransfer"                    ),
             Tuple.New(typeof(MaintenanceDepotAI),"StartTransfer"                ),
-            Tuple.New(typeof(OutsideConnectionAI),"StartConnectionTransferImpl" ),
             Tuple.New(typeof(PoliceStationAI),"StartTransfer"                   ),
             Tuple.New(typeof(PostOfficeAI),"StartTransfer"                      ),
             Tuple.New(typeof(PrivateAirportAI),"CheckVehicles"                  ),
@@ -101,10 +123,16 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             Tuple.New(typeof(WaterFacilityAI),"StartTransfer"                   ),
         };
 
+        private static Tuple<Type, string>[] staticMethodsToTranspile = new Tuple<Type, string>[]
+        {
+            Tuple.New(typeof(OutsideConnectionAI),"StartConnectionTransferImpl" ),
+        };
+
 
         public void Awake()
         {
             var transpileMethod = GetType().GetMethod("TranspileGetVehicle", RedirectorUtils.allFlags);
+            var transpileMethodStatic = GetType().GetMethod("TranspileGetVehicleStatic", RedirectorUtils.allFlags);
 
             foreach (var item in methodsToTranspile)
             {
@@ -113,6 +141,20 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                     try
                     {
                         AddRedirect(from, null, null, transpileMethod);
+                    }
+                    catch (Exception e)
+                    {
+                        LogUtils.DoErrorLog($"Failed transpiling: {item.First}.{item.Second} as {from}\n{e}\n--------");
+                    }
+                }
+            }
+            foreach (var item in staticMethodsToTranspile)
+            {
+                foreach (MethodInfo from in item.First.GetMethods(RedirectorUtils.allFlags).Where(x => x.Name == item.Second))
+                {
+                    try
+                    {
+                        AddRedirect(from, null, null, transpileMethodStatic);
                     }
                     catch (Exception e)
                     {

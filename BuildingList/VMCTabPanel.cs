@@ -4,17 +4,17 @@ using ICities;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.Interfaces;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.Utils;
+using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
+using Klyte.VehiclesMasterControl.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Klyte.ServiceVehiclesManager.UI
+namespace Klyte.VehiclesMasterControl.UI
 {
 
-    public class SVMTabPanel : BasicKPanel<ServiceVehiclesManagerMod, SVMController, SVMTabPanel>
+    public class VMCTabPanel : BasicKPanel<VehiclesMasterControlMod, VMCController, VMCTabPanel>
     {
         public UIPanel controlContainer { get; private set; }
 
@@ -46,45 +46,45 @@ namespace Klyte.ServiceVehiclesManager.UI
             controlContainer = GetComponent<UIPanel>();
             controlContainer.area = new Vector4(0, 0, 0, 0);
             controlContainer.isVisible = false;
-            controlContainer.name = "SVMPanel";
+            controlContainer.name = "VMCPanel";
 
-            KlyteMonoUtils.CreateUIElement(out mainPanel, controlContainer.transform, "SVMListPanel", new Vector4(0, 0, 875, 550));
+            KlyteMonoUtils.CreateUIElement(out mainPanel, controlContainer.transform, "VMCListPanel", new Vector4(0, 0, 875, 550));
             mainPanel.backgroundSprite = "MenuPanel2";
 
             CreateTitleBar();
 
 
-            KlyteMonoUtils.CreateUIElement(out m_StripMain, mainPanel.transform, "SVMTabstrip", new Vector4(5, 40, mainPanel.width - 10, 40));
+            KlyteMonoUtils.CreateUIElement(out m_StripMain, mainPanel.transform, "VMCTabstrip", new Vector4(5, 40, mainPanel.width - 10, 40));
 
-            KlyteMonoUtils.CreateUIElement(out UITabContainer tabContainer, mainPanel.transform, "SVMTabContainer", new Vector4(0, 80, mainPanel.width, mainPanel.height - 80));
+            KlyteMonoUtils.CreateUIElement(out UITabContainer tabContainer, mainPanel.transform, "VMCTabContainer", new Vector4(0, 80, mainPanel.width, mainPanel.height - 80));
             m_StripMain.tabPages = tabContainer;
 
             UIButton tabPerBuilding = CreateTabTemplate();
             tabPerBuilding.normalFgSprite = "ToolbarIconMonuments";
-            tabPerBuilding.tooltip = Locale.Get("K45_SVM_CONFIG_PER_BUILDING_TAB");
+            tabPerBuilding.tooltip = Locale.Get("K45_VMC_CONFIG_PER_BUILDING_TAB");
 
             KlyteMonoUtils.CreateUIElement(out UIPanel contentContainerPerBuilding, null);
             contentContainerPerBuilding.name = "Container";
             contentContainerPerBuilding.area = new Vector4(0, 40, mainPanel.width, mainPanel.height - 80);
 
-            m_StripMain.AddTab("SVMPerBuilding", tabPerBuilding.gameObject, contentContainerPerBuilding.gameObject);
+            m_StripMain.AddTab("VMCPerBuilding", tabPerBuilding.gameObject, contentContainerPerBuilding.gameObject);
             CreateTitleRowBuilding(ref m_titleLineBuildings, contentContainerPerBuilding);
             CreateSsdTabstrip(ref m_StripBuilings, ref m_StripBuilingsStrips, m_titleLineBuildings, contentContainerPerBuilding, true);
 
             UIButton tabPerDistrict = CreateTabTemplate();
             tabPerDistrict.normalFgSprite = "ToolbarIconDistrict";
-            tabPerDistrict.tooltip = Locale.Get("K45_SVM_CONFIG_PER_DISTRICT_TAB");
+            tabPerDistrict.tooltip = Locale.Get("K45_VMC_CONFIG_PER_DISTRICT_TAB");
 
             KlyteMonoUtils.CreateUIElement(out UIPanel contentContainerPerDistrict, mainPanel.transform);
             contentContainerPerDistrict.name = "Container2";
             contentContainerPerDistrict.area = new Vector4(0, 40, mainPanel.width, mainPanel.height - 80);
 
-            m_StripMain.AddTab("SVMPerDistrict", tabPerDistrict.gameObject, contentContainerPerDistrict.gameObject);
+            m_StripMain.AddTab("VMCPerDistrict", tabPerDistrict.gameObject, contentContainerPerDistrict.gameObject);
             CreateSsdTabstrip(ref m_StripDistricts, ref m_StripDistrictsStrips, null, contentContainerPerDistrict);
 
             m_cachedDistricts = DistrictUtils.GetValidDistricts();
 
-            m_selectDistrict = UIHelperExtension.CloneBasicDropDownLocalized("K45_SVM_DISTRICT_TITLE", m_cachedDistricts.Keys.OrderBy(x => x).ToArray(), OnDistrictSelect, 0, contentContainerPerDistrict);
+            m_selectDistrict = UIHelperExtension.CloneBasicDropDownLocalized("K45_VMC_DISTRICT_TITLE", m_cachedDistricts.Keys.OrderBy(x => x).ToArray(), OnDistrictSelect, 0, contentContainerPerDistrict);
             UIPanel container = m_selectDistrict.GetComponentInParent<UIPanel>();
             container.autoLayoutDirection = LayoutDirection.Horizontal;
             container.autoFitChildrenHorizontally = true;
@@ -115,7 +115,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             {
                 if (y)
                 {
-                    ServiceVehiclesManagerMod.Instance.ShowVersionInfoPopup();
+                    VehiclesMasterControlMod.Instance.ShowVersionInfoPopup();
                 }
             };
         }
@@ -129,7 +129,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                 m_StripBuilings.selectedIndex = (int)catIdx;
                 m_StripBuilingsStrips[catIdx].selectedIndex = m_StripBuilingsStrips[catIdx].Find<UIComponent>(ssd.GetDefType().Name)?.zOrder ?? 0;
             }
-            ServiceVehiclesManagerMod.Controller.OpenSVMPanel();
+            VehiclesMasterControlMod.Controller.OpenVMCPanel();
         }
 
         private void OnDistrictSelect(int x)
@@ -176,11 +176,11 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private void CreateSsdTabstrip(ref UITabstrip strip, ref Dictionary<CategoryTab, UITabstrip> substrips, UIPanel titleLine, UIComponent parent, bool buildings = false)
         {
-            KlyteMonoUtils.CreateUIElement(out strip, parent.transform, "SVMTabstrip", new Vector4(5, 0, parent.width - 10, 40));
+            KlyteMonoUtils.CreateUIElement(out strip, parent.transform, "VMCTabstrip", new Vector4(5, 0, parent.width - 10, 40));
 
             float effectiveOffsetY = strip.height + (titleLine?.height ?? 0);
 
-            KlyteMonoUtils.CreateUIElement(out UITabContainer tabContainer, parent.transform, "SVMTabContainer", new Vector4(0, 40, parent.width, parent.height - 40));
+            KlyteMonoUtils.CreateUIElement(out UITabContainer tabContainer, parent.transform, "VMCTabContainer", new Vector4(0, 40, parent.width, parent.height - 40));
             strip.tabPages = tabContainer;
 
             UIButton tabTemplate = CreateTabTemplate();
@@ -201,12 +201,12 @@ namespace Klyte.ServiceVehiclesManager.UI
                 tabButtonSuper.normalFgSprite = catTab.getCategoryIcon();
                 tabsCategories[catTab] = strip.AddTab(catTab.ToString(), tabCategory, contentCategory);
                 tabsCategories[catTab].isVisible = false;
-                KlyteMonoUtils.CreateUIElement(out UITabstrip subStrip, contentCategory.transform, "SVMTabstripCat" + catTab, new Vector4(5, 0, bodySuper.width - 10, 40));
-                KlyteMonoUtils.CreateUIElement(out UITabContainer tabSubContainer, contentCategory.transform, "SVMTabContainer" + catTab, new Vector4(5, effectiveOffsetY, bodySuper.width - 10, bodySuper.height - effectiveOffsetY));
+                KlyteMonoUtils.CreateUIElement(out UITabstrip subStrip, contentCategory.transform, "VMCTabstripCat" + catTab, new Vector4(5, 0, bodySuper.width - 10, 40));
+                KlyteMonoUtils.CreateUIElement(out UITabContainer tabSubContainer, contentCategory.transform, "VMCTabContainer" + catTab, new Vector4(5, effectiveOffsetY, bodySuper.width - 10, bodySuper.height - effectiveOffsetY));
                 subStrip.tabPages = tabSubContainer;
                 substrips[catTab] = subStrip;
             }
-            foreach (KeyValuePair<ServiceSystemDefinition, ISVMSysDef> kv in ServiceSystemDefinition.sysDefinitions)
+            foreach (KeyValuePair<ServiceSystemDefinition, IVMCSysDef> kv in ServiceSystemDefinition.sysDefinitions)
             {
                 GameObject tab = Instantiate(tabTemplate.gameObject);
                 GameObject body = Instantiate(bodyContent.gameObject);
@@ -226,14 +226,14 @@ namespace Klyte.ServiceVehiclesManager.UI
                 Type targetType;
                 if (buildings)
                 {
-                    targetType = ReflectionUtils.GetImplementationForGenericType(typeof(SVMTabControllerBuildingList<>), kv.Value.GetType());
+                    targetType = ReflectionUtils.GetImplementationForGenericType(typeof(VMCTabControllerBuildingList<>), kv.Value.GetType());
                     components = new Type[] { targetType };
                 }
                 else
                 {
                     try
                     {
-                        targetType = ReflectionUtils.GetImplementationForGenericType(typeof(SVMTabControllerDistrictList<>), kv.Value.GetType());
+                        targetType = ReflectionUtils.GetImplementationForGenericType(typeof(VMCTabControllerDistrictList<>), kv.Value.GetType());
                         components = new Type[] { targetType };
                     }
                     catch
@@ -260,7 +260,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private static UIButton CreateTabTemplate()
         {
-            KlyteMonoUtils.CreateUIElement(out UIButton tabTemplate, null, "SVMTabTemplate");
+            KlyteMonoUtils.CreateUIElement(out UIButton tabTemplate, null, "VMCTabTemplate");
             KlyteMonoUtils.InitButton(tabTemplate, false, "GenericTab");
             tabTemplate.autoSize = false;
             tabTemplate.width = 40;
@@ -271,7 +271,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private void CreateTitleRowBuilding(ref UIPanel titleLine, UIComponent parent)
         {
-            KlyteMonoUtils.CreateUIElement(out titleLine, parent.transform, "SVMtitleline", new Vector4(5, 80, parent.width - 10, 40));
+            KlyteMonoUtils.CreateUIElement(out titleLine, parent.transform, "VMCtitleline", new Vector4(5, 80, parent.width - 10, 40));
 
             KlyteMonoUtils.CreateUIElement(out UILabel districtNameLabel, titleLine.transform, "districtNameLabel");
             districtNameLabel.autoSize = false;
@@ -283,27 +283,27 @@ namespace Klyte.ServiceVehiclesManager.UI
             buildingNameLabel.autoSize = false;
             buildingNameLabel.area = new Vector4(200, 10, 198, 18);
             buildingNameLabel.textAlignment = UIHorizontalAlignment.Center;
-            buildingNameLabel.text = Locale.Get("K45_SVM_BUILDING_NAME_LABEL");
+            buildingNameLabel.text = Locale.Get("K45_VMC_BUILDING_NAME_LABEL");
 
             KlyteMonoUtils.CreateUIElement(out UILabel vehicleCapacityLabel, titleLine.transform, "vehicleCapacityLabel");
             vehicleCapacityLabel.autoSize = false;
             vehicleCapacityLabel.area = new Vector4(475, 10, 200, 18);
             vehicleCapacityLabel.textAlignment = UIHorizontalAlignment.Center;
-            vehicleCapacityLabel.text = Locale.Get("K45_SVM_VEHICLE_CAPACITY_LABEL");
+            vehicleCapacityLabel.text = Locale.Get("K45_VMC_VEHICLE_CAPACITY_LABEL");
 
             KlyteMonoUtils.CreateUIElement(out m_directionLabel, titleLine.transform, "directionLabel");
             m_directionLabel.autoSize = false;
             m_directionLabel.area = new Vector4(600, 10, 200, 18);
             m_directionLabel.textAlignment = UIHorizontalAlignment.Center;
-            m_directionLabel.text = Locale.Get("K45_SVM_DIRECTION_LABEL");
+            m_directionLabel.text = Locale.Get("K45_VMC_DIRECTION_LABEL");
 
         }
 
         private void CreateTitleBar()
         {
-            KlyteMonoUtils.CreateUIElement(out UILabel titlebar, mainPanel.transform, "SVMListPanel", new Vector4(75, 10, mainPanel.width - 150, 20));
+            KlyteMonoUtils.CreateUIElement(out UILabel titlebar, mainPanel.transform, "VMCListPanel", new Vector4(75, 10, mainPanel.width - 150, 20));
             titlebar.autoSize = false;
-            titlebar.text = "Service Vehicles Manager v" + ServiceVehiclesManagerMod.Version;
+            titlebar.text = "Service Vehicles Manager v" + VehiclesMasterControlMod.Version;
             titlebar.textAlignment = UIHorizontalAlignment.Center;
 
             KlyteMonoUtils.CreateUIElement(out UIButton closeButton, mainPanel.transform, "CloseButton", new Vector4(mainPanel.width - 37, 5, 32, 32));
@@ -311,11 +311,11 @@ namespace Klyte.ServiceVehiclesManager.UI
             closeButton.hoveredBgSprite = "buttonclosehover";
             closeButton.eventClick += (x, y) =>
             {
-                ServiceVehiclesManagerMod.Instance.ClosePanel();
+                VehiclesMasterControlMod.Instance.ClosePanel();
             };
 
-            KlyteMonoUtils.CreateUIElement(out UISprite logo, mainPanel.transform, "SVMLogo", new Vector4(22, 5f, 32, 32));
-            logo.spriteName = ServiceVehiclesManagerMod.Instance.IconName;
+            KlyteMonoUtils.CreateUIElement(out UISprite logo, mainPanel.transform, "VMCLogo", new Vector4(22, 5f, 32, 32));
+            logo.spriteName = VehiclesMasterControlMod.Instance.IconName;
         }
 
         private static UIComponent CreateContentTemplate(float width, float height)

@@ -3,14 +3,14 @@ using ColossalFramework.Globalization;
 using ColossalFramework.UI;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.Utils;
-using Klyte.ServiceVehiclesManager.Extensors.VehicleExt;
-using Klyte.ServiceVehiclesManager.UI.ExtraUI;
+using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
+using Klyte.VehiclesMasterControl.UI.ExtraUI;
 using UnityEngine;
 
-namespace Klyte.ServiceVehiclesManager.UI
+namespace Klyte.VehiclesMasterControl.UI
 {
 
-    internal abstract class SVMTabControllerDistrictList<T> : UICustomControl where T : SVMSysDef<T>, new()
+    internal abstract class VMCTabControllerDistrictList<T> : UICustomControl where T : VMCSysDef<T>, new()
     {
         public UIScrollablePanel mainPanel { get; private set; }
         public OnButtonSelect<int> eventOnDistrictSelectionChanged;
@@ -21,7 +21,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         private UICheckBox m_districtAllowOutsiders;
         private UICheckBox m_districtAllowGoOutside;
         private UIButton m_resetValues;
-        private SVMAssetSelectorWindowDistrictTab m_assetSelectorWindow;
+        private VMCAssetSelectorWindowDistrictTab m_assetSelectorWindow;
 
         private bool allowColorChange;
         private bool isLoading = true;
@@ -29,7 +29,7 @@ namespace Klyte.ServiceVehiclesManager.UI
         #region Awake
         private void Awake()
         {
-            SVMTabPanel.eventOnDistrictSelectionChanged += onDistrictChanged;
+            VMCTabPanel.eventOnDistrictSelectionChanged += onDistrictChanged;
 
 
             mainPanel = GetComponentInChildren<UIScrollablePanel>();
@@ -43,7 +43,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             {
                 KlyteMonoUtils.LimitWidth(lbl, 250);
                 lbl.autoSize = true;
-                lbl.localeID = "K45_SVM_DISTRICT_COLOR_LABEL";
+                lbl.localeID = "K45_VMC_DISTRICT_COLOR_LABEL";
 
                 m_districtColor = KlyteMonoUtils.CreateColorField(mainPanel);
                 m_districtColor.eventSelectedColorChanged += onChangeDistrictColor;
@@ -53,14 +53,14 @@ namespace Klyte.ServiceVehiclesManager.UI
                 KlyteMonoUtils.LimitWidth(resetColor, 200);
                 resetColor.textPadding = new RectOffset(5, 5, 5, 2);
                 resetColor.autoSize = true;
-                resetColor.localeID = "K45_SVM_RESET_COLOR";
+                resetColor.localeID = "K45_VMC_RESET_COLOR";
                 resetColor.eventClick += onResetColor;
             }
             ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
-            ISVMDistrictExtension extension = SingletonLite<T>.instance.GetExtensionDistrict();
+            IVMCDistrictExtension extension = SingletonLite<T>.instance.GetExtensionDistrict();
             if (ssd.AllowDistrictServiceRestrictions)
             {
-                m_districtAllowOutsiders = m_uiHelper.AddCheckboxLocale("K45_SVM_ALLOW_OUTSIDERS", true, (x) =>
+                m_districtAllowOutsiders = m_uiHelper.AddCheckboxLocale("K45_VMC_ALLOW_OUTSIDERS", true, (x) =>
                 {
                     if (!getCurrentSelectedId(out int currentDistrict) || isLoading)
                     {
@@ -70,7 +70,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                     extension.SetAllowOutsiders((uint) currentDistrict, x);
                     m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = Color.white;
                 });
-                m_districtAllowGoOutside = m_uiHelper.AddCheckboxLocale("K45_SVM_ALLOW_GO_OUTSIDE", true, (x) =>
+                m_districtAllowGoOutside = m_uiHelper.AddCheckboxLocale("K45_VMC_ALLOW_GO_OUTSIDE", true, (x) =>
                 {
                     if (!getCurrentSelectedId(out int currentDistrict) || isLoading)
                     {
@@ -81,7 +81,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                     m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = Color.white;
                 });
 
-                m_resetValues = (UIButton) m_uiHelper.AddButton(Locale.Get("K45_SVM_RESET_VALUE_CITY_DEFAULT"), () =>
+                m_resetValues = (UIButton) m_uiHelper.AddButton(Locale.Get("K45_VMC_RESET_VALUE_CITY_DEFAULT"), () =>
                  {
                      if (!getCurrentSelectedId(out int currentDistrict) || isLoading)
                      {
@@ -121,7 +121,7 @@ namespace Klyte.ServiceVehiclesManager.UI
 
         private static bool getCurrentSelectedId(out int currentDistrict)
         {
-            currentDistrict = SVMTabPanel.Instance.getCurrentSelectedDistrictId();
+            currentDistrict = VMCTabPanel.Instance.getCurrentSelectedDistrictId();
             return currentDistrict >= 0;
         }
 
@@ -138,9 +138,9 @@ namespace Klyte.ServiceVehiclesManager.UI
                 }
                 if (m_districtAllowOutsiders != null && m_districtAllowGoOutside != null)
                 {
-                    m_districtAllowOutsiders.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowOutsiders((uint) currentDistrict) ?? ServiceVehiclesManagerMod.allowOutsidersAsDefault;
+                    m_districtAllowOutsiders.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowOutsiders((uint) currentDistrict) ?? VehiclesMasterControlMod.allowOutsidersAsDefault;
                     m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowOutsiders((uint) currentDistrict) == null ? Color.yellow : Color.white;
-                    m_districtAllowGoOutside.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowServeOtherDistricts((uint) currentDistrict) ?? ServiceVehiclesManagerMod.allowServeOtherDistrictsAsDefault;
+                    m_districtAllowGoOutside.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowServeOtherDistricts((uint) currentDistrict) ?? VehiclesMasterControlMod.allowServeOtherDistrictsAsDefault;
                     m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowServeOtherDistricts((uint) currentDistrict) == null ? Color.yellow : Color.white;
                 }
                 eventOnDistrictSelectionChanged?.Invoke(currentDistrict);
@@ -163,30 +163,30 @@ namespace Klyte.ServiceVehiclesManager.UI
         }
 
     }
-    internal sealed class SVMTabControllerDistrictListDisCar : SVMTabControllerDistrictList<SVMSysDefDisCar> { }
-    internal sealed class SVMTabControllerDistrictListDisHel : SVMTabControllerDistrictList<SVMSysDefDisHel> { }
-    internal sealed class SVMTabControllerDistrictListFirCar : SVMTabControllerDistrictList<SVMSysDefFirCar> { }
-    internal sealed class SVMTabControllerDistrictListFirHel : SVMTabControllerDistrictList<SVMSysDefFirHel> { }
-    internal sealed class SVMTabControllerDistrictListGarCar : SVMTabControllerDistrictList<SVMSysDefGarCar> { }
-    internal sealed class SVMTabControllerDistrictListGbcCar : SVMTabControllerDistrictList<SVMSysDefGbcCar> { }
-    internal sealed class SVMTabControllerDistrictListHcrCar : SVMTabControllerDistrictList<SVMSysDefHcrCar> { }
-    internal sealed class SVMTabControllerDistrictListHcrHel : SVMTabControllerDistrictList<SVMSysDefHcrHel> { }
-    internal sealed class SVMTabControllerDistrictListPolCar : SVMTabControllerDistrictList<SVMSysDefPolCar> { }
-    internal sealed class SVMTabControllerDistrictListPolHel : SVMTabControllerDistrictList<SVMSysDefPolHel> { }
-    internal sealed class SVMTabControllerDistrictListRoaCar : SVMTabControllerDistrictList<SVMSysDefRoaCar> { }
-    internal sealed class SVMTabControllerDistrictListWatCar : SVMTabControllerDistrictList<SVMSysDefWatCar> { }
-    internal sealed class SVMTabControllerDistrictListPriCar : SVMTabControllerDistrictList<SVMSysDefPriCar> { }
-    internal sealed class SVMTabControllerDistrictListDcrCar : SVMTabControllerDistrictList<SVMSysDefDcrCar> { }
-    internal sealed class SVMTabControllerDistrictListTaxCar : SVMTabControllerDistrictList<SVMSysDefTaxCar> { }
-    internal sealed class SVMTabControllerDistrictListCcrCcr : SVMTabControllerDistrictList<SVMSysDefCcrCcr> { }
-    internal sealed class SVMTabControllerDistrictListSnwCar : SVMTabControllerDistrictList<SVMSysDefSnwCar> { }
-    internal sealed class SVMTabControllerDistrictListRegTra : SVMTabControllerDistrictList<SVMSysDefRegTra> { }
-    internal sealed class SVMTabControllerDistrictListRegShp : SVMTabControllerDistrictList<SVMSysDefRegShp> { }
-    internal sealed class SVMTabControllerDistrictListRegPln : SVMTabControllerDistrictList<SVMSysDefRegPln> { }
-    internal sealed class SVMTabControllerDistrictListCrgTra : SVMTabControllerDistrictList<SVMSysDefCrgTra> { }
-    internal sealed class SVMTabControllerDistrictListCrgShp : SVMTabControllerDistrictList<SVMSysDefCrgShp> { }
-    internal sealed class SVMTabControllerDistrictListBeaCar : SVMTabControllerDistrictList<SVMSysDefBeaCar> { }
-    internal sealed class SVMTabControllerDistrictListPstCar : SVMTabControllerDistrictList<SVMSysDefPstCar> { }
-    internal sealed class SVMTabControllerDistrictListPstTrk : SVMTabControllerDistrictList<SVMSysDefPstTrk> { }
+    internal sealed class VMCTabControllerDistrictListDisCar : VMCTabControllerDistrictList<VMCSysDefDisCar> { }
+    internal sealed class VMCTabControllerDistrictListDisHel : VMCTabControllerDistrictList<VMCSysDefDisHel> { }
+    internal sealed class VMCTabControllerDistrictListFirCar : VMCTabControllerDistrictList<VMCSysDefFirCar> { }
+    internal sealed class VMCTabControllerDistrictListFirHel : VMCTabControllerDistrictList<VMCSysDefFirHel> { }
+    internal sealed class VMCTabControllerDistrictListGarCar : VMCTabControllerDistrictList<VMCSysDefGarCar> { }
+    internal sealed class VMCTabControllerDistrictListGbcCar : VMCTabControllerDistrictList<VMCSysDefGbcCar> { }
+    internal sealed class VMCTabControllerDistrictListHcrCar : VMCTabControllerDistrictList<VMCSysDefHcrCar> { }
+    internal sealed class VMCTabControllerDistrictListHcrHel : VMCTabControllerDistrictList<VMCSysDefHcrHel> { }
+    internal sealed class VMCTabControllerDistrictListPolCar : VMCTabControllerDistrictList<VMCSysDefPolCar> { }
+    internal sealed class VMCTabControllerDistrictListPolHel : VMCTabControllerDistrictList<VMCSysDefPolHel> { }
+    internal sealed class VMCTabControllerDistrictListRoaCar : VMCTabControllerDistrictList<VMCSysDefRoaCar> { }
+    internal sealed class VMCTabControllerDistrictListWatCar : VMCTabControllerDistrictList<VMCSysDefWatCar> { }
+    internal sealed class VMCTabControllerDistrictListPriCar : VMCTabControllerDistrictList<VMCSysDefPriCar> { }
+    internal sealed class VMCTabControllerDistrictListDcrCar : VMCTabControllerDistrictList<VMCSysDefDcrCar> { }
+    internal sealed class VMCTabControllerDistrictListTaxCar : VMCTabControllerDistrictList<VMCSysDefTaxCar> { }
+    internal sealed class VMCTabControllerDistrictListCcrCcr : VMCTabControllerDistrictList<VMCSysDefCcrCcr> { }
+    internal sealed class VMCTabControllerDistrictListSnwCar : VMCTabControllerDistrictList<VMCSysDefSnwCar> { }
+    internal sealed class VMCTabControllerDistrictListRegTra : VMCTabControllerDistrictList<VMCSysDefRegTra> { }
+    internal sealed class VMCTabControllerDistrictListRegShp : VMCTabControllerDistrictList<VMCSysDefRegShp> { }
+    internal sealed class VMCTabControllerDistrictListRegPln : VMCTabControllerDistrictList<VMCSysDefRegPln> { }
+    internal sealed class VMCTabControllerDistrictListCrgTra : VMCTabControllerDistrictList<VMCSysDefCrgTra> { }
+    internal sealed class VMCTabControllerDistrictListCrgShp : VMCTabControllerDistrictList<VMCSysDefCrgShp> { }
+    internal sealed class VMCTabControllerDistrictListBeaCar : VMCTabControllerDistrictList<VMCSysDefBeaCar> { }
+    internal sealed class VMCTabControllerDistrictListPstCar : VMCTabControllerDistrictList<VMCSysDefPstCar> { }
+    internal sealed class VMCTabControllerDistrictListPstTrk : VMCTabControllerDistrictList<VMCSysDefPstTrk> { }
 
 }

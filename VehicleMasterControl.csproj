@@ -60,13 +60,13 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BuildingList\ExtraUI\SVMAssetSelectorWindowDistrictTab.cs" />
-    <Compile Include="BuildingList\ExtraUI\SVMBuildingSSDConfigWindow.cs" />
-    <Compile Include="BuildingList\SVMTabControllerDistrictList.cs" />
-    <Compile Include="BuildingList\SVMTabControllerBuildingList.cs" />
-    <Compile Include="BuildingList\SVMTabPanel.cs" />
-    <Compile Include="BuildingList\SVMBuildingInfoItem.cs" />
-    <Compile Include="BuildingList\SVMBuildingInfoPanel.cs" />
+    <Compile Include="BuildingList\ExtraUI\VMCAssetSelectorWindowDistrictTab.cs" />
+    <Compile Include="BuildingList\ExtraUI\VMCBuildingSSDConfigWindow.cs" />
+    <Compile Include="BuildingList\VMCTabControllerDistrictList.cs" />
+    <Compile Include="BuildingList\VMCTabControllerBuildingList.cs" />
+    <Compile Include="BuildingList\VMCTabPanel.cs" />
+    <Compile Include="BuildingList\VMCBuildingInfoItem.cs" />
+    <Compile Include="BuildingList\VMCBuildingInfoPanel.cs" />
     <Compile Include="CommonProperties.cs" />
     <Compile Include="commons\Extensors\Redirector.cs" />
     <Compile Include="commons\Extensors\UI\CheckboxOrdernatedList.cs" />
@@ -173,14 +173,13 @@
     <Compile Include="commons\Utils\XmlUtils.cs" />
     <Compile Include="commons\Utils\ZipUtils.cs" />
     <Compile Include="Extensors\ServiceSystemDefinition.cs" />
-    <Compile Include="Extensors\SVMServiceVehicleExtension.cs" />
+    <Compile Include="Extensors\VMCServiceVehicleExtension.cs" />
     <Compile Include="Overrides\BuildingAIOverrides.cs" />
     <Compile Include="Overrides\VehicleAIOverrides.cs" />
-    <Compile Include="ServiceVehiclesManager.cs" />
-    <Compile Include="SVMController.cs" />
-    <Compile Include="SVMConfigWarehouse.cs" />
-    <Compile Include="Utils\SVMBuildingUtils.cs" />
-    <Compile Include="Utils\SVMUtils.cs" />
+    <Compile Include="VehiclesMasterControlMod.cs" />
+    <Compile Include="VMCController.cs" />
+    <Compile Include="Utils\VMCBuildingUtils.cs" />
+    <Compile Include="Utils\VMCUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
@@ -306,14 +305,11 @@
     <EmbeddedResource Include="UI\VersionNotes.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\Images\%25K45_SVM_BioIndicator.png" />
-    <EmbeddedResource Include="UI\Images\%25K45_SVM_CargoIndicator.png" />
-    <EmbeddedResource Include="UI\Images\%25K45_SVM_HelicopterIndicator.png" />
-    <EmbeddedResource Include="UI\Images\%25K45_SVM_OutsideIndicator.png" />
-    <EmbeddedResource Include="UI\Images\%25K45_SVMIcon.png" />
-    <Resource Include="UI\Images\spritesb.psd" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="UI\Images\%25K45_VMCIcon.png" />
+    <EmbeddedResource Include="UI\Images\%25K45_VMC_BioIndicator.png" />
+    <EmbeddedResource Include="UI\Images\%25K45_VMC_CargoIndicator.png" />
+    <EmbeddedResource Include="UI\Images\%25K45_VMC_HelicopterIndicator.png" />
+    <EmbeddedResource Include="UI\Images\%25K45_VMC_OutsideIndicator.png" />
     <None Include="UI\Images\sprites.psd" />
     <EmbeddedResource Include="commons\UI\Images\%25K45_Delete.png" />
     <EmbeddedResource Include="commons\UI\Images\%25K45_Down.png" />
@@ -342,10 +338,10 @@
     <PostBuildEvent>xcopy /Y "$(TargetDir)0Harmony.dll" "$(ProjectDir)\_requiredDLLs\"
 xcopy /Y "$(TargetPath)" "$(ProjectDir)\_requiredDLLs\"
 rem xcopy /Y "$(ProjectDir)\_requiredDLLs\*" "S:\Steam\steamapps\workshop\content\255710\????\"
-xcopy /Y "$(ProjectDir)\_requiredDLLs\*" "C:\Users\Leandro\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\SVM\"</PostBuildEvent>
+xcopy /Y "$(ProjectDir)\_requiredDLLs\*" "C:\Users\Leandro\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\VMC\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>rem del /Q "S:\Steam\steamapps\workshop\content\255710\?????\*"
-rem del /Q  "C:\Users\Leandro\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\SVM\*"</PreBuildEvent>
+del /Q  "C:\Users\Leandro\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\VMC\*"</PreBuildEvent>
   </PropertyGroup>
 </Project>
