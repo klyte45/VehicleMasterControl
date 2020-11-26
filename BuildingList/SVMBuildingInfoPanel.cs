@@ -333,8 +333,8 @@ namespace Klyte.ServiceVehiclesManager.UI
 
 
 
-            string bgIcon = ssd.getIconServiceSystem();
-            string fgIcon = ssd.getFgIconServiceSystem();
+            string bgIcon = ssd.IconServiceSystem;
+            string fgIcon = ssd.FgIconServiceSystem;
 
             buildingTypeIcon.normalFgSprite = bgIcon;
             buildingTypeIconFg.spriteName = fgIcon;

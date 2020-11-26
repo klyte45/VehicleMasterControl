@@ -124,7 +124,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             m_StripMain.selectedIndex = 0;
             if (ssd != null)
             {
-                var catIdx = ssd.getCategory();
+                var catIdx = ssd.Category;
                 m_StripBuilings.selectedIndex = (int)catIdx;
                 m_StripBuilingsStrips[catIdx].selectedIndex = m_StripBuilingsStrips[catIdx].Find<UIComponent>(ssd.GetDefType().Name)?.zOrder ?? 0;
             }
@@ -211,10 +211,10 @@ namespace Klyte.ServiceVehiclesManager.UI
                 GameObject body = Instantiate(bodyContent.gameObject);
                 string name = kv.Value.GetType().Name;
                 LogUtils.DoLog($"kv.Key = {kv.Key}; kv.Value= {kv.Value} ");
-                string bgIcon = kv.Key.getIconServiceSystem();
-                string fgIcon = kv.Key.getFgIconServiceSystem();
+                string bgIcon = kv.Key.IconServiceSystem;
+                string fgIcon = kv.Key.FgIconServiceSystem;
                 UIButton tabButton = tab.GetComponent<UIButton>();
-                tabButton.tooltip = kv.Key.getNameForServiceSystem();
+                tabButton.tooltip = kv.Key.NameForServiceSystem;
                 tabButton.normalFgSprite = bgIcon;
                 if (!string.IsNullOrEmpty(fgIcon))
                 {
@@ -241,7 +241,7 @@ namespace Klyte.ServiceVehiclesManager.UI
                     }
 
                 }
-                CategoryTab catTab = kv.Key.getCategory();
+                CategoryTab catTab = kv.Key.Category;
                 substrips[catTab].AddTab(name, tab, body, components);
 
                 body.GetComponent<UIComponent>().eventVisibilityChanged += (x, y) =>

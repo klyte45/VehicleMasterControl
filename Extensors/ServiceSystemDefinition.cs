@@ -1,4 +1,5 @@
 ﻿using ColossalFramework;
+using ColossalFramework.Globalization;
 using Klyte.Commons.Utils;
 using Klyte.ServiceVehiclesManager.Overrides;
 using Klyte.ServiceVehiclesManager.UI;
@@ -14,8 +15,10 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     {
         public static readonly ServiceSystemDefinition DISASTER_CAR = new ServiceSystemDefinition(ItemClass.Service.Disaster, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition DISASTER_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.Disaster, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level2);
+
         public static readonly ServiceSystemDefinition FIRE_CAR = new ServiceSystemDefinition(ItemClass.Service.FireDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition FIRE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.FireDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level1);
+
         public static readonly ServiceSystemDefinition GARBAGE_CAR = new ServiceSystemDefinition(ItemClass.Service.Garbage, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition GARBBIO_CAR = new ServiceSystemDefinition(ItemClass.Service.Garbage, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
 
@@ -23,17 +26,17 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition HEALTHCARE_CAR = new ServiceSystemDefinition(ItemClass.Service.HealthCare, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition HEALTHCARE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.HealthCare, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
         public static readonly ServiceSystemDefinition DEATHCARE_CAR = new ServiceSystemDefinition(ItemClass.Service.HealthCare, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
+
         public static readonly ServiceSystemDefinition POLICE_CAR = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition POLICE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
-
-        internal bool GetAllowDistrictServiceRestrictions() => throw new NotImplementedException();
-
-        public static readonly ServiceSystemDefinition ROAD_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
-        public static readonly ServiceSystemDefinition WATER_CAR = new ServiceSystemDefinition(ItemClass.Service.Water, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition PRISION_CAR = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
+
+        public static readonly ServiceSystemDefinition SNOW_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
+        public static readonly ServiceSystemDefinition ROAD_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
+
+        public static readonly ServiceSystemDefinition WATER_CAR = new ServiceSystemDefinition(ItemClass.Service.Water, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition TAXI_CAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTaxi, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition CABLECAR_CABLECAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportCableCar, VehicleInfo.VehicleType.CableCar, ItemClass.Level.Level1);
-        public static readonly ServiceSystemDefinition SNOW_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
         public static readonly ServiceSystemDefinition REG_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition REG_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition REG_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1);
@@ -43,10 +46,10 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition POST_CAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPost, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition POST_TRK = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPost, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5);
 
-        //public static readonly ServiceSystemDefinition OUT_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1, true);
-        //public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
-        //public static readonly ServiceSystemDefinition OUT_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1, true);
-        //public static readonly ServiceSystemDefinition OUT_ROAD = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5, true);   
+        public static readonly ServiceSystemDefinition OUT_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1, true);
+        public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
+        public static readonly ServiceSystemDefinition OUT_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1, true);
+        public static readonly ServiceSystemDefinition OUT_ROAD = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5, true);
 
         public bool AllowRestrictions { get; private set; }
 
@@ -58,7 +61,41 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         internal ISVMDistrictExtension GetDistrictExtension() => sysDefinitions[this].GetExtensionDistrict();
         internal ISVMBuildingExtension GetBuildingExtension() => sysDefinitions[this].GetExtensionBuilding();
 
-        public static readonly Dictionary<ServiceSystemDefinition, ISVMBuildingExtension> m_availableDefinitions = new Dictionary<ServiceSystemDefinition, ISVMBuildingExtension>();
+        internal SSD ToIndex => m_indexMap[this];
+
+        public static readonly Dictionary<ServiceSystemDefinition, SSD> m_indexMap = new Dictionary<ServiceSystemDefinition, SSD>()
+        {
+            [DISASTER_CAR] = SSD.DISASTER_CAR,
+            [DISASTER_HELICOPTER] = SSD.DISASTER_HELICOPTER,
+            [FIRE_CAR] = SSD.FIRE_CAR,
+            [FIRE_HELICOPTER] = SSD.FIRE_HELICOPTER,
+            [GARBAGE_CAR] = SSD.GARBAGE_CAR,
+            [GARBBIO_CAR] = SSD.GARBBIO_CAR,
+            [HEALTHCARE_CAR] = SSD.HEALTHCARE_CAR,
+            [HEALTHCARE_HELICOPTER] = SSD.HEALTHCARE_HELICOPTER,
+            [DEATHCARE_CAR] = SSD.DEATHCARE_CAR,
+            [POLICE_CAR] = SSD.POLICE_CAR,
+            [POLICE_HELICOPTER] = SSD.POLICE_HELICOPTER,
+            [PRISION_CAR] = SSD.PRISION_CAR,
+            [SNOW_CAR] = SSD.SNOW_CAR,
+            [ROAD_CAR] = SSD.ROAD_CAR,
+            [WATER_CAR] = SSD.WATER_CAR,
+            [TAXI_CAR] = SSD.TAXI_CAR,
+            [CABLECAR_CABLECAR] = SSD.CABLECAR_CABLECAR,
+            [REG_TRAIN] = SSD.REG_TRAIN,
+            [REG_PLANE] = SSD.REG_PLANE,
+            [REG_SHIP] = SSD.REG_SHIP,
+            [CARG_SHIP] = SSD.CARG_SHIP,
+            [CARG_TRAIN] = SSD.CARG_TRAIN,
+            [BEAU_CAR] = SSD.BEAU_CAR,
+            [POST_CAR] = SSD.POST_CAR,
+            [POST_TRK] = SSD.POST_TRK,
+            [OUT_TRAIN] = SSD.OUT_TRAIN,
+            [OUT_PLANE] = SSD.OUT_PLANE,
+            [OUT_SHIP] = SSD.OUT_SHIP,
+            [OUT_ROAD] = SSD.OUT_ROAD,
+        };
+
         public static Dictionary<ServiceSystemDefinition, ISVMSysDef> sysDefinitions
         {
             get {
@@ -126,10 +163,12 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             }
         }
 
-        internal CategoryTab getCategory() => throw new NotImplementedException();
-        internal string getNameForServiceSystem() => throw new NotImplementedException();
-        internal string getFgIconServiceSystem() => throw new NotImplementedException();
-        internal string getIconServiceSystem() => throw new NotImplementedException();
+
+        public bool AllowDistrictServiceRestrictions => AllowRestrictions;
+        public CategoryTab Category { get; }
+        public string NameForServiceSystem { get; }
+        public string FgIconServiceSystem { get; }
+        public string IconServiceSystem { get; }
 
         private static readonly Dictionary<ServiceSystemDefinition, ISVMSysDef> m_sysDefinitions = new Dictionary<ServiceSystemDefinition, ISVMSysDef>();
 
@@ -170,6 +209,271 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             this.outsideConnection = outsideConnection;
             Idx = ((int) service << 48) | ((int) subService << 40) | ((int) level << 32) | (Mathf.RoundToInt(Mathf.Log((int) vehicleType) / Mathf.Log(2)) << 8) | (outsideConnection ? 1 : 0);
             AllowRestrictions = service != ItemClass.Service.PublicTransport || subService == ItemClass.SubService.PublicTransportTaxi;
+            Category = SetCategory(service, outsideConnection);
+            NameForServiceSystem = SetNameForServiceSystem(service, subService, vehicleType, level, outsideConnection);
+            IconServiceSystem = SetIcon(service, subService, vehicleType, level, outsideConnection);
+            FgIconServiceSystem = SetFgIcon(service, subService, vehicleType, level, outsideConnection);
+        }
+
+        private static string SetFgIcon(ItemClass.Service service, ItemClass.SubService subService, VehicleInfo.VehicleType vehicleType, ItemClass.Level level, bool outsideConnection)
+        {
+            return "K45_SVM_" + outsideConnection switch
+            {
+                true => "OutsideIndicator",
+                false => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Helicopter => "HelicopterIndicator",
+                    _ => service switch
+                    {
+                        ItemClass.Service.Garbage => level switch
+                        {
+                            ItemClass.Level.Level2 => "BioIndicator",
+                            _ => ""
+                        },
+                        ItemClass.Service.PublicTransport => level switch
+                        {
+                            ItemClass.Level.Level4 => "CargoIndicator",
+                            ItemClass.Level.Level5 => "CargoIndicator",
+                            _ => ""
+                        },
+                        _ => ""
+                    },
+                }
+            };
+        }
+
+        private static string SetIcon(ItemClass.Service service, ItemClass.SubService subService, VehicleInfo.VehicleType vehicleType, ItemClass.Level level, bool outsideConnection)
+        {
+            return service switch
+            {
+                ItemClass.Service.Disaster => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Car => "SubBarFireDepartmentDisaster",
+                    VehicleInfo.VehicleType.Helicopter => "SubBarFireDepartmentDisaster",
+                    _ => "UNKNOWN DISASTER",
+                },
+                ItemClass.Service.FireDepartment => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Car => "InfoIconFireSafety",
+                    VehicleInfo.VehicleType.Helicopter => "InfoIconFireSafety",
+                    _ => "UNKNOWN FIRE",
+                },
+                ItemClass.Service.Garbage => level switch
+                {
+                    ItemClass.Level.Level1 => "InfoIconGarbage",
+                    ItemClass.Level.Level2 => "InfoIconGarbage",
+                    _ => "UNKNOWN GARBAGE",
+                },
+                ItemClass.Service.HealthCare => level switch
+                {
+                    ItemClass.Level.Level1 => "ToolbarIconHealthcare",
+                    ItemClass.Level.Level2 => "ToolbarIconHealthcareHovered",
+                    ItemClass.Level.Level3 => "ToolbarIconHealthcare",
+                    _ => "UNKNOWN HEALTHCARE",
+                },
+                ItemClass.Service.PoliceDepartment => level switch
+                {
+                    ItemClass.Level.Level1 => "ToolbarIconPolice",
+                    ItemClass.Level.Level3 => "ToolbarIconPolice",
+                    ItemClass.Level.Level4 => "IconPolicyDoubleSentences",
+                    _ => "UNKNOWN POLICE",
+                },
+                ItemClass.Service.Road => level switch
+                {
+                    ItemClass.Level.Level2 => "ToolbarIconRoads",
+                    ItemClass.Level.Level4 => "InfoIconSnow",
+                    ItemClass.Level.Level5 => outsideConnection switch
+                    {
+                        true => "ToolbarIconRoads",
+                        _ => "UNKNOWN ROAD 5"
+                    },
+                    _ => "UNKNOWN ROAD",
+                },
+                ItemClass.Service.Water => level switch
+                {
+                    ItemClass.Level.Level1 => "ToolbarIconWaterAndSewage",
+                    _ => "UNKNOWN WATER",
+                },
+                ItemClass.Service.Beautification => "ToolbarIconBeautification",
+                ItemClass.Service.PublicTransport => subService switch
+                {
+                    ItemClass.SubService.PublicTransportPost => level switch
+                    {
+                        ItemClass.Level.Level2 => "InfoIconPost",
+                        ItemClass.Level.Level5 => "InfoIconPost",
+                        _ => $"UNKNOWN POST {level}",
+                    },
+                    ItemClass.SubService.PublicTransportTaxi => "SubBarPublicTransportTaxi",
+                    ItemClass.SubService.PublicTransportCableCar => "SubBarPublicTransportCableCar",
+                    ItemClass.SubService.PublicTransportTrain => level switch
+                    {
+                        ItemClass.Level.Level1 => outsideConnection switch
+                        {
+                            true => "SubBarPublicTransportTrain",
+                            false => "SubBarPublicTransportTrain"
+                        },
+                        ItemClass.Level.Level4 => "SubBarPublicTransportTrain",
+                        _ => $"UNKNOWN TRAIN {level}",
+                    },
+
+                    ItemClass.SubService.PublicTransportShip => level switch
+                    {
+                        ItemClass.Level.Level1 => outsideConnection switch
+                        {
+                            true => "SubBarPublicTransportShip",
+                            false => "SubBarPublicTransportShip",
+                        },
+                        ItemClass.Level.Level4 => "SubBarPublicTransportShip",
+                        _ => $"UNKNOWN SHIP {level}",
+                    },
+                    ItemClass.SubService.PublicTransportPlane => level switch
+                    {
+                        ItemClass.Level.Level1 => outsideConnection switch
+                        {
+                            true => "SubBarPublicTransportPlane",
+                            false => "SubBarPublicTransportPlane",
+                        },
+                        ItemClass.Level.Level4 => "SubBarPublicTransportPlane",
+                        _ => $"UNKNOWN AIRCRAFT {level}",
+                    },
+                    _ => $"UNKNOWN PUBLIC TRANSPORT {subService}",
+                },
+                _ => $"??? {service}",
+            };
+
+        }
+
+        private static string SetNameForServiceSystem(
+            ItemClass.Service service,
+        ItemClass.SubService subService,
+        VehicleInfo.VehicleType vehicleType,
+        ItemClass.Level level,
+        bool outsideConnection)
+        {
+            return service switch
+            {
+                ItemClass.Service.Disaster => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Disaster Response Vehicle"),
+                    VehicleInfo.VehicleType.Helicopter => Locale.Get("VEHICLE_TITLE", "Disaster Response Helicopter"),
+                    _ => "UNKNOWN DISASTER",
+                },
+                ItemClass.Service.FireDepartment => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Fire Truck"),
+                    VehicleInfo.VehicleType.Helicopter => Locale.Get("VEHICLE_TITLE", "Fire Helicopter"),
+                    _ => "UNKNOWN FIRE",
+                },
+                ItemClass.Service.Garbage => level switch
+                {
+                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Garbage Truck"),
+                    ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Biofuel Garbage Truck 01"),
+                    _ => "UNKNOWN GARBAGE",
+                },
+                ItemClass.Service.HealthCare => level switch
+                {
+                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Ambulance"),
+                    ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Hearse"),
+                    ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Medical Helicopter"),
+                    _ => "UNKNOWN HEALTHCARE",
+                },
+                ItemClass.Service.PoliceDepartment => level switch
+                {
+                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Police Car"),
+                    ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Police Helicopter"),
+                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "PoliceVan"),
+                    _ => "UNKNOWN POLICE",
+                },
+                ItemClass.Service.Road => level switch
+                {
+                    ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Engineering_Truck"),
+                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Snowplow"),
+                    ItemClass.Level.Level5 => outsideConnection switch
+                    {
+                        true => Locale.Get("AREA_YES_HIGHWAYCONNECTION"),
+                        _ => "UNKNOWN ROAD 5"
+                    },
+                    _ => "UNKNOWN ROAD",
+                },
+                ItemClass.Service.Water => level switch
+                {
+                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Water Pumping Truck"),
+                    _ => "UNKNOWN WATER",
+                },
+                ItemClass.Service.Beautification => Locale.Get("VEHICLE_TITLE", "Park Staff Vehicle 01"),
+                ItemClass.Service.PublicTransport => subService switch
+                {
+                    ItemClass.SubService.PublicTransportPost => level switch
+                    {
+                        ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Post Vehicle 01"),
+                        ItemClass.Level.Level5 => Locale.Get("VEHICLE_TITLE", "Post Truck 01"),
+                        _ => $"UNKNOWN POST {level}",
+                    },
+                    ItemClass.SubService.PublicTransportTaxi => Locale.Get("VEHICLE_TITLE", "Taxi"),
+                    ItemClass.SubService.PublicTransportCableCar => Locale.Get("VEHICLE_TITLE", "Cable Car"),
+                    ItemClass.SubService.PublicTransportTrain => level switch
+                    {
+                        ItemClass.Level.Level1 => outsideConnection switch
+                        {
+                            true => Locale.Get("AREA_YES_TRAINCONNECTION"),
+                            false => Locale.Get("VEHICLE_TITLE", "Train Engine")
+                        },
+                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Train Cargo Engine"),
+                        _ => $"UNKNOWN TRAIN {level}",
+                    },
+
+                    ItemClass.SubService.PublicTransportShip => level switch
+                    {
+                        ItemClass.Level.Level1 => outsideConnection switch
+                        {
+                            true => Locale.Get("AREA_YES_SHIPCONNECTION"),
+                            false => Locale.Get("VEHICLE_TITLE", "Ship Passenger"),
+                        },
+                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Ship Cargo"),
+                        _ => $"UNKNOWN SHIP {level}",
+                    },
+                    ItemClass.SubService.PublicTransportPlane => level switch
+                    {
+                        ItemClass.Level.Level1 => outsideConnection switch
+                        {
+                            true => Locale.Get("AREA_YES_SHIPCONNECTION"),
+                            false => Locale.Get("VEHICLE_TITLE", "Aircraft Passenger"),
+                        },
+                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Aircraft Cargo"),
+                        _ => $"UNKNOWN AIRCRAFT {level}",
+                    },
+                    _ => $"UNKNOWN PUBLIC TRANSPORT {subService}",
+                },
+                _ => $"??? {service}",
+            };
+        }
+
+        private static CategoryTab SetCategory(ItemClass.Service service, bool outsideConnection)
+        {
+            if (outsideConnection)
+            {
+                return CategoryTab.OutsideConnection;
+            }
+            else if (service == ItemClass.Service.Disaster || service == ItemClass.Service.FireDepartment)
+            {
+                return CategoryTab.EmergencyVehicles;
+            }
+            else if (service == ItemClass.Service.HealthCare)
+            {
+                return CategoryTab.HealthcareVehicles;
+            }
+            else if (service == ItemClass.Service.PoliceDepartment)
+            {
+                return CategoryTab.SecurityVehicles;
+            }
+            else if (service == ItemClass.Service.PublicTransport)
+            {
+                return CategoryTab.PublicTransport;
+            }
+            else
+            {
+                return CategoryTab.OtherServices;
+            }
         }
 
         public Type GetDefType() => sysDefinitions[this].GetType();
@@ -263,11 +567,8 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
             return sysDefinitions.Keys.Where(x => x.isFromSystem(info));
         }
 
-        //public SVMConfigWarehouse.ConfigIndex toConfigIndex()
-        //{
-        //    ServiceSystemDefinition th = this;
-        //    return SVMConfigWarehouse.getConfigServiceSystemForDefinition(ref th);
-        //}
+        public static ServiceSystemDefinition from(SSD index) => m_indexMap.Where(x => x.Value == index).FirstOrDefault().Key;
+
 
         public override string ToString() => service.ToString() + "|" + subService.ToString() + "|" + level.ToString() + "|" + vehicleType.ToString() + "|" + outsideConnection;
 
@@ -326,6 +627,53 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
         };
     }
 
+    public enum SSD
+    {
+        DISASTER_CAR,
+        DISASTER_HELICOPTER,
+
+
+        FIRE_CAR,
+        FIRE_HELICOPTER,
+
+
+        GARBAGE_CAR,
+        GARBBIO_CAR,
+
+
+
+        HEALTHCARE_CAR,
+        HEALTHCARE_HELICOPTER,
+        DEATHCARE_CAR,
+
+
+        POLICE_CAR,
+        POLICE_HELICOPTER,
+        PRISION_CAR,
+
+
+        SNOW_CAR,
+        ROAD_CAR,
+
+
+        WATER_CAR,
+        TAXI_CAR,
+        CABLECAR_CABLECAR,
+        REG_TRAIN,
+        REG_PLANE,
+        REG_SHIP,
+        CARG_SHIP,
+        CARG_TRAIN,
+        BEAU_CAR,
+        POST_CAR,
+        POST_TRK,
+
+
+        OUT_TRAIN,
+        OUT_PLANE,
+        OUT_SHIP,
+        OUT_ROAD,
+    }
     public interface ISVMSysDef
     {
         public abstract ServiceSystemDefinition GetSSD();
@@ -360,10 +708,10 @@ namespace Klyte.ServiceVehiclesManager.Extensors.VehicleExt
     public sealed class SVMSysDefRegPln : SVMSysDef<SVMSysDefRegPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.REG_PLANE; }
     public sealed class SVMSysDefCrgTra : SVMSysDef<SVMSysDefCrgTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CARG_TRAIN; }
     public sealed class SVMSysDefCrgShp : SVMSysDef<SVMSysDefCrgShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CARG_SHIP; }
-    //public sealed class SVMSysDefOutShp : SVMSysDef<SVMSysDefOutShp> { public override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_SHIP; } }
-    //public sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { public override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_TRAIN; } }
-    //public sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { public override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_PLANE; } }
-    //public sealed class SVMSysDefOutCar : SVMSysDef<SVMSysDefOutCar> { public override ServiceSystemDefinition GetSSD() { return ServiceSystemDefinition.OUT_ROAD; } }
+    public sealed class SVMSysDefOutShp : SVMSysDef<SVMSysDefOutShp> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_SHIP; }
+    public sealed class SVMSysDefOutTra : SVMSysDef<SVMSysDefOutTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_TRAIN; }
+    public sealed class SVMSysDefOutPln : SVMSysDef<SVMSysDefOutPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_PLANE; }
+    public sealed class SVMSysDefOutCar : SVMSysDef<SVMSysDefOutCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_ROAD; }
     public sealed class SVMSysDefBeaCar : SVMSysDef<SVMSysDefBeaCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.BEAU_CAR; }
     public sealed class SVMSysDefPstCar : SVMSysDef<SVMSysDefPstCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_CAR; }
     public sealed class SVMSysDefPstTrk : SVMSysDef<SVMSysDefPstTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_TRK; }

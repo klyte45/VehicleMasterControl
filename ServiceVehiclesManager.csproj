@@ -229,6 +229,10 @@
     <EmbeddedResource Include="UI\VersionNotes.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI\Images\%25K45_SVM_BioIndicator.png" />
+    <EmbeddedResource Include="UI\Images\%25K45_SVM_CargoIndicator.png" />
+    <EmbeddedResource Include="UI\Images\%25K45_SVM_HelicopterIndicator.png" />
+    <EmbeddedResource Include="UI\Images\%25K45_SVM_OutsideIndicator.png" />
     <EmbeddedResource Include="commons\UI\Images\%25K45_24hLineIcon.png" />
     <EmbeddedResource Include="commons\UI\Images\%25K45_AbsoluteMode.png" />
     <EmbeddedResource Include="commons\UI\Images\%25K45_AutoColorIcon.png" />

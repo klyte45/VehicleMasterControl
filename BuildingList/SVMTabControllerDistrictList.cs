@@ -58,7 +58,7 @@ namespace Klyte.ServiceVehiclesManager.UI
             }
             ServiceSystemDefinition ssd = SingletonLite<T>.instance.GetSSD();
             ISVMDistrictExtension extension = SingletonLite<T>.instance.GetExtensionDistrict();
-            if (ssd.GetAllowDistrictServiceRestrictions())
+            if (ssd.AllowDistrictServiceRestrictions)
             {
                 m_districtAllowOutsiders = m_uiHelper.AddCheckboxLocale("K45_SVM_ALLOW_OUTSIDERS", true, (x) =>
                 {

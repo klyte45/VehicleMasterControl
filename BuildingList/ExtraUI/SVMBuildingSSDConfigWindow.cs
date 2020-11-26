@@ -196,18 +196,18 @@ namespace Klyte.ServiceVehiclesManager.UI.ExtraUI
 
             if (isCustomConfig)
             {
-                m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE"), Singleton<BuildingManager>.instance.GetBuildingName(buildingId, default), ssd.getNameForServiceSystem());
+                m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE"), Singleton<BuildingManager>.instance.GetBuildingName(buildingId, default), ssd.NameForServiceSystem);
             }
             else
             {
                 ushort districtId = BuildingUtils.GetBuildingDistrict(buildingId);
                 if (districtId > 0)
                 {
-                    m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE_DISTRICT"), Singleton<DistrictManager>.instance.GetDistrictName(districtId), ssd.getNameForServiceSystem());
+                    m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE_DISTRICT"), Singleton<DistrictManager>.instance.GetDistrictName(districtId), ssd.NameForServiceSystem);
                 }
                 else
                 {
-                    m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE_CITY"), ssd.getNameForServiceSystem());
+                    m_title.text = string.Format(Locale.Get("K45_SVM_ASSET_SELECT_WINDOW_TITLE_CITY"), ssd.NameForServiceSystem);
                 }
             }
 

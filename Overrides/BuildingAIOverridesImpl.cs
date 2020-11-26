@@ -45,7 +45,7 @@ namespace Klyte.ServiceVehiclesManager.Overrides
                 }
             }
             var targetClasses = new List<Type>();
-            List<IBasicBuildingAIOverrides> value = null;
+            List<IBasicBuildingAIOverrides> value;
             if (!subtypes.Contains(targetTypeAi))
             {
                 foreach (Type clazz in subtypes.Select(x => x.Key))
@@ -72,13 +72,13 @@ namespace Klyte.ServiceVehiclesManager.Overrides
             {
                 targetClasses = subtypes[targetTypeAi].ToList();
             }
-            //value = targetClasses.Select(targetClass => (IBasicBuildingAIOverrides) SVMUtils.GetPrivateStaticProperty("instance", targetClass)).ToList();
-            //if (ServiceVehiclesManagerMod.DebugMode)
-            //{
-            //    LogUtils.DoLog("GetOverride - value = {0}", value);
-            //}
+           value = targetClasses.Select(targetClass => (IBasicBuildingAIOverrides) ReflectionUtils.GetStaticPropertyDelegates("instance", targetClass)).ToList();
+           if (ServiceVehiclesManagerMod.DebugMode)
+           {
+               LogUtils.DoLog("GetOverride - value = {0}", value);
+           }
 
-            return value;
+            return new List<IBasicBuildingAIOverrides>();
         }
 
         public static IBasicBuildingAIOverrides getBuildingOverrideExtensionStrict(BuildingInfo info) => getBuildingOverrideExtension(info).FirstOrDefault(x => !x.ExtraAllowedLevels().Contains(info.m_class.m_level));
