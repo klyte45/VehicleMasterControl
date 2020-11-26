@@ -187,7 +187,7 @@ namespace Klyte.VehiclesMasterControl.UI.ExtraUI
             }
             foreach (string i in m_checkboxes.Keys)
             {
-                m_checkboxes[i].isChecked = selectedAssets.Contains(i);
+                m_checkboxes[i].isChecked = selectedAssets?.Contains(i) ?? false;
             }
             if (m_color != null)
             {
@@ -238,39 +238,39 @@ namespace Klyte.VehiclesMasterControl.UI.ExtraUI
             LogUtils.DoLog("m_defaultAssets Size = {0} ({1})", m_defaultAssets?.Count, string.Join(",", m_defaultAssets.Keys?.ToArray() ?? new string[0]));
             foreach (string i in m_defaultAssets.Keys)
             {
-                var checkbox = (UICheckBox) m_uiHelper.AddCheckbox(m_defaultAssets[i], false, (x) =>
-                 {
-                     IVMCBuildingExtension ext = SingletonLite<T>.instance.GetSSD().GetBuildingExtension();
+                var checkbox = (UICheckBox)m_uiHelper.AddCheckbox(m_defaultAssets[i], false, (x) =>
+                {
+                    IVMCBuildingExtension ext = SingletonLite<T>.instance.GetSSD().GetBuildingExtension();
 
-                     ushort buildingId = m_buildingInfo.buildingIdSel.Building;
-                     if (m_isLoading)
-                     {
-                         return;
-                     }
+                    ushort buildingId = m_buildingInfo.buildingIdSel.Building;
+                    if (m_isLoading)
+                    {
+                        return;
+                    }
 
-                     if (x)
-                     {
-                         if (ext.GetIgnoreDistrict(buildingId))
-                         {
-                             ext.AddAsset(buildingId, i);
-                         }
-                         else
-                         {
-                             SingletonLite<T>.instance.GetSSD().GetDistrictExtension().AddAsset(BuildingUtils.GetBuildingDistrict(buildingId), i);
-                         }
-                     }
-                     else
-                     {
-                         if (ext.GetIgnoreDistrict(buildingId))
-                         {
-                             ext.RemoveAsset(buildingId, i);
-                         }
-                         else
-                         {
-                             SingletonLite<T>.instance.GetSSD().GetDistrictExtension().RemoveAsset(BuildingUtils.GetBuildingDistrict(buildingId), i);
-                         }
-                     }
-                 });
+                    if (x)
+                    {
+                        if (ext.GetIgnoreDistrict(buildingId))
+                        {
+                            ext.AddAsset(buildingId, i);
+                        }
+                        else
+                        {
+                            SingletonLite<T>.instance.GetSSD().GetDistrictExtension().AddAsset(BuildingUtils.GetBuildingDistrict(buildingId), i);
+                        }
+                    }
+                    else
+                    {
+                        if (ext.GetIgnoreDistrict(buildingId))
+                        {
+                            ext.RemoveAsset(buildingId, i);
+                        }
+                        else
+                        {
+                            SingletonLite<T>.instance.GetSSD().GetDistrictExtension().RemoveAsset(BuildingUtils.GetBuildingDistrict(buildingId), i);
+                        }
+                    }
+                });
                 CreateModelCheckBox(i, checkbox);
                 checkbox.label.tooltip = checkbox.label.text;
                 checkbox.label.textScale = 0.9f;
@@ -343,10 +343,10 @@ namespace Klyte.VehiclesMasterControl.UI.ExtraUI
     internal sealed class VMCBuildingSSDConfigWindowRegPln : VMCBuildingSSDConfigWindow<VMCSysDefRegPln> { }
     internal sealed class VMCBuildingSSDConfigWindowCrgTra : VMCBuildingSSDConfigWindow<VMCSysDefCrgTra> { }
     internal sealed class VMCBuildingSSDConfigWindowCrgShp : VMCBuildingSSDConfigWindow<VMCSysDefCrgShp> { }
-    //internal sealed class VMCBuildingSSDConfigWindowOutTra : VMCBuildingSSDConfigWindow<VMCSysDefOutTra> { }
-    //internal sealed class VMCBuildingSSDConfigWindowOutShp : VMCBuildingSSDConfigWindow<VMCSysDefOutShp> { }
-    //internal sealed class VMCBuildingSSDConfigWindowOutPln : VMCBuildingSSDConfigWindow<VMCSysDefOutPln> { }
-    //internal sealed class VMCBuildingSSDConfigWindowOutCar : VMCBuildingSSDConfigWindow<VMCSysDefOutCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowOutTra : VMCBuildingSSDConfigWindow<VMCSysDefOutTra> { }
+    internal sealed class VMCBuildingSSDConfigWindowOutShp : VMCBuildingSSDConfigWindow<VMCSysDefOutShp> { }
+    internal sealed class VMCBuildingSSDConfigWindowOutPln : VMCBuildingSSDConfigWindow<VMCSysDefOutPln> { }
+    internal sealed class VMCBuildingSSDConfigWindowOutCar : VMCBuildingSSDConfigWindow<VMCSysDefOutCar> { }
     internal sealed class VMCBuildingSSDConfigWindowBeaCar : VMCBuildingSSDConfigWindow<VMCSysDefBeaCar> { }
     internal sealed class VMCBuildingSSDConfigWindowPstCar : VMCBuildingSSDConfigWindow<VMCSysDefPstCar> { }
     internal sealed class VMCBuildingSSDConfigWindowPstTrk : VMCBuildingSSDConfigWindow<VMCSysDefPstTrk> { }

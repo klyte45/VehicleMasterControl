@@ -101,7 +101,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         public bool IgnoreDistrict { get; set; }
         [XmlArray("Assets")]
         [XmlArrayItem("Asset")]
-        public SimpleXmlList<string> AssetList { get; set; }
+        public SimpleXmlList<string> AssetList { get; set; } = new SimpleXmlList<string>();
         [XmlIgnore]
         public Color Color { get => m_cachedColor; set => m_cachedColor = value; }
         [XmlIgnore]
@@ -117,7 +117,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         public bool IgnoreDistrict { get; set; }
         [XmlArray("Assets")]
         [XmlArrayItem("Asset")]
-        public SimpleXmlList<string> AssetList { get; set; }
+        public SimpleXmlList<string> AssetList { get; set; } = new SimpleXmlList<string>();
         [XmlIgnore]
         public Color Color { get => m_cachedColor; set => m_cachedColor = value; }
         [XmlIgnore]

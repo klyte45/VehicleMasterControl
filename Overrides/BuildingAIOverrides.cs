@@ -1,4 +1,5 @@
 ﻿using ColossalFramework.Math;
+using ColossalFramework.Plugins;
 using Harmony;
 using Klyte.Commons.Extensors;
 using Klyte.Commons.Utils;
@@ -13,10 +14,10 @@ namespace Klyte.VehiclesMasterControl.Overrides
 {
     internal class BuildingAIOverrides : Redirector, IRedirectable
     {
-        public static VehicleInfo GetRandomVehicleInfoNoVehicle(VehicleManager vm, ref Randomizer randomizer, ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, ushort buildingId)
+        public static VehicleInfo GetRandomVehicleInfoNoVehicle(VehicleManager vm, ref Randomizer randomizer, ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, ushort buildingId, ref Building building)
         {
             // A
-            var ssds = ServiceSystemDefinition.from(service, subService, level).FirstOrDefault();
+            var ssds = ServiceSystemDefinition.from(service, subService, level, building.Info.m_buildingAI is OutsideConnectionAI).FirstOrDefault();
             if (ssds != default)
             {
                 var vehicleInfo = ssds.GetAModel(buildingId);
@@ -28,10 +29,10 @@ namespace Klyte.VehiclesMasterControl.Overrides
             return VehicleManager.instance.GetRandomVehicleInfo(ref randomizer, service, subService, level);
         }
 
-        public static VehicleInfo GetRandomVehicleInfoWithVehicle(VehicleManager vm, ref Randomizer randomizer, ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, VehicleInfo.VehicleType vehicleType, ushort buildingId)
+        public static VehicleInfo GetRandomVehicleInfoWithVehicle(VehicleManager vm, ref Randomizer randomizer, ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, VehicleInfo.VehicleType vehicleType, ushort buildingId, ref Building building)
         {
             // A
-            var ssds = ServiceSystemDefinition.from(service, subService, level, vehicleType);
+            var ssds = ServiceSystemDefinition.from(service, subService, level, vehicleType, building.Info.m_buildingAI is OutsideConnectionAI);
             if (ssds != default)
             {
                 var vehicleInfo = ssds.GetAModel(buildingId);
@@ -63,9 +64,9 @@ namespace Klyte.VehiclesMasterControl.Overrides
             OpCodes.Ldloc_S,
         };
 
-        public static IEnumerable<CodeInstruction> TranspileGetVehicleStatic(IEnumerable<CodeInstruction> instr, ILGenerator il) => TranspileGetVehicleImpl(instr, il, OpCodes.Ldarg_0);
-        public static IEnumerable<CodeInstruction> TranspileGetVehicle(IEnumerable<CodeInstruction> instr, ILGenerator il) => TranspileGetVehicleImpl(instr, il, OpCodes.Ldarg_1);
-        public static IEnumerable<CodeInstruction> TranspileGetVehicleImpl(IEnumerable<CodeInstruction> instr, ILGenerator il, OpCode argOpcode) 
+        public static IEnumerable<CodeInstruction> TranspileGetVehicleStatic(IEnumerable<CodeInstruction> instr, ILGenerator il) => TranspileGetVehicleImpl(instr, il, OpCodes.Ldarg_0, OpCodes.Ldarg_1);
+        public static IEnumerable<CodeInstruction> TranspileGetVehicle(IEnumerable<CodeInstruction> instr, ILGenerator il) => TranspileGetVehicleImpl(instr, il, OpCodes.Ldarg_1, OpCodes.Ldarg_2);
+        public static IEnumerable<CodeInstruction> TranspileGetVehicleImpl(IEnumerable<CodeInstruction> instr, ILGenerator il, OpCode argOpcode, OpCode argOpcodeBuilding)
         {
             var instrList = new List<CodeInstruction>(instr);
 
@@ -75,16 +76,18 @@ namespace Klyte.VehiclesMasterControl.Overrides
                 {
                     instrList[i].opcode = argOpcode;
                     instrList[i].operand = null;
+                    instrList.Insert(i + 1, new CodeInstruction(argOpcodeBuilding));
                     if (mi.GetParameters().Where(x => x.ParameterType == typeof(VehicleInfo.VehicleType)).Count() > 0)
                     {
-                        instrList.Insert(i + 1, new CodeInstruction(OpCodes.Call, typeof(BuildingAIOverrides).GetMethod("GetRandomVehicleInfoWithVehicle")));
+                        instrList.Insert(i + 2, new CodeInstruction(OpCodes.Call, typeof(BuildingAIOverrides).GetMethod("GetRandomVehicleInfoWithVehicle")));
                     }
                     else
                     {
-                        instrList.Insert(i + 1, new CodeInstruction(OpCodes.Call, typeof(BuildingAIOverrides).GetMethod("GetRandomVehicleInfoNoVehicle")));
+                        instrList.Insert(i + 2, new CodeInstruction(OpCodes.Call, typeof(BuildingAIOverrides).GetMethod("GetRandomVehicleInfoNoVehicle")));
                     }
-                    i += 3;
+                    i += 4;
                 }
+               ;
             }
 
             LogUtils.PrintMethodIL(instrList);

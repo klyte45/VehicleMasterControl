@@ -6,8 +6,6 @@
     using ColossalFramework.UI;
     using Klyte.Commons.Utils;
     using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
-    using Klyte.VehiclesMasterControl.Overrides;
-    using System.Linq;
     using UnityEngine;
     using Utils;
     internal abstract class VMCBuildingInfoItem<T> : ToolsModifierControl where T : VMCSysDef<T>, new()
@@ -60,7 +58,7 @@
             if (Singleton<BuildingManager>.exists && transform.parent.gameObject.GetComponent<UIComponent>().isVisible)
             {
                 GetComponent<UIComponent>().isVisible = true;
-                Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingID];
+                ref Building b = ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingID];
                 m_buildingName.text = Singleton<BuildingManager>.instance.GetBuildingName(m_buildingID, default(InstanceID));
                 byte districtID = Singleton<DistrictManager>.instance.GetDistrict(b.m_position);
                 string districtName = districtID == 0 ? Locale.Get("K45_VMC_DISTRICT_NONE") : Singleton<DistrictManager>.instance.GetDistrictName(districtID);
@@ -71,10 +69,9 @@
                 int capacity = 0;
                 int inbound = 0;
                 int outbound = 0;
-                ItemClass.Level defLevel = b.Info.m_class.m_level;
-                VMCBuildingUtils.CalculateOwnVehicles(buildingId, ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                VMCBuildingUtils.CalculateOwnVehicles(ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
 
-                int maxCount = VMCBuildingUtils.GetMaxVehiclesBuilding(buildingId, sysDef.vehicleType, sysDef.level);
+                int maxCount = Mathf.CeilToInt(VMCBuildingUtils.GetMaxVehiclesBuilding(ref b, sysDef.vehicleType, sysDef.level) * VMCBuildingUtils.GetProductionRate(ref b) / 100f);
                 m_totalVehicles.prefix = count.ToString();
                 m_totalVehicles.suffix = maxCount > 0x3FFF ? "∞" : maxCount.ToString();
                 if (sysDef.outsideConnection)
@@ -90,12 +87,12 @@
         public void SetBackgroundColor()
         {
             Color32 backgroundColor = m_BackgroundColor;
-            backgroundColor.a = (byte) ((base.component.zOrder % 2 != 0) ? 127 : 255);
+            backgroundColor.a = (byte)((base.component.zOrder % 2 != 0) ? 127 : 255);
             if (m_mouseIsOver)
             {
-                backgroundColor.r = (byte) Mathf.Min(255, backgroundColor.r * 3 >> 1);
-                backgroundColor.g = (byte) Mathf.Min(255, backgroundColor.g * 3 >> 1);
-                backgroundColor.b = (byte) Mathf.Min(255, backgroundColor.b * 3 >> 1);
+                backgroundColor.r = (byte)Mathf.Min(255, backgroundColor.r * 3 >> 1);
+                backgroundColor.g = (byte)Mathf.Min(255, backgroundColor.g * 3 >> 1);
+                backgroundColor.b = (byte)Mathf.Min(255, backgroundColor.b * 3 >> 1);
             }
             m_Background.color = backgroundColor;
         }
@@ -111,6 +108,7 @@
         private void Awake()
         {
             KlyteMonoUtils.ClearAllVisibilityEvents(GetComponent<UIPanel>());
+            GetComponent<UIPanel>().width = 830;
             base.component.eventZOrderChanged += delegate (UIComponent c, int r)
             {
                 SetBackgroundColor();
@@ -183,6 +181,7 @@
 
             m_totalVehicles = base.Find<UILabel>("LineVehicles");
             m_totalVehicles.text = "/";
+            m_totalVehicles.width = 80;
 
             m_Background = base.Find("Background");
             m_BackgroundColor = m_Background.color;
@@ -190,7 +189,10 @@
             base.component.eventMouseEnter += new MouseEventHandler(OnMouseEnter);
             base.component.eventMouseLeave += new MouseEventHandler(OnMouseLeave);
             GameObject.Destroy(base.Find<UIButton>("DeleteLine").gameObject);
-            base.Find<UIButton>("ViewLine").eventClick += delegate (UIComponent c, UIMouseEventParameter r)
+            var vl = base.Find<UIButton>("ViewLine");
+            vl.relativePosition = new Vector3(800, 5);
+            vl.size = new Vector2(26, 26);
+            vl.eventClick += delegate (UIComponent c, UIMouseEventParameter r)
             {
                 if (m_buildingID != 0)
                 {
@@ -271,10 +273,10 @@
     internal sealed class VMCBuildingInfoItemRegPln : VMCBuildingInfoItem<VMCSysDefRegPln> { }
     internal sealed class VMCBuildingInfoItemCrgTra : VMCBuildingInfoItem<VMCSysDefCrgTra> { }
     internal sealed class VMCBuildingInfoItemCrgShp : VMCBuildingInfoItem<VMCSysDefCrgShp> { }
-    //internal sealed class VMCBuildingInfoItemOutTra : VMCBuildingInfoItem<VMCSysDefOutTra> { }
-    //internal sealed class VMCBuildingInfoItemOutShp : VMCBuildingInfoItem<VMCSysDefOutShp> { }
-    //internal sealed class VMCBuildingInfoItemOutPln : VMCBuildingInfoItem<VMCSysDefOutPln> { }
-    //internal sealed class VMCBuildingInfoItemOutCar : VMCBuildingInfoItem<VMCSysDefOutCar> { }
+    internal sealed class VMCBuildingInfoItemOutTra : VMCBuildingInfoItem<VMCSysDefOutTra> { }
+    internal sealed class VMCBuildingInfoItemOutShp : VMCBuildingInfoItem<VMCSysDefOutShp> { }
+    internal sealed class VMCBuildingInfoItemOutPln : VMCBuildingInfoItem<VMCSysDefOutPln> { }
+    internal sealed class VMCBuildingInfoItemOutCar : VMCBuildingInfoItem<VMCSysDefOutCar> { }
     internal sealed class VMCBuildingInfoItemBeaCar : VMCBuildingInfoItem<VMCSysDefBeaCar> { }
     internal sealed class VMCBuildingInfoItemPstCar : VMCBuildingInfoItem<VMCSysDefPstCar> { }
     internal sealed class VMCBuildingInfoItemPstTrk : VMCBuildingInfoItem<VMCSysDefPstTrk> { }

@@ -10,7 +10,7 @@ namespace Klyte.VehiclesMasterControl.Utils
         internal static List<string> LoadBasicAssets(ref ServiceSystemDefinition definition)
         {
             var basicAssetsList = new List<string>();
-            for (uint num = 0u; num < (ulong) PrefabCollection<VehicleInfo>.PrefabCount(); num += 1u)
+            for (uint num = 0u; num < (ulong)PrefabCollection<VehicleInfo>.PrefabCount(); num += 1u)
             {
                 VehicleInfo prefab = PrefabCollection<VehicleInfo>.GetPrefab(num);
                 if (!(prefab == null) && definition.isFromSystem(prefab) && !VehicleUtils.IsTrailer(prefab))

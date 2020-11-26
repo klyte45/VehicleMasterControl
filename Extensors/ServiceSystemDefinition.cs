@@ -110,10 +110,10 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     m_sysDefinitions[CARG_TRAIN] = SingletonLite<VMCSysDefCrgTra>.instance;
                     m_sysDefinitions[CARG_SHIP] = SingletonLite<VMCSysDefCrgShp>.instance;
 
-                    //m_sysDefinitions[OUT_PLANE] = SingletonLite<VMCSysDefOutPln>.instance;
-                    //m_sysDefinitions[OUT_TRAIN] = SingletonLite<VMCSysDefOutTra>.instance;
-                    //m_sysDefinitions[OUT_SHIP] = SingletonLite<VMCSysDefOutShp>.instance;
-                    //m_sysDefinitions[OUT_ROAD] = SingletonLite<VMCSysDefOutCar>.instance;
+                    m_sysDefinitions[OUT_PLANE] = SingletonLite<VMCSysDefOutPln>.instance;
+                    m_sysDefinitions[OUT_TRAIN] = SingletonLite<VMCSysDefOutTra>.instance;
+                    m_sysDefinitions[OUT_SHIP] = SingletonLite<VMCSysDefOutShp>.instance;
+                    m_sysDefinitions[OUT_ROAD] = SingletonLite<VMCSysDefOutCar>.instance;
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
                     //{
@@ -519,7 +519,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
             {
                 return default;
             }
-            return from(info.GetService(), info.GetSubService(), info.GetClassLevel(), type);
+            return from(info.GetService(), info.GetSubService(), info.GetClassLevel(), type, info.m_buildingAI is OutsideConnectionAI);
         }
 
         public static IEnumerable<ServiceSystemDefinition> from(BuildingInfo info)
@@ -528,11 +528,11 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
             {
                 return new List<ServiceSystemDefinition>();
             }
-            return from(info.GetService(), info.GetSubService(), info.GetClassLevel());
+            return from(info.GetService(), info.GetSubService(), info.GetClassLevel(), info.m_buildingAI is OutsideConnectionAI);
         }
 
-        public static IEnumerable<ServiceSystemDefinition> from(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level) => sysDefinitions.Keys.Where(x => x.service == service && x.subService == subService && x.level == level);
-        public static ServiceSystemDefinition from(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, VehicleInfo.VehicleType type) => sysDefinitions.Keys.Where(x => x.service == service && x.subService == subService && x.level == level && x.vehicleType == type).FirstOrDefault();
+        public static IEnumerable<ServiceSystemDefinition> from(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, bool isOutsideConnection) => sysDefinitions.Keys.Where(x => x.service == service && x.subService == subService && x.level == level && x.outsideConnection == isOutsideConnection);
+        public static ServiceSystemDefinition from(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, VehicleInfo.VehicleType type, bool isOutsideConnection) => sysDefinitions.Keys.Where(x => x.service == service && x.subService == subService && x.level == level && x.vehicleType == type && x.outsideConnection == isOutsideConnection).FirstOrDefault();
 
         public static ServiceSystemDefinition from(SSD index) => m_indexMap.Where(x => x.Value == index).FirstOrDefault().Key;
 

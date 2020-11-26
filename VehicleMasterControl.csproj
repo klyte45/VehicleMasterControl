@@ -175,6 +175,7 @@
     <Compile Include="Extensors\ServiceSystemDefinition.cs" />
     <Compile Include="Extensors\VMCServiceVehicleExtension.cs" />
     <Compile Include="Overrides\BuildingAIOverrides.cs" />
+    <Compile Include="Overrides\DistrictManagerOverrides.cs" />
     <Compile Include="Overrides\VehicleAIOverrides.cs" />
     <Compile Include="VehiclesMasterControlMod.cs" />
     <Compile Include="VMCController.cs" />

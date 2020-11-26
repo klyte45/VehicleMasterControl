@@ -5,6 +5,7 @@ using Klyte.Commons.Utils;
 using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
 using Klyte.VehiclesMasterControl.UI;
 using Klyte.VehiclesMasterControl.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -23,12 +24,28 @@ namespace Klyte.VehiclesMasterControl
             KlyteMonoUtils.CreateUIElement(out UIPanel buildingInfoParent, FindObjectOfType<UIView>().transform, "VMCBuildingInfoPanel", new Vector4(0, 0, 0, 1));
 
             buildingInfoParent.gameObject.AddComponent<VMCBuildingInfoPanel>();
+            initNearLinesOnWorldInfoPanel();
+            m_districtCooldown = 10;
         }
 
         public void OpenVMCPanel() => VehiclesMasterControlMod.Instance.OpenPanelAtModTab();
 
+        public event Action eventOnDistrictChanged;
 
-        public void Awake() => initNearLinesOnWorldInfoPanel();
+        private static int m_districtCooldown;
+        public static void OnDistrictChanged() => m_districtCooldown = 10;
+
+        public void Update()
+        {
+            if (m_districtCooldown > 0)
+            {
+                m_districtCooldown--;
+                if (m_districtCooldown == 0)
+                {
+                    eventOnDistrictChanged?.Invoke();
+                }
+            }
+        }
 
         private void initNearLinesOnWorldInfoPanel()
         {
@@ -70,13 +87,13 @@ namespace Klyte.VehiclesMasterControl
                 }
                 FieldInfo prop = typeof(WorldInfoPanel).GetField("m_InstanceID", System.Reflection.BindingFlags.NonPublic
                     | System.Reflection.BindingFlags.Instance);
-                ushort buildingId = ((InstanceID) (prop.GetValue(parent.gameObject.GetComponent<WorldInfoPanel>()))).Building;
+                ushort buildingId = ((InstanceID)(prop.GetValue(parent.gameObject.GetComponent<WorldInfoPanel>()))).Building;
                 IEnumerable<ServiceSystemDefinition> ssds = ServiceSystemDefinition.from(Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingId].Info);
 
                 byte count = 0;
                 foreach (ServiceSystemDefinition ssd in ssds)
                 {
-                    int maxCount = VMCBuildingUtils.GetMaxVehiclesBuilding(buildingId, ssd.vehicleType, ssd.level);
+                    int maxCount = VMCBuildingUtils.GetMaxVehiclesBuilding(ref BuildingManager.instance.m_buildings.m_buffer[buildingId], ssd.vehicleType, ssd.level);
                     if (maxCount > 0)
                     {
                         count++;
@@ -100,7 +117,7 @@ namespace Klyte.VehiclesMasterControl
             saida.eventClick += (x, y) =>
             {
                 FieldInfo prop = typeof(WorldInfoPanel).GetField("m_InstanceID", BindingFlags.NonPublic | BindingFlags.Instance);
-                ushort buildingId = ((InstanceID) (prop.GetValue(parent.gameObject.GetComponent<WorldInfoPanel>()))).Building;
+                ushort buildingId = ((InstanceID)(prop.GetValue(parent.gameObject.GetComponent<WorldInfoPanel>()))).Building;
                 VMCBuildingInfoPanel.instance.openInfo(buildingId);
             };
             return saida;

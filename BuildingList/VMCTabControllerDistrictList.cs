@@ -67,7 +67,7 @@ namespace Klyte.VehiclesMasterControl.UI
                         return;
                     }
 
-                    extension.SetAllowOutsiders((uint) currentDistrict, x);
+                    extension.SetAllowOutsiders((uint)currentDistrict, x);
                     m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = Color.white;
                 });
                 m_districtAllowGoOutside = m_uiHelper.AddCheckboxLocale("K45_VMC_ALLOW_GO_OUTSIDE", true, (x) =>
@@ -77,21 +77,21 @@ namespace Klyte.VehiclesMasterControl.UI
                         return;
                     }
 
-                    extension.SetAllowServeOtherDistricts((uint) currentDistrict, x);
+                    extension.SetAllowServeOtherDistricts((uint)currentDistrict, x);
                     m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = Color.white;
                 });
 
-                m_resetValues = (UIButton) m_uiHelper.AddButton(Locale.Get("K45_VMC_RESET_VALUE_CITY_DEFAULT"), () =>
-                 {
-                     if (!getCurrentSelectedId(out int currentDistrict) || isLoading)
-                     {
-                         return;
-                     }
+                m_resetValues = (UIButton)m_uiHelper.AddButton(Locale.Get("K45_VMC_RESET_VALUE_CITY_DEFAULT"), () =>
+                {
+                    if (!getCurrentSelectedId(out int currentDistrict) || isLoading)
+                    {
+                        return;
+                    }
 
-                     extension.ClearServeOtherDistricts((uint) currentDistrict);
-                     extension.ClearAllowOutsiders((uint) currentDistrict);
-                     onDistrictChanged();
-                 });
+                    extension.ClearServeOtherDistricts((uint)currentDistrict);
+                    extension.ClearAllowOutsiders((uint)currentDistrict);
+                    onDistrictChanged();
+                });
 
                 m_districtAllowOutsiders.relativePosition = new Vector2(0, 30);
                 m_districtAllowGoOutside.relativePosition = new Vector2(0, 60);
@@ -99,7 +99,6 @@ namespace Klyte.VehiclesMasterControl.UI
             }
             KlyteMonoUtils.CreateElement(out m_assetSelectorWindow, mainPanel.transform);
             m_assetSelectorWindow.setTabContent(this);
-
         }
 
 
@@ -114,7 +113,7 @@ namespace Klyte.VehiclesMasterControl.UI
                 return;
             }
 
-            SingletonLite<T>.instance.GetExtensionDistrict().SetColor((uint) currentDistrict, value);
+            SingletonLite<T>.instance.GetExtensionDistrict().SetColor((uint)currentDistrict, value);
             eventOnColorDistrictChanged?.Invoke(value);
         }
         #endregion
@@ -134,14 +133,14 @@ namespace Klyte.VehiclesMasterControl.UI
                 mainPanel.isVisible = true;
                 if (m_districtColor != null)
                 {
-                    m_districtColor.selectedColor = SingletonLite<T>.instance.GetSSD().GetDistrictExtension().GetColor((uint) currentDistrict);
+                    m_districtColor.selectedColor = SingletonLite<T>.instance.GetSSD().GetDistrictExtension().GetColor((uint)currentDistrict);
                 }
                 if (m_districtAllowOutsiders != null && m_districtAllowGoOutside != null)
                 {
-                    m_districtAllowOutsiders.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowOutsiders((uint) currentDistrict) ?? VehiclesMasterControlMod.allowOutsidersAsDefault;
-                    m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowOutsiders((uint) currentDistrict) == null ? Color.yellow : Color.white;
-                    m_districtAllowGoOutside.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowServeOtherDistricts((uint) currentDistrict) ?? VehiclesMasterControlMod.allowServeOtherDistrictsAsDefault;
-                    m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowServeOtherDistricts((uint) currentDistrict) == null ? Color.yellow : Color.white;
+                    m_districtAllowOutsiders.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowOutsiders((uint)currentDistrict) ?? VehiclesMasterControlMod.allowOutsidersAsDefault;
+                    m_districtAllowOutsiders.GetComponentInChildren<UILabel>().textColor = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowOutsiders((uint)currentDistrict) == null ? Color.yellow : Color.white;
+                    m_districtAllowGoOutside.isChecked = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowServeOtherDistricts((uint)currentDistrict) ?? VehiclesMasterControlMod.allowServeOtherDistrictsAsDefault;
+                    m_districtAllowGoOutside.GetComponentInChildren<UILabel>().textColor = SingletonLite<T>.instance.GetExtensionDistrict().GetAllowServeOtherDistricts((uint)currentDistrict) == null ? Color.yellow : Color.white;
                 }
                 eventOnDistrictSelectionChanged?.Invoke(currentDistrict);
                 isLoading = false;
@@ -152,7 +151,7 @@ namespace Klyte.VehiclesMasterControl.UI
             }
         }
         #endregion
-          
+
 
         private void Update()
         {

@@ -2,7 +2,6 @@
 using ColossalFramework.UI;
 using Klyte.Commons.Utils;
 using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
-using Klyte.VehiclesMasterControl.Overrides;
 using Klyte.VehiclesMasterControl.Utils;
 using System;
 using System.Linq;
@@ -28,6 +27,7 @@ namespace Klyte.VehiclesMasterControl.UI
             mainPanel = GetComponentInChildren<UIScrollablePanel>();
             mainPanel.autoLayout = true;
             mainPanel.autoLayoutDirection = LayoutDirection.Vertical;
+            mainPanel.scrollWheelDirection = UIOrientation.Vertical;
         }
         #endregion
 
@@ -52,12 +52,12 @@ namespace Klyte.VehiclesMasterControl.UI
             {
                 GameObject temp = UITemplateManager.Get<PublicTransportLineInfo>(kLineTemplate).gameObject;
                 GameObject.Destroy(temp.GetComponent<PublicTransportLineInfo>());
-                buildingInfoItem = (VMCBuildingInfoItem<T>) temp.AddComponent(implClassBuildingLine);
+                buildingInfoItem = (VMCBuildingInfoItem<T>)temp.AddComponent(implClassBuildingLine);
                 mainPanel.AttachUIComponent(buildingInfoItem.gameObject);
             }
             else
             {
-                buildingInfoItem = (VMCBuildingInfoItem<T>) mainPanel.components[count].GetComponent(implClassBuildingLine);
+                buildingInfoItem = (VMCBuildingInfoItem<T>)mainPanel.components[count].GetComponent(implClassBuildingLine);
             }
             buildingInfoItem.buildingId = buildingID;
             buildingInfoItem.RefreshData();
@@ -75,9 +75,9 @@ namespace Klyte.VehiclesMasterControl.UI
                 LogUtils.DoLog("{0} buildingList = [{1}] (s={2})", GetType(), string.Join(",", buildingList.Select(x => x.ToString()).ToArray()), buildingList.Count);
                 foreach (ushort buildingID in buildingList)
                 {
-                    Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
-                    int maxVehicle =99;
-                    if ( maxVehicle > 0)
+                    ref Building b = ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
+                    int maxVehicle = Mathf.CeilToInt(VMCBuildingUtils.GetMaxVehiclesBuilding(ref b, ssd.vehicleType, ssd.level) * VMCBuildingUtils.GetProductionRate(ref b)/100f);
+                    if (maxVehicle > 0)
                     {
                         AddToList(buildingID, ref count);
                     }
@@ -122,10 +122,10 @@ namespace Klyte.VehiclesMasterControl.UI
     internal sealed class VMCTabControllerBuildingListRegPln : VMCTabControllerBuildingList<VMCSysDefRegPln> { }
     internal sealed class VMCTabControllerBuildingListCrgTra : VMCTabControllerBuildingList<VMCSysDefCrgTra> { }
     internal sealed class VMCTabControllerBuildingListCrgShp : VMCTabControllerBuildingList<VMCSysDefCrgShp> { }
-    //internal sealed class VMCTabControllerBuildingListOutTra : VMCTabControllerBuildingList<VMCSysDefOutTra> { }
-    //internal sealed class VMCTabControllerBuildingListOutShp : VMCTabControllerBuildingList<VMCSysDefOutShp> { }
-    //internal sealed class VMCTabControllerBuildingListOutPln : VMCTabControllerBuildingList<VMCSysDefOutPln> { }
-    //internal sealed class VMCTabControllerBuildingListOutCar : VMCTabControllerBuildingList<VMCSysDefOutCar> { }
+    internal sealed class VMCTabControllerBuildingListOutTra : VMCTabControllerBuildingList<VMCSysDefOutTra> { }
+    internal sealed class VMCTabControllerBuildingListOutShp : VMCTabControllerBuildingList<VMCSysDefOutShp> { }
+    internal sealed class VMCTabControllerBuildingListOutPln : VMCTabControllerBuildingList<VMCSysDefOutPln> { }
+    internal sealed class VMCTabControllerBuildingListOutCar : VMCTabControllerBuildingList<VMCSysDefOutCar> { }
     internal sealed class VMCTabControllerBuildingListBeaCar : VMCTabControllerBuildingList<VMCSysDefBeaCar> { }
     internal sealed class VMCTabControllerBuildingListPstCar : VMCTabControllerBuildingList<VMCSysDefPstCar> { }
     internal sealed class VMCTabControllerBuildingListPstTrk : VMCTabControllerBuildingList<VMCSysDefPstTrk> { }

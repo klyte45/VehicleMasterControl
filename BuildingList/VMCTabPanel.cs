@@ -41,7 +41,7 @@ namespace Klyte.VehiclesMasterControl.UI
         public static OnButtonClicked eventOnDistrictSelectionChanged;
 
         #region Awake
-        private void Awake()
+        protected override void AwakeActions()
         {
             controlContainer = GetComponent<UIPanel>();
             controlContainer.area = new Vector4(0, 0, 0, 0);
@@ -96,7 +96,7 @@ namespace Klyte.VehiclesMasterControl.UI
             label.padding.top = 10;
             label.padding.right = 10;
 
-            //DistrictManagerOverrides.eventOnDistrictChanged += reloadDistricts;
+            VehiclesMasterControlMod.Controller.eventOnDistrictChanged += ReloadDistricts;
 
             m_StripMain.selectedIndex = -1;
             m_StripBuilings.selectedIndex = -1;
@@ -158,11 +158,13 @@ namespace Klyte.VehiclesMasterControl.UI
         }
 
 
-        private void reloadDistricts()
+        private void ReloadDistricts()
         {
             m_cachedDistricts = DistrictUtils.GetValidDistricts();
             m_selectDistrict.items = m_cachedDistricts.Keys.OrderBy(x => x).ToArray();
             m_selectDistrict.selectedValue = m_lastSelectedItem;
+
+            eventOnDistrictSelectionChanged?.Invoke();
         }
 
         public int getCurrentSelectedDistrictId()
@@ -303,7 +305,7 @@ namespace Klyte.VehiclesMasterControl.UI
         {
             KlyteMonoUtils.CreateUIElement(out UILabel titlebar, mainPanel.transform, "VMCListPanel", new Vector4(75, 10, mainPanel.width - 150, 20));
             titlebar.autoSize = false;
-            titlebar.text = "Service Vehicles Manager v" + VehiclesMasterControlMod.Version;
+            titlebar.text = VehiclesMasterControlMod.Instance.Name ;
             titlebar.textAlignment = UIHorizontalAlignment.Center;
 
             KlyteMonoUtils.CreateUIElement(out UIButton closeButton, mainPanel.transform, "CloseButton", new Vector4(mainPanel.width - 37, 5, 32, 32));
@@ -380,11 +382,7 @@ namespace Klyte.VehiclesMasterControl.UI
 
         public void SetActiveTab(int idx) => m_StripMain.selectedIndex = idx;
 
-        private void Update()
-        {
-        }
 
-        protected override void AwakeActions() => throw new NotImplementedException();
     }
 
     public enum CategoryTab

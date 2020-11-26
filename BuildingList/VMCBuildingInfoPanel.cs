@@ -5,7 +5,6 @@ using Klyte.Commons.Extensors;
 using Klyte.Commons.UI;
 using Klyte.Commons.Utils;
 using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
-using Klyte.VehiclesMasterControl.Overrides;
 using Klyte.VehiclesMasterControl.UI.ExtraUI;
 using Klyte.VehiclesMasterControl.Utils;
 using System;
@@ -236,7 +235,7 @@ namespace Klyte.VehiclesMasterControl.UI
                 return;
             }
 
-            Building b = Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingIdSelecionado.Building];
+            ref Building b = ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[m_buildingIdSelecionado.Building];
 
             if (!(b.Info.GetAI() is BuildingAI basicAI))
             {
@@ -255,8 +254,8 @@ namespace Klyte.VehiclesMasterControl.UI
                 int capacity = 0;
                 int inbound = 0;
                 int outbound = 0;
-                VMCBuildingUtils.CalculateOwnVehicles(m_buildingIdSelecionado.Building, ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
-                int maxVehicles = 0;//(ReflectionUtils.GetPrivateField<int>(b.Info.GetAI(), maxField) * VMCBuildingUtils.GetProductionRate(ref b) / 100);
+                VMCBuildingUtils.CalculateOwnVehicles(ref b, ref count, ref cargo, ref capacity, ref inbound, ref outbound);
+                int maxVehicles = Mathf.CeilToInt(VMCBuildingUtils.GetMaxVehiclesBuilding(ref b, ssd.vehicleType, ssd.level) * VMCBuildingUtils.GetProductionRate(ref b) / 100f);
                 string maxVehiclesStr = maxVehicles > 0x3FFF ? "∞" : maxVehicles.ToString();
                 textVehicles.Add($"{count}/{maxVehiclesStr} ({Locale.Get("K45_VMC_VEHICLE_TYPE", ssd.vehicleType.ToString())})");
             }
@@ -274,16 +273,16 @@ namespace Klyte.VehiclesMasterControl.UI
             CitizenManager instance = Singleton<CitizenManager>.instance;
             while (num != 0u)
             {
-                uint nextUnit = instance.m_units.m_buffer[(int) ((UIntPtr) num)].m_nextUnit;
-                if ((ushort) (instance.m_units.m_buffer[(int) ((UIntPtr) num)].m_flags & CitizenUnit.Flags.Work) != 0)
+                uint nextUnit = instance.m_units.m_buffer[(int)((UIntPtr)num)].m_nextUnit;
+                if ((ushort)(instance.m_units.m_buffer[(int)((UIntPtr)num)].m_flags & CitizenUnit.Flags.Work) != 0)
                 {
                     for (int i = 0; i < 5; i++)
                     {
-                        uint citizen = instance.m_units.m_buffer[(int) ((UIntPtr) num)].GetCitizen(i);
-                        if (citizen != 0u && !instance.m_citizens.m_buffer[(int) ((UIntPtr) citizen)].Dead && (instance.m_citizens.m_buffer[(int) ((UIntPtr) citizen)].m_flags & Citizen.Flags.MovingIn) == Citizen.Flags.None)
+                        uint citizen = instance.m_units.m_buffer[(int)((UIntPtr)num)].GetCitizen(i);
+                        if (citizen != 0u && !instance.m_citizens.m_buffer[(int)((UIntPtr)citizen)].Dead && (instance.m_citizens.m_buffer[(int)((UIntPtr)citizen)].m_flags & Citizen.Flags.MovingIn) == Citizen.Flags.None)
                         {
                             num3++;
-                            switch (instance.m_citizens.m_buffer[(int) ((UIntPtr) citizen)].EducationLevel)
+                            switch (instance.m_citizens.m_buffer[(int)((UIntPtr)citizen)].EducationLevel)
                             {
                                 case Citizen.Education.Uneducated:
                                     unskill++;
