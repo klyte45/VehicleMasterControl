@@ -27,11 +27,10 @@ namespace Klyte.VehiclesMasterControl.UI
             mainPanel = GetComponentInChildren<UIScrollablePanel>();
             mainPanel.autoLayout = true;
             mainPanel.autoLayoutDirection = LayoutDirection.Vertical;
-            mainPanel.scrollWheelDirection = UIOrientation.Vertical;
         }
         #endregion
 
-        private void Update()
+        private void LateUpdate()
         {
             if (!mainPanel.isVisible)
             {
@@ -50,10 +49,9 @@ namespace Klyte.VehiclesMasterControl.UI
             Type implClassBuildingLine = ReflectionUtils.GetImplementationForGenericType(typeof(VMCBuildingInfoItem<>), typeof(T));
             if (count >= mainPanel.components.Count)
             {
-                GameObject temp = UITemplateManager.Get<PublicTransportLineInfo>(kLineTemplate).gameObject;
-                GameObject.Destroy(temp.GetComponent<PublicTransportLineInfo>());
-                buildingInfoItem = (VMCBuildingInfoItem<T>)temp.AddComponent(implClassBuildingLine);
-                mainPanel.AttachUIComponent(buildingInfoItem.gameObject);
+                KlyteMonoUtils.CreateUIElement(out UIPanel item, mainPanel.transform);
+                mainPanel.AttachUIComponent(item.gameObject);
+                buildingInfoItem = (VMCBuildingInfoItem<T>)item.gameObject.AddComponent(implClassBuildingLine);
             }
             else
             {
@@ -76,7 +74,7 @@ namespace Klyte.VehiclesMasterControl.UI
                 foreach (ushort buildingID in buildingList)
                 {
                     ref Building b = ref Singleton<BuildingManager>.instance.m_buildings.m_buffer[buildingID];
-                    int maxVehicle = Mathf.CeilToInt(VMCBuildingUtils.GetMaxVehiclesBuilding(ref b, ssd.vehicleType, ssd.level) * VMCBuildingUtils.GetProductionRate(ref b)/100f);
+                    int maxVehicle = Mathf.CeilToInt(VMCBuildingUtils.GetMaxVehiclesBuilding(ref b, ssd.vehicleType, ssd.level) * VMCBuildingUtils.GetProductionRate(ref b) / 100f);
                     if (maxVehicle > 0)
                     {
                         AddToList(buildingID, ref count);
@@ -129,5 +127,21 @@ namespace Klyte.VehiclesMasterControl.UI
     internal sealed class VMCTabControllerBuildingListBeaCar : VMCTabControllerBuildingList<VMCSysDefBeaCar> { }
     internal sealed class VMCTabControllerBuildingListPstCar : VMCTabControllerBuildingList<VMCSysDefPstCar> { }
     internal sealed class VMCTabControllerBuildingListPstTrk : VMCTabControllerBuildingList<VMCSysDefPstTrk> { }
+    internal sealed class VMCTabControllerBuildingListFshTrk : VMCTabControllerBuildingList<VMCSysDefFshTrk> { }
+    internal sealed class VMCTabControllerBuildingListWstTrn : VMCTabControllerBuildingList<VMCSysDefWstTrn> { }
+    internal sealed class VMCTabControllerBuildingListWstCol : VMCTabControllerBuildingList<VMCSysDefWstCol> { }
+    internal sealed class VMCTabControllerBuildingListIfmTrk : VMCTabControllerBuildingList<VMCSysDefIfmTrk> { }
+    internal sealed class VMCTabControllerBuildingListIfrTrk : VMCTabControllerBuildingList<VMCSysDefIfrTrk> { }
+    internal sealed class VMCTabControllerBuildingListIgnTrk : VMCTabControllerBuildingList<VMCSysDefIgnTrk> { }
+    internal sealed class VMCTabControllerBuildingListIolTrk : VMCTabControllerBuildingList<VMCSysDefIolTrk> { }
+    internal sealed class VMCTabControllerBuildingListIorTrk : VMCTabControllerBuildingList<VMCSysDefIorTrk> { }
+    internal sealed class VMCTabControllerBuildingListClbPln : VMCTabControllerBuildingList<VMCSysDefClbPln> { }
+    internal sealed class VMCTabControllerBuildingListIfmTrl : VMCTabControllerBuildingList<VMCSysDefIfmTrl> { }
+    internal sealed class VMCTabControllerBuildingListIndTrk : VMCTabControllerBuildingList<VMCSysDefIndTrk> { }
+    internal sealed class VMCTabControllerBuildingListCrgPln : VMCTabControllerBuildingList<VMCSysDefCrgPln> { }
+    internal sealed class VMCTabControllerBuildingListTouBal : VMCTabControllerBuildingList<VMCSysDefTouBal> { }
+    internal sealed class VMCTabControllerBuildingListAdtBcc : VMCTabControllerBuildingList<VMCSysDefAdtBcc> { }
+    internal sealed class VMCTabControllerBuildingListChdBcc : VMCTabControllerBuildingList<VMCSysDefChdBcc> { }
+
 
 }

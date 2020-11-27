@@ -26,12 +26,12 @@ namespace Klyte.VehiclesMasterControl.UI
 
         private UILabel m_directionLabel;
 
-        private UITabstrip m_StripMain;
+        //   private UITabstrip m_StripMain;
         private UITabstrip m_StripDistricts;
-        private UITabstrip m_StripBuilings;
+        //    private UITabstrip m_StripBuilings;
 
         private Dictionary<CategoryTab, UITabstrip> m_StripDistrictsStrips = new Dictionary<CategoryTab, UITabstrip>();
-        private Dictionary<CategoryTab, UITabstrip> m_StripBuilingsStrips = new Dictionary<CategoryTab, UITabstrip>();
+        //  private Dictionary<CategoryTab, UITabstrip> m_StripBuilingsStrips = new Dictionary<CategoryTab, UITabstrip>();
 
         private UIDropDown m_selectDistrict;
         private Dictionary<string, int> m_cachedDistricts;
@@ -53,32 +53,32 @@ namespace Klyte.VehiclesMasterControl.UI
             CreateTitleBar();
 
 
-            KlyteMonoUtils.CreateUIElement(out m_StripMain, mainPanel.transform, "VMCTabstrip", new Vector4(5, 40, mainPanel.width - 10, 40));
+            //KlyteMonoUtils.CreateUIElement(out m_StripMain, mainPanel.transform, "VMCTabstrip", new Vector4(5, 40, mainPanel.width - 10, 40));
 
-            KlyteMonoUtils.CreateUIElement(out UITabContainer tabContainer, mainPanel.transform, "VMCTabContainer", new Vector4(0, 80, mainPanel.width, mainPanel.height - 80));
-            m_StripMain.tabPages = tabContainer;
+            //KlyteMonoUtils.CreateUIElement(out UITabContainer tabContainer, mainPanel.transform, "VMCTabContainer", new Vector4(0, 80, mainPanel.width, mainPanel.height - 80));
+            //m_StripMain.tabPages = tabContainer;
 
-            UIButton tabPerBuilding = CreateTabTemplate();
-            tabPerBuilding.normalFgSprite = "ToolbarIconMonuments";
-            tabPerBuilding.tooltip = Locale.Get("K45_VMC_CONFIG_PER_BUILDING_TAB");
+            //UIButton tabPerBuilding = CreateTabTemplate();
+            //tabPerBuilding.normalFgSprite = "ToolbarIconMonuments";
+            //tabPerBuilding.tooltip = Locale.Get("K45_VMC_CONFIG_PER_BUILDING_TAB");
 
-            KlyteMonoUtils.CreateUIElement(out UIPanel contentContainerPerBuilding, null);
-            contentContainerPerBuilding.name = "Container";
-            contentContainerPerBuilding.area = new Vector4(0, 40, mainPanel.width, mainPanel.height - 80);
+            //KlyteMonoUtils.CreateUIElement(out UIPanel contentContainerPerBuilding, null);
+            //contentContainerPerBuilding.name = "Container";
+            //contentContainerPerBuilding.area = new Vector4(0, 40, mainPanel.width, mainPanel.height - 80);
 
-            m_StripMain.AddTab("VMCPerBuilding", tabPerBuilding.gameObject, contentContainerPerBuilding.gameObject);
-            CreateTitleRowBuilding(ref m_titleLineBuildings, contentContainerPerBuilding);
-            CreateSsdTabstrip(ref m_StripBuilings, ref m_StripBuilingsStrips, m_titleLineBuildings, contentContainerPerBuilding, true);
+            //m_StripMain.AddTab("VMCPerBuilding", tabPerBuilding.gameObject, contentContainerPerBuilding.gameObject);
+            //CreateTitleRowBuilding(ref m_titleLineBuildings, contentContainerPerBuilding);
+            //CreateSsdTabstrip(ref m_StripBuilings, ref m_StripBuilingsStrips, m_titleLineBuildings, contentContainerPerBuilding, true);
 
-            UIButton tabPerDistrict = CreateTabTemplate();
-            tabPerDistrict.normalFgSprite = "ToolbarIconDistrict";
-            tabPerDistrict.tooltip = Locale.Get("K45_VMC_CONFIG_PER_DISTRICT_TAB");
+            //UIButton tabPerDistrict = CreateTabTemplate();
+            //tabPerDistrict.normalFgSprite = "ToolbarIconDistrict";
+            //tabPerDistrict.tooltip = Locale.Get("K45_VMC_CONFIG_PER_DISTRICT_TAB");
 
             KlyteMonoUtils.CreateUIElement(out UIPanel contentContainerPerDistrict, mainPanel.transform);
             contentContainerPerDistrict.name = "Container2";
-            contentContainerPerDistrict.area = new Vector4(0, 40, mainPanel.width, mainPanel.height - 80);
+            contentContainerPerDistrict.area = new Vector4(0, 50, mainPanel.width, mainPanel.height - 50);
 
-            m_StripMain.AddTab("VMCPerDistrict", tabPerDistrict.gameObject, contentContainerPerDistrict.gameObject);
+            //m_StripMain.AddTab("VMCPerDistrict", tabPerDistrict.gameObject, contentContainerPerDistrict.gameObject);
             CreateSsdTabstrip(ref m_StripDistricts, ref m_StripDistrictsStrips, null, contentContainerPerDistrict);
 
             m_cachedDistricts = DistrictUtils.GetValidDistricts();
@@ -90,25 +90,25 @@ namespace Klyte.VehiclesMasterControl.UI
             container.autoFitChildrenVertically = true;
             container.pivot = UIPivotPoint.TopRight;
             container.anchor = UIAnchorStyle.Top | UIAnchorStyle.Right;
-            container.relativePosition = new Vector3(contentContainerPerDistrict.width - container.width - 10, -40);
+            container.relativePosition = new Vector3(contentContainerPerDistrict.width - container.width - 10, 0);
             UILabel label = container.GetComponentInChildren<UILabel>();
             label.padding.top = 10;
             label.padding.right = 10;
 
             VehiclesMasterControlMod.Controller.eventOnDistrictChanged += ReloadDistricts;
 
-            m_StripMain.selectedIndex = -1;
-            m_StripBuilings.selectedIndex = -1;
+            //   m_StripMain.selectedIndex = -1;
+            //   m_StripBuilings.selectedIndex = -1;
             m_StripDistricts.selectedIndex = -1;
 
             foreach (UITabstrip strip in m_StripDistrictsStrips.Values)
             {
                 strip.selectedIndex = -1;
             }
-            foreach (UITabstrip strip in m_StripBuilingsStrips.Values)
-            {
-                strip.selectedIndex = -1;
-            }
+            //foreach (UITabstrip strip in m_StripBuilingsStrips.Values)
+            //{
+            //    strip.selectedIndex = -1;
+            //}
 
             mainPanel.eventVisibilityChanged += (x, y) =>
             {
@@ -121,12 +121,12 @@ namespace Klyte.VehiclesMasterControl.UI
 
         internal void OpenAt(ref ServiceSystemDefinition ssd)
         {
-            m_StripMain.selectedIndex = 0;
+            //   m_StripMain.selectedIndex = 0;
             if (ssd != null)
             {
                 var catIdx = ssd.Category;
-                m_StripBuilings.selectedIndex = (int)catIdx;
-                m_StripBuilingsStrips[catIdx].selectedIndex = m_StripBuilingsStrips[catIdx].Find<UIComponent>(ssd.GetDefType().Name)?.zOrder ?? 0;
+                m_StripDistricts.selectedIndex = (int)catIdx;
+                m_StripDistrictsStrips[catIdx].selectedIndex = m_StripDistrictsStrips[catIdx].Find<UIComponent>(ssd.GetDefType().Name)?.zOrder ?? 0;
             }
             VehiclesMasterControlMod.Controller.OpenVMCPanel();
         }
@@ -213,6 +213,11 @@ namespace Klyte.VehiclesMasterControl.UI
             }
             foreach (KeyValuePair<ServiceSystemDefinition, IVMCSysDef> kv in ServiceSystemDefinition.sysDefinitions)
             {
+                if (kv.Value.GetSSD().GetDistrictExtension().GetAllBasicAssets().Count == 0)
+                {
+                    continue;
+                }
+
                 GameObject tab = Instantiate(tabTemplate.gameObject);
                 GameObject body = Instantiate(bodyContent.gameObject);
                 string name = kv.Value.GetType().Name;
@@ -261,7 +266,7 @@ namespace Klyte.VehiclesMasterControl.UI
                 {
                     if (y)
                     {
-                        m_directionLabel.isVisible = kv.Key.outsideConnection;
+                        //   m_directionLabel.isVisible = kv.Key.outsideConnection;
                     }
                 };
                 tabsCategories[catTab].isVisible = true;
@@ -332,65 +337,17 @@ namespace Klyte.VehiclesMasterControl.UI
 
         private static UIComponent CreateContentTemplate(float width, float height)
         {
+
             KlyteMonoUtils.CreateUIElement(out UIPanel contentContainer, null);
             contentContainer.name = "Container";
             contentContainer.area = new Vector4(0, 0, width, height);
-            KlyteMonoUtils.CreateUIElement(out UIScrollablePanel scrollPanel, contentContainer.transform, "ScrollPanel");
-            scrollPanel.width = contentContainer.width - 20f;
-            scrollPanel.height = contentContainer.height;
-            scrollPanel.autoLayoutDirection = LayoutDirection.Vertical;
-            scrollPanel.autoLayoutStart = LayoutStart.TopLeft;
-            scrollPanel.autoLayoutPadding = new RectOffset(0, 0, 0, 0);
-            scrollPanel.autoLayout = true;
-            scrollPanel.clipChildren = true;
-            scrollPanel.relativePosition = new Vector3(5, 0);
-
-            KlyteMonoUtils.CreateUIElement(out UIPanel trackballPanel, contentContainer.transform, "Trackball");
-            trackballPanel.width = 10f;
-            trackballPanel.height = scrollPanel.height;
-            trackballPanel.autoLayoutDirection = LayoutDirection.Horizontal;
-            trackballPanel.autoLayoutStart = LayoutStart.TopLeft;
-            trackballPanel.autoLayoutPadding = new RectOffset(0, 0, 0, 0);
-            trackballPanel.autoLayout = true;
-            trackballPanel.relativePosition = new Vector3(contentContainer.width - 15, 0);
-
-            KlyteMonoUtils.CreateUIElement(out UIScrollbar scrollBar, trackballPanel.transform, "Scrollbar");
-            scrollBar.width = 10f;
-            scrollBar.height = scrollBar.parent.height;
-            scrollBar.orientation = UIOrientation.Vertical;
-            scrollBar.pivot = UIPivotPoint.BottomLeft;
-            scrollBar.AlignTo(trackballPanel, UIAlignAnchor.TopRight);
-            scrollBar.minValue = 0f;
-            scrollBar.value = 0f;
-            scrollBar.incrementAmount = 25f;
-
-            KlyteMonoUtils.CreateUIElement(out UISlicedSprite scrollBg, scrollBar.transform, "ScrollbarBg");
-            scrollBg.relativePosition = Vector2.zero;
-            scrollBg.autoSize = true;
-            scrollBg.size = scrollBg.parent.size;
-            scrollBg.fillDirection = UIFillDirection.Vertical;
-            scrollBg.spriteName = "ScrollbarTrack";
-            scrollBar.trackObject = scrollBg;
-
-            KlyteMonoUtils.CreateUIElement(out UISlicedSprite scrollFg, scrollBg.transform, "ScrollbarFg");
-            scrollFg.relativePosition = Vector2.zero;
-            scrollFg.fillDirection = UIFillDirection.Vertical;
-            scrollFg.autoSize = true;
-            scrollFg.width = scrollFg.parent.width - 4f;
-            scrollFg.spriteName = "ScrollbarThumb";
-            scrollBar.thumbObject = scrollFg;
-            scrollPanel.verticalScrollbar = scrollBar;
-            scrollPanel.eventMouseWheel += delegate (UIComponent component, UIMouseEventParameter param)
-            {
-                scrollPanel.scrollPosition += new Vector2(0f, Mathf.Sign(param.wheelDelta) * -1f * scrollBar.incrementAmount);
-                param.Use();
-            };
+            KlyteMonoUtils.CreateScrollPanel(contentContainer, out UIScrollablePanel mcrollablePanel, out UIScrollbar sc, width - 20f, height);
             return contentContainer;
         }
         #endregion
 
 
-        public void SetActiveTab(int idx) => m_StripMain.selectedIndex = idx;
+        //     public void SetActiveTab(int idx) => m_StripMain.selectedIndex = idx;
 
 
     }

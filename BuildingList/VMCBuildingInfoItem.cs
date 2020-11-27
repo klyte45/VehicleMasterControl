@@ -4,6 +4,7 @@
     using ColossalFramework.Globalization;
     using ColossalFramework.Math;
     using ColossalFramework.UI;
+    using Klyte.Commons.Extensors;
     using Klyte.Commons.Utils;
     using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
     using UnityEngine;
@@ -11,8 +12,6 @@
     internal abstract class VMCBuildingInfoItem<T> : ToolsModifierControl where T : VMCSysDef<T>, new()
     {
         private ushort m_buildingID;
-
-        private bool m_secondary;
 
         private UILabel m_districtName;
 
@@ -24,7 +23,7 @@
 
         private UILabel m_totalVehicles;
 
-        private UIComponent m_Background;
+        private UIPanel m_background;
 
         private Color32 m_BackgroundColor;
 
@@ -36,11 +35,6 @@
             set => SetBuildingID(value);
         }
 
-        public bool secondary
-        {
-            get => m_secondary;
-            set => m_secondary = value;
-        }
         public string districtName => m_districtName.text;
 
         public string buidingName => m_buildingName.text;
@@ -49,9 +43,8 @@
 
         private void SetBuildingID(ushort id) => m_buildingID = id;
 
-        private ServiceSystemDefinition sysDef = SingletonLite<T>.instance.GetSSD();
-
-
+        private readonly ServiceSystemDefinition sysDef = SingletonLite<T>.instance.GetSSD();
+        private UIHelperExtension m_uIHelper;
 
         public void RefreshData()
         {
@@ -86,7 +79,7 @@
 
         public void SetBackgroundColor()
         {
-            Color32 backgroundColor = m_BackgroundColor;
+            Color32 backgroundColor = new Color32(49, 52, 58, 255);
             backgroundColor.a = (byte)((base.component.zOrder % 2 != 0) ? 127 : 255);
             if (m_mouseIsOver)
             {
@@ -94,7 +87,7 @@
                 backgroundColor.g = (byte)Mathf.Min(255, backgroundColor.g * 3 >> 1);
                 backgroundColor.b = (byte)Mathf.Min(255, backgroundColor.b * 3 >> 1);
             }
-            m_Background.color = backgroundColor;
+            m_background.color = backgroundColor;
         }
 
         private void LateUpdate()
@@ -107,92 +100,30 @@
 
         private void Awake()
         {
-            KlyteMonoUtils.ClearAllVisibilityEvents(GetComponent<UIPanel>());
-            GetComponent<UIPanel>().width = 830;
-            base.component.eventZOrderChanged += delegate (UIComponent c, int r)
-            {
-                SetBackgroundColor();
-            };
-            GameObject.Destroy(base.Find<UICheckBox>("LineVisible").gameObject);
-            GameObject.Destroy(base.Find<UIColorField>("LineColor").gameObject);
-            GameObject.Destroy(base.Find<UIPanel>("WarningIncomplete"));
-            GameObject.Destroy(base.Find<UIPanel>("LineModelSelectorContainer"));
+            AwakeBG();
 
-            m_buildingName = base.Find<UILabel>("LineName");
-            m_buildingName.area = new Vector4(200, 2, 198, 35);
-            m_buildingNameField = m_buildingName.Find<UITextField>("LineNameField");
-            m_buildingNameField.maxLength = 256;
-            m_buildingNameField.eventTextChanged += new PropertyChangedEventHandler<string>(OnRename);
-            m_buildingName.eventMouseEnter += delegate (UIComponent c, UIMouseEventParameter r)
+            AwakeLineName();
+
+            AwakeLabels();
+
+            AwakeLineDetail();
+
+            base.component.eventVisibilityChanged += delegate (UIComponent c, bool v)
             {
-                m_buildingName.backgroundSprite = "TextFieldPanelHovered";
-            };
-            m_buildingName.eventMouseLeave += delegate (UIComponent c, UIMouseEventParameter r)
-            {
-                m_buildingName.backgroundSprite = string.Empty;
-            };
-            m_buildingName.eventClick += delegate (UIComponent c, UIMouseEventParameter r)
-            {
-                m_buildingNameField.Show();
-                m_buildingNameField.text = m_buildingName.text;
-                m_buildingNameField.Focus();
-            };
-            m_buildingNameField.eventLeaveFocus += delegate (UIComponent c, UIFocusEventParameter r)
-            {
-                m_buildingNameField.Hide();
-                Singleton<BuildingManager>.instance.StartCoroutine(BuildingUtils.SetBuildingName(m_buildingID, m_buildingNameField.text, () =>
+                if (v)
                 {
-                    m_buildingName.text = m_buildingNameField.text;
-                }));
+                    RefreshData();
+                }
             };
-
-            GameObject.Destroy(base.Find<UICheckBox>("DayLine").gameObject);
-            GameObject.Destroy(base.Find<UICheckBox>("NightLine").gameObject);
-            GameObject.Destroy(base.Find<UICheckBox>("DayNightLine").gameObject);
-
-            UICheckBox m_DayLine = base.Find<UICheckBox>("DayLine");
-
-            GameObject.Destroy(base.Find<UICheckBox>("NightLine").gameObject);
-            GameObject.Destroy(base.Find<UICheckBox>("DayNightLine").gameObject);
-            GameObject.Destroy(m_DayLine.gameObject);
-
-            m_districtName = base.Find<UILabel>("LineStops");
-            m_districtName.size = new Vector2(175, 18);
-            m_districtName.relativePosition = new Vector3(0, 10);
-            m_districtName.pivot = UIPivotPoint.MiddleCenter;
-            m_districtName.wordWrap = true;
-            m_districtName.autoHeight = true;
-
-
-            m_directionLabel = base.Find<UILabel>("LinePassengers");
-            if (sysDef.outsideConnection)
-            {
-                m_directionLabel.size = new Vector2(200, 18);
-                m_directionLabel.relativePosition = new Vector3(600, 10);
-                m_directionLabel.wordWrap = true;
-                m_directionLabel.autoHeight = true;
-            }
-            else
-            {
-                GameObject.Destroy(m_directionLabel.gameObject);
-            }
+        }
 
 
 
-            m_totalVehicles = base.Find<UILabel>("LineVehicles");
-            m_totalVehicles.text = "/";
-            m_totalVehicles.width = 80;
-
-            m_Background = base.Find("Background");
-            m_BackgroundColor = m_Background.color;
-            m_mouseIsOver = false;
-            base.component.eventMouseEnter += new MouseEventHandler(OnMouseEnter);
-            base.component.eventMouseLeave += new MouseEventHandler(OnMouseLeave);
-            GameObject.Destroy(base.Find<UIButton>("DeleteLine").gameObject);
-            var vl = base.Find<UIButton>("ViewLine");
-            vl.relativePosition = new Vector3(800, 5);
-            vl.size = new Vector2(26, 26);
-            vl.eventClick += delegate (UIComponent c, UIMouseEventParameter r)
+        private void AwakeLineDetail()
+        {
+            KlyteMonoUtils.CreateUIElement(out UIButton view, transform, "ViewLine", new Vector4(784, 5, 28, 28));
+            KlyteMonoUtils.InitButton(view, true, "LineDetailButton");
+            view.eventClick += delegate (UIComponent c, UIMouseEventParameter r)
             {
                 if (m_buildingID != 0)
                 {
@@ -204,16 +135,95 @@
                     ToolsModifierControl.cameraController.SetTarget(instanceID, position, true);
                 }
             };
-            base.component.eventVisibilityChanged += delegate (UIComponent c, bool v)
+        }
+
+        private void AwakeLabels()
+        {
+            KlyteMonoUtils.CreateUIElement(out m_districtName, transform);
+            m_districtName.name = "districtName";
+            m_districtName.autoSize = false;
+            m_districtName.minimumSize = new Vector2(145, 18);
+            m_districtName.relativePosition = new Vector3(10, 10);
+            m_districtName.textAlignment = UIHorizontalAlignment.Center;
+
+            if (sysDef.outsideConnection)
             {
-                if (v)
+                KlyteMonoUtils.CreateUIElement(out m_directionLabel, transform);
+                m_directionLabel.autoSize = false;
+                m_directionLabel.size = new Vector2(200, 18);
+                m_directionLabel.relativePosition = new Vector3(655, 10);
+                m_directionLabel.textAlignment = UIHorizontalAlignment.Center;
+                m_directionLabel.wordWrap = true;
+                m_directionLabel.autoHeight = true;
+            }
+
+            KlyteMonoUtils.CreateUIElement(out m_totalVehicles, transform);
+            m_totalVehicles.autoSize = false;
+            m_totalVehicles.text = "/";
+            m_totalVehicles.width = 180;
+            m_totalVehicles.textAlignment = UIHorizontalAlignment.Center;
+            m_totalVehicles.relativePosition = new Vector3(500, 12);
+        }
+
+        private void AwakeLineName()
+        {
+            KlyteMonoUtils.CreateUIElement(out m_buildingName, transform, "LineName", new Vector4(200, 2, 198, 35));
+            //  m_buildingName.textColor = ForegroundColor;
+            m_buildingName.textAlignment = UIHorizontalAlignment.Center;
+            m_buildingName.verticalAlignment = UIVerticalAlignment.Middle;
+            m_buildingName.wordWrap = true;
+            KlyteMonoUtils.CreateUIElement(out m_buildingNameField, transform, "LineNameField", new Vector4(200, 10, 198, 20));
+            m_buildingNameField.maxLength = 256;
+            m_buildingNameField.isVisible = false;
+            m_buildingNameField.verticalAlignment = UIVerticalAlignment.Middle;
+            m_buildingNameField.horizontalAlignment = UIHorizontalAlignment.Center;
+            m_buildingNameField.selectionSprite = "EmptySprite";
+            m_buildingNameField.builtinKeyNavigation = true;
+            m_buildingName.eventMouseEnter += delegate (UIComponent c, UIMouseEventParameter r)
+            {
+                m_buildingName.backgroundSprite = "TextFieldPanelHovered";
+            };
+            m_buildingName.eventMouseLeave += delegate (UIComponent c, UIMouseEventParameter r)
+            {
+                m_buildingName.backgroundSprite = string.Empty;
+            };
+            m_buildingName.eventClick += delegate (UIComponent c, UIMouseEventParameter r)
+            {
+                m_buildingName.Hide();
+                m_buildingNameField.Show();
+                m_buildingNameField.text = m_buildingName.text;
+                m_buildingNameField.Focus();
+            };
+            m_buildingNameField.eventLeaveFocus += delegate (UIComponent c, UIFocusEventParameter r)
+            {
+                m_buildingNameField.Hide();
+                m_buildingName.Show();
+                Singleton<BuildingManager>.instance.StartCoroutine(BuildingUtils.SetBuildingName(m_buildingID, m_buildingNameField.text, () =>
                 {
-                    RefreshData();
-                }
+                    m_buildingName.text = m_buildingNameField.text;
+                }));
             };
         }
 
-        private void OnMouseEnter(UIComponent comp, UIMouseEventParameter param)
+
+        private void AwakeBG()
+        {
+            m_uIHelper = new UIHelperExtension(GetComponent<UIPanel>());
+            KlyteMonoUtils.CreateUIElement<UIPanel>(out m_background, transform, "BG");
+            m_mouseIsOver = false;
+            component.eventMouseEnter += new MouseEventHandler(OnMouseEnter);
+            component.eventMouseLeave += new MouseEventHandler(OnMouseLeave);
+            m_background.width = 844;
+            m_background.height = 38;
+            m_background.relativePosition = default;
+            SetBackgroundColor();
+
+            m_uIHelper.Self.width = 844;
+            m_uIHelper.Self.height = 38;
+            m_background.backgroundSprite = "InfoviewPanel";
+
+        }
+    private void OnMouseEnter(UIComponent comp, UIMouseEventParameter param)
         {
             if (!m_mouseIsOver)
             {
@@ -281,4 +291,20 @@
     internal sealed class VMCBuildingInfoItemBeaCar : VMCBuildingInfoItem<VMCSysDefBeaCar> { }
     internal sealed class VMCBuildingInfoItemPstCar : VMCBuildingInfoItem<VMCSysDefPstCar> { }
     internal sealed class VMCBuildingInfoItemPstTrk : VMCBuildingInfoItem<VMCSysDefPstTrk> { }
+    internal sealed class VMCBuildingInfoItemWstTrn : VMCBuildingInfoItem<VMCSysDefWstTrn> { }
+    internal sealed class VMCBuildingInfoItemIfmTrl : VMCBuildingInfoItem<VMCSysDefIfmTrl> { }
+    internal sealed class VMCBuildingInfoItemFshTrk : VMCBuildingInfoItem<VMCSysDefFshTrk> { }
+    internal sealed class VMCBuildingInfoItemIndTrk : VMCBuildingInfoItem<VMCSysDefIndTrk> { }
+    internal sealed class VMCBuildingInfoItemIfmTrk : VMCBuildingInfoItem<VMCSysDefIfmTrk> { }
+    internal sealed class VMCBuildingInfoItemIfrTrk : VMCBuildingInfoItem<VMCSysDefIfrTrk> { }
+    internal sealed class VMCBuildingInfoItemIgnTrk : VMCBuildingInfoItem<VMCSysDefIgnTrk> { }
+    internal sealed class VMCBuildingInfoItemIolTrk : VMCBuildingInfoItem<VMCSysDefIolTrk> { }
+    internal sealed class VMCBuildingInfoItemIorTrk : VMCBuildingInfoItem<VMCSysDefIorTrk> { }
+    internal sealed class VMCBuildingInfoItemClbPln : VMCBuildingInfoItem<VMCSysDefClbPln> { }
+    internal sealed class VMCBuildingInfoItemCrgPln : VMCBuildingInfoItem<VMCSysDefCrgPln> { }
+    internal sealed class VMCBuildingInfoItemWstCol : VMCBuildingInfoItem<VMCSysDefWstCol> { }
+    internal sealed class VMCBuildingInfoItemAdtBcc : VMCBuildingInfoItem<VMCSysDefAdtBcc> { }
+    internal sealed class VMCBuildingInfoItemChdBcc : VMCBuildingInfoItem<VMCSysDefChdBcc> { }
+    internal sealed class VMCBuildingInfoItemTouBal : VMCBuildingInfoItem<VMCSysDefTouBal> { }
+
 }
