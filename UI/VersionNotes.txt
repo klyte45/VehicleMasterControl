@@ -1,1 +1,13 @@
-﻿VMCv1
+﻿Welcome to the <color yellow>Vehicle Master Control Mod</color>!
+
+This mod is a lighter and fixed version of the old Service Vehicle Manager. Some features were removed due malfunction, but the mod control abrangency has been increased.
+
+Using VMC you can control the spawn of models by district (being the default selection applied to whole city) and also change the color basing on source building's district.
+
+May in the future some feature can come back to this mod, like the model selection by building.
+
+Of course, this mod have support to latest updates of CS, including <sprite SunsetHarborIcon> vehicles.
+
+Use this along with <color #4444FF>Transport Lines Manager</color> and <color red>Vehicle Wealthizer</color> to have full control over the game vehicles, once this mod changes all but the city public transport and citizen vehicles (except bikes, that VW can't handle).
+
+Enjoy!
