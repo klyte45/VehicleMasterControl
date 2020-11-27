@@ -188,5 +188,26 @@ namespace Klyte.VehiclesMasterControl.UI
     internal sealed class VMCTabControllerDistrictListPstCar : VMCTabControllerDistrictList<VMCSysDefPstCar> { }
     internal sealed class VMCTabControllerDistrictListPstTrk : VMCTabControllerDistrictList<VMCSysDefPstTrk> { }
     internal sealed class VMCTabControllerDistrictListOutBus : VMCTabControllerDistrictList<VMCSysDefOutBus> { }
+    internal sealed class VMCTabControllerDistrictListTouBal : VMCTabControllerDistrictList<VMCSysDefTouBal> { }
+    internal sealed class VMCTabControllerDistrictListClbPln : VMCTabControllerDistrictList<VMCSysDefClbPln> { }
+    internal sealed class VMCTabControllerDistrictListAdtBcc : VMCTabControllerDistrictList<VMCSysDefAdtBcc> { }
+    internal sealed class VMCTabControllerDistrictListChdBcc : VMCTabControllerDistrictList<VMCSysDefChdBcc> { }
+    internal sealed class VMCTabControllerDistrictListCrgPln : VMCTabControllerDistrictList<VMCSysDefCrgPln> { }
+    internal sealed class VMCTabControllerDistrictListFshTrk : VMCTabControllerDistrictList<VMCSysDefFshTrk> { }
+    internal sealed class VMCTabControllerDistrictListFshGen : VMCTabControllerDistrictList<VMCSysDefFshGen> { }
+    internal sealed class VMCTabControllerDistrictListFshSlm : VMCTabControllerDistrictList<VMCSysDefFshSlm> { }
+    internal sealed class VMCTabControllerDistrictListFshShf : VMCTabControllerDistrictList<VMCSysDefFshShf> { }
+    internal sealed class VMCTabControllerDistrictListFshTna : VMCTabControllerDistrictList<VMCSysDefFshTna> { }
+    internal sealed class VMCTabControllerDistrictListFshAch : VMCTabControllerDistrictList<VMCSysDefFshAch> { }
+    internal sealed class VMCTabControllerDistrictListIfmTrl : VMCTabControllerDistrictList<VMCSysDefIfmTrl> { }
+    internal sealed class VMCTabControllerDistrictListIndTrk : VMCTabControllerDistrictList<VMCSysDefIndTrk> { }
+    internal sealed class VMCTabControllerDistrictListIndVan : VMCTabControllerDistrictList<VMCSysDefIndVan> { }
+    internal sealed class VMCTabControllerDistrictListIfmTrk : VMCTabControllerDistrictList<VMCSysDefIfmTrk> { }
+    internal sealed class VMCTabControllerDistrictListIfrTrk : VMCTabControllerDistrictList<VMCSysDefIfrTrk> { }
+    internal sealed class VMCTabControllerDistrictListIgnTrk : VMCTabControllerDistrictList<VMCSysDefIgnTrk> { }
+    internal sealed class VMCTabControllerDistrictListIolTrk : VMCTabControllerDistrictList<VMCSysDefIolTrk> { }
+    internal sealed class VMCTabControllerDistrictListIorTrk : VMCTabControllerDistrictList<VMCSysDefIorTrk> { }
+    internal sealed class VMCTabControllerDistrictListWstCol : VMCTabControllerDistrictList<VMCSysDefWstCol> { }
+    internal sealed class VMCTabControllerDistrictListWstTrn : VMCTabControllerDistrictList<VMCSysDefWstTrn> { }
 
 }

@@ -12,38 +12,65 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
 {
     public class ServiceSystemDefinition
     {
+        public static readonly ServiceSystemDefinition BEAU_CAR = new ServiceSystemDefinition(ItemClass.Service.Beautification, ItemClass.SubService.BeautificationParks, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
+
         public static readonly ServiceSystemDefinition DISASTER_CAR = new ServiceSystemDefinition(ItemClass.Service.Disaster, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition DISASTER_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.Disaster, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level2);
 
         public static readonly ServiceSystemDefinition FIRE_CAR = new ServiceSystemDefinition(ItemClass.Service.FireDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition FIRE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.FireDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level1);
 
+        public static readonly ServiceSystemDefinition FISH_TRK = new ServiceSystemDefinition(ItemClass.Service.Fishing, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition FISH_GEN = new ServiceSystemDefinition(ItemClass.Service.Fishing, ItemClass.SubService.None, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition FISH_SLM = new ServiceSystemDefinition(ItemClass.Service.Fishing, ItemClass.SubService.None, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level2);
+        public static readonly ServiceSystemDefinition FISH_SHF = new ServiceSystemDefinition(ItemClass.Service.Fishing, ItemClass.SubService.None, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level3);
+        public static readonly ServiceSystemDefinition FISH_TNA = new ServiceSystemDefinition(ItemClass.Service.Fishing, ItemClass.SubService.None, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level4);
+        public static readonly ServiceSystemDefinition FISH_ACH = new ServiceSystemDefinition(ItemClass.Service.Fishing, ItemClass.SubService.None, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level5);
+
         public static readonly ServiceSystemDefinition GARBAGE_CAR = new ServiceSystemDefinition(ItemClass.Service.Garbage, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition GARBBIO_CAR = new ServiceSystemDefinition(ItemClass.Service.Garbage, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
-
+        public static readonly ServiceSystemDefinition WASTCOL_CAR = new ServiceSystemDefinition(ItemClass.Service.Garbage, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level3);
+        public static readonly ServiceSystemDefinition WASTTRN_CAR = new ServiceSystemDefinition(ItemClass.Service.Garbage, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
 
         public static readonly ServiceSystemDefinition HEALTHCARE_CAR = new ServiceSystemDefinition(ItemClass.Service.HealthCare, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition HEALTHCARE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.HealthCare, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
         public static readonly ServiceSystemDefinition DEATHCARE_CAR = new ServiceSystemDefinition(ItemClass.Service.HealthCare, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
+
+        public static readonly ServiceSystemDefinition INDFARM_TRK = new ServiceSystemDefinition(ItemClass.Service.Industrial, ItemClass.SubService.IndustrialFarming, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition INDFRST_TRK = new ServiceSystemDefinition(ItemClass.Service.Industrial, ItemClass.SubService.IndustrialForestry, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition INDGNRC_TRK = new ServiceSystemDefinition(ItemClass.Service.Industrial, ItemClass.SubService.IndustrialGeneric, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition INDOIL_TRK = new ServiceSystemDefinition(ItemClass.Service.Industrial, ItemClass.SubService.IndustrialOil, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition INDORE_TRK = new ServiceSystemDefinition(ItemClass.Service.Industrial, ItemClass.SubService.IndustrialOre, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
+
+        public static readonly ServiceSystemDefinition AIR_CLB = new ServiceSystemDefinition(ItemClass.Service.Monument, ItemClass.SubService.None, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level5);
+
+        public static readonly ServiceSystemDefinition INDCMN_VAN = new ServiceSystemDefinition(ItemClass.Service.PlayerIndustry, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition INDCMN_TRK = new ServiceSystemDefinition(ItemClass.Service.PlayerIndustry, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
+        public static readonly ServiceSystemDefinition INDCMN_FRM_TRAILER = new ServiceSystemDefinition(ItemClass.Service.PlayerIndustry, ItemClass.SubService.PlayerIndustryFarming, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
 
         public static readonly ServiceSystemDefinition POLICE_CAR = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition POLICE_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level3);
         public static readonly ServiceSystemDefinition PRISION_CAR = new ServiceSystemDefinition(ItemClass.Service.PoliceDepartment, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
 
         public static readonly ServiceSystemDefinition SNOW_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level4);
-        public static readonly ServiceSystemDefinition ROAD_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
 
-        public static readonly ServiceSystemDefinition WATER_CAR = new ServiceSystemDefinition(ItemClass.Service.Water, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition TAXI_CAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTaxi, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition CABLECAR_CABLECAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportCableCar, VehicleInfo.VehicleType.CableCar, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition REG_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition REG_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1);
         public static readonly ServiceSystemDefinition REG_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition CARG_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level4);
         public static readonly ServiceSystemDefinition CARG_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level4);
         public static readonly ServiceSystemDefinition CARG_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level4);
-        public static readonly ServiceSystemDefinition BEAU_CAR = new ServiceSystemDefinition(ItemClass.Service.Beautification, ItemClass.SubService.BeautificationParks, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition POST_CAR = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPost, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition POST_TRK = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPost, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5);
+        public static readonly ServiceSystemDefinition BALLOON = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTours, VehicleInfo.VehicleType.Balloon, ItemClass.Level.Level4);
+
+        public static readonly ServiceSystemDefinition BICYCLE_CHILD = new ServiceSystemDefinition(ItemClass.Service.Residential, ItemClass.SubService.ResidentialHigh, VehicleInfo.VehicleType.Bicycle, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition BICYCLE_ADULT = new ServiceSystemDefinition(ItemClass.Service.Residential, ItemClass.SubService.ResidentialHigh, VehicleInfo.VehicleType.Bicycle, ItemClass.Level.Level2);
+
+        public static readonly ServiceSystemDefinition WATER_CAR = new ServiceSystemDefinition(ItemClass.Service.Water, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level1);
+        public static readonly ServiceSystemDefinition ROAD_CAR = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
 
         public static readonly ServiceSystemDefinition OUT_TRAIN = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportTrain, VehicleInfo.VehicleType.Train, ItemClass.Level.Level1, true);
         public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
@@ -95,6 +122,28 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
             [OUT_SHIP] = SSD.OUT_SHIP,
             [OUT_ROAD] = SSD.OUT_ROAD,
             [OUT_BUS] = SSD.OUT_BUS,
+
+            [BICYCLE_ADULT] = SSD.BICYCLE_ADULT,
+            [BICYCLE_CHILD] = SSD.BICYCLE_CHILD,
+            [CARG_PLANE] = SSD.CARG_PLANE,
+            [FISH_TRK] = SSD.FISH_TRK,
+            [FISH_GEN] = SSD.FISH_GEN,
+            [FISH_SLM] = SSD.FISH_SLM,
+            [FISH_SHF] = SSD.FISH_SHF,
+            [FISH_TNA] = SSD.FISH_TNA,
+            [FISH_ACH] = SSD.FISH_ACH,
+            [INDCMN_FRM_TRAILER] = SSD.INDCMN_FRM_TRAILER,
+            [INDCMN_TRK] = SSD.INDCMN_TRK,
+            [INDCMN_VAN] = SSD.INDCMN_VAN,
+            [INDFARM_TRK] = SSD.INDFARM_TRK,
+            [INDFRST_TRK] = SSD.INDFRST_TRK,
+            [INDGNRC_TRK] = SSD.INDGNRC_TRK,
+            [INDOIL_TRK] = SSD.INDOIL_TRK,
+            [INDORE_TRK] = SSD.INDORE_TRK,
+            [WASTCOL_CAR] = SSD.WASTCOL_CAR,
+            [WASTTRN_CAR] = SSD.WASTTRN_CAR,
+            [AIR_CLB] = SSD.AIR_CLB,
+            [BALLOON] = SSD.BALLOON
         };
 
         public static Dictionary<ServiceSystemDefinition, IVMCSysDef> sysDefinitions
@@ -160,6 +209,27 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     VehiclesMasterControlMod.Controller.m_sysDefinitions[POST_CAR] = SingletonLite<VMCSysDefPstCar>.instance;
                     VehiclesMasterControlMod.Controller.m_sysDefinitions[POST_TRK] = SingletonLite<VMCSysDefPstTrk>.instance;
                     //}
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[BALLOON] = SingletonLite<VMCSysDefTouBal>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[AIR_CLB] = SingletonLite<VMCSysDefClbPln>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[BICYCLE_ADULT] = SingletonLite<VMCSysDefAdtBcc>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[BICYCLE_CHILD] = SingletonLite<VMCSysDefChdBcc>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[CARG_PLANE] = SingletonLite<VMCSysDefCrgPln>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_TRK] = SingletonLite<VMCSysDefFshTrk>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_GEN] = SingletonLite<VMCSysDefFshGen>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_SLM] = SingletonLite<VMCSysDefFshSlm>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_SHF] = SingletonLite<VMCSysDefFshShf>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_TNA] = SingletonLite<VMCSysDefFshTna>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_ACH] = SingletonLite<VMCSysDefFshAch>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDCMN_FRM_TRAILER] = SingletonLite<VMCSysDefIfmTrl>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDCMN_TRK] = SingletonLite<VMCSysDefIndTrk>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDCMN_VAN] = SingletonLite<VMCSysDefIndVan>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDFARM_TRK] = SingletonLite<VMCSysDefIfmTrk>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDFRST_TRK] = SingletonLite<VMCSysDefIfrTrk>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDGNRC_TRK] = SingletonLite<VMCSysDefIgnTrk>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDOIL_TRK] = SingletonLite<VMCSysDefIolTrk>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDORE_TRK] = SingletonLite<VMCSysDefIorTrk>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[WASTCOL_CAR] = SingletonLite<VMCSysDefWstCol>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[WASTTRN_CAR] = SingletonLite<VMCSysDefWstTrn>.instance;
                 }
                 return VehiclesMasterControlMod.Controller.m_sysDefinitions;
             }
@@ -229,13 +299,32 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     {
                         ItemClass.Service.Garbage => level switch
                         {
-                            ItemClass.Level.Level2 => "BioIndicator",
+                            ItemClass.Level.Level3 => "CargoIndicator",
+                            ItemClass.Level.Level4 => "OutsideIndicator",
                             _ => ""
                         },
-                        ItemClass.Service.PublicTransport => level switch
+                        ItemClass.Service.PublicTransport => vehicleType switch
                         {
+                            VehicleInfo.VehicleType.Balloon => "",
+                            _ => level switch
+                            {
+                                ItemClass.Level.Level4 => "CargoIndicator",
+                                ItemClass.Level.Level5 => "CargoIndicator",
+                                _ => ""
+                            }
+                        },
+                        ItemClass.Service.Fishing => level switch
+                        {
+                            ItemClass.Level.Level2 => "AIndicator",
+                            ItemClass.Level.Level3 => "BioIndicator",
                             ItemClass.Level.Level4 => "CargoIndicator",
-                            ItemClass.Level.Level5 => "CargoIndicator",
+                            ItemClass.Level.Level5 => "DIndicator",
+                            _ => ""
+                        },
+                        ItemClass.Service.Residential => level switch
+                        {
+                            ItemClass.Level.Level2 => "AIndicator",
+                            ItemClass.Level.Level1 => "CargoIndicator",
                             _ => ""
                         },
                         _ => ""
@@ -248,6 +337,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         {
             return service switch
             {
+                ItemClass.Service.Beautification => "ToolbarIconBeautification",
                 ItemClass.Service.Disaster => vehicleType switch
                 {
                     VehicleInfo.VehicleType.Car => "SubBarFireDepartmentDisaster",
@@ -260,10 +350,18 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     VehicleInfo.VehicleType.Helicopter => "InfoIconFireSafety",
                     _ => "UNKNOWN FIRE",
                 },
+                ItemClass.Service.Fishing => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Car => "IconServiceVehicle",
+                    VehicleInfo.VehicleType.Ship => "IconCargoShip",
+                    _ => "UNKNOWN FISH",
+                },
                 ItemClass.Service.Garbage => level switch
                 {
                     ItemClass.Level.Level1 => "InfoIconGarbage",
-                    ItemClass.Level.Level2 => "InfoIconGarbage",
+                    ItemClass.Level.Level2 => "IconPolicyRecycling",
+                    ItemClass.Level.Level3 => "InfoIconGarbage",
+                    ItemClass.Level.Level4 => "InfoIconGarbage",
                     _ => "UNKNOWN GARBAGE",
                 },
                 ItemClass.Service.HealthCare => level switch
@@ -272,6 +370,34 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     ItemClass.Level.Level2 => "ToolbarIconHealthcareHovered",
                     ItemClass.Level.Level3 => "ToolbarIconHealthcare",
                     _ => "UNKNOWN HEALTHCARE",
+                },
+                ItemClass.Service.Industrial => subService switch
+                {
+                    ItemClass.SubService.IndustrialFarming => "IconPolicyFarming",
+                    ItemClass.SubService.IndustrialForestry => "IconPolicyForest",
+                    ItemClass.SubService.IndustrialGeneric => "ToolbarIconGarbage",
+                    ItemClass.SubService.IndustrialOil => "IconPolicyOil",
+                    ItemClass.SubService.IndustrialOre => "IconPolicyOre",
+
+                    _ => "UNKNOWN INDUSTRIAL",
+                },
+                ItemClass.Service.Monument => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Rocket => "ParkLevelStar",
+                    VehicleInfo.VehicleType.Plane => "SubBarPublicTransportPlane",
+                    _ => "UNKNOWN MONUMENT",
+                },
+                ItemClass.Service.PlayerIndustry => subService switch
+                {
+                    ItemClass.SubService.PlayerIndustryFarming => "SubBarIndustryFarming",
+                    ItemClass.SubService.None => level switch
+                    {
+                        ItemClass.Level.Level1 => "SubBarDistrictSpecializationIndustrial",
+                        ItemClass.Level.Level2 => "resourceIconLuxuryProducts",
+                        _ => "UNKNOWN PLAYERINDUSTRY NONE LEVEL",
+                    },
+
+                    _ => "UNKNOWN PLAYERINDUSTRY",
                 },
                 ItemClass.Service.PoliceDepartment => level switch
                 {
@@ -296,9 +422,13 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     ItemClass.Level.Level1 => "ToolbarIconWaterAndSewage",
                     _ => "UNKNOWN WATER",
                 },
-                ItemClass.Service.Beautification => "ToolbarIconBeautification",
                 ItemClass.Service.PublicTransport => subService switch
                 {
+                    ItemClass.SubService.PublicTransportTours => vehicleType switch
+                    {
+                        VehicleInfo.VehicleType.Balloon => "IconBalloonTours",
+                        _ => "UNKNOWN PUBLICTRANSPORTTOURS"
+                    },
                     ItemClass.SubService.PublicTransportBus => "SubBarPublicTransportBus",
                     ItemClass.SubService.PublicTransportPost => level switch
                     {
@@ -341,6 +471,11 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     },
                     _ => $"UNKNOWN PUBLIC TRANSPORT {subService}",
                 },
+                ItemClass.Service.Residential => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Bicycle => "IconPolicyEncourageBiking",
+                    _ => "UNKNOWN RESIDENTIAL"
+                },
                 _ => $"??? {service}",
             };
 
@@ -355,6 +490,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         {
             return service switch
             {
+                ItemClass.Service.Beautification => Locale.Get("VEHICLE_TITLE", "Park Staff Vehicle 01"),
                 ItemClass.Service.Disaster => vehicleType switch
                 {
                     VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Disaster Response Vehicle"),
@@ -367,10 +503,26 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     VehicleInfo.VehicleType.Helicopter => Locale.Get("VEHICLE_TITLE", "Fire Helicopter"),
                     _ => "UNKNOWN FIRE",
                 },
+                ItemClass.Service.Fishing => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Fish Truck 01"),
+                    VehicleInfo.VehicleType.Ship => level switch
+                    {
+                        ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 01"),
+                        ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 02"),
+                        ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 03"),
+                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 04"),
+                        ItemClass.Level.Level5 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 05"),
+                        _ => "UNKNOWN FISH BOAT"
+                    },
+                    _ => "UNKNOWN FISH",
+                },
                 ItemClass.Service.Garbage => level switch
                 {
                     ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Garbage Truck"),
                     ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Biofuel Garbage Truck 01"),
+                    ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Waste Collection Truck"),
+                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Waste Transfer Truck"),
                     _ => "UNKNOWN GARBAGE",
                 },
                 ItemClass.Service.HealthCare => level switch
@@ -379,6 +531,32 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Hearse"),
                     ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Medical Helicopter"),
                     _ => "UNKNOWN HEALTHCARE",
+                },
+                ItemClass.Service.Industrial => subService switch
+                {
+                    ItemClass.SubService.IndustrialFarming => Locale.Get("VEHICLE_TITLE", "Farm Truck 01"),
+                    ItemClass.SubService.IndustrialForestry => Locale.Get("VEHICLE_TITLE", "Forestry Truck"),
+                    ItemClass.SubService.IndustrialGeneric => Locale.Get("VEHICLE_TITLE", "Lorry"),
+                    ItemClass.SubService.IndustrialOil => Locale.Get("VEHICLE_TITLE", "Oil Truck"),
+                    ItemClass.SubService.IndustrialOre => Locale.Get("VEHICLE_TITLE", "Ore Truck"),
+                    _ => "UNKNOWN INDUSTRIAL",
+                },
+                ItemClass.Service.Monument => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Plane => Locale.Get("VEHICLE_TITLE", "Aviation Club Plane 01"),
+                    _ => "UNKNOWN MONUMENT",
+                },
+                ItemClass.Service.PlayerIndustry => subService switch
+                {
+                    ItemClass.SubService.PlayerIndustryFarming => Locale.Get("VEHICLE_TITLE", "Truck Animal"),
+                    ItemClass.SubService.None => level switch
+                    {
+                        ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Delivery Van 01"),
+                        ItemClass.Level.Level2 => Locale.Get("WAREHOUSEPANEL_RESOURCE", "LuxuryProducts"),
+                        _ => "UNKNOWN PLAYERINDUSTRY NONE LEVEL",
+                    },
+
+                    _ => "UNKNOWN PLAYERINDUSTRY",
                 },
                 ItemClass.Service.PoliceDepartment => level switch
                 {
@@ -398,14 +576,13 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     },
                     _ => "UNKNOWN ROAD",
                 },
-                ItemClass.Service.Water => level switch
-                {
-                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Water Pumping Truck"),
-                    _ => "UNKNOWN WATER",
-                },
-                ItemClass.Service.Beautification => Locale.Get("VEHICLE_TITLE", "Park Staff Vehicle 01"),
                 ItemClass.Service.PublicTransport => subService switch
                 {
+                    ItemClass.SubService.PublicTransportTours => vehicleType switch
+                    {
+                        VehicleInfo.VehicleType.Balloon => Locale.Get("VEHICLE_TITLE", "Hot Air Balloon 01"),
+                        _ => "UNKNOWN PUBLICTRANSPORTTOURS"
+                    },
                     ItemClass.SubService.PublicTransportPost => level switch
                     {
                         ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Post Vehicle 01"),
@@ -443,15 +620,29 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                             true => Locale.Get("AREA_YES_SHIPCONNECTION"),
                             false => Locale.Get("VEHICLE_TITLE", "Aircraft Passenger"),
                         },
-                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Aircraft Cargo"),
+                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Cargo Airplane 01"),
                         _ => $"UNKNOWN AIRCRAFT {level}",
                     },
                     _ => $"UNKNOWN PUBLIC TRANSPORT {subService}",
                 },
+                ItemClass.Service.Residential => vehicleType switch
+                {
+                    VehicleInfo.VehicleType.Bicycle => level switch
+                    {
+                        ItemClass.Level.Level1 => $"{Locale.Get("VEHICLE_TITLE", "Bicycle Child")} ({Locale.Get("ZONEDBUILDING_CHILDREN")})",
+                        ItemClass.Level.Level2 => $"{Locale.Get("VEHICLE_TITLE", "Bicycle")} ({Locale.Get("ZONEDBUILDING_ADULTS")})",
+                        _ => "UNK BICYCLE LVL RESIDENTIAL"
+                    },
+                    _ => "UNKNOWN RESIDENTIAL"
+                },
+                ItemClass.Service.Water => level switch
+                {
+                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Water Pumping Truck"),
+                    _ => "UNKNOWN WATER",
+                },
                 _ => $"??? {service}",
             };
         }
-
         private static CategoryTab SetCategory(ItemClass.Service service, bool outsideConnection)
         {
             if (outsideConnection)
@@ -477,6 +668,18 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
             else if (service == ItemClass.Service.Fishing)
             {
                 return CategoryTab.Fish;
+            }
+            else if (service == ItemClass.Service.Garbage)
+            {
+                return CategoryTab.Garbage;
+            }
+            else if (service == ItemClass.Service.Industrial || service == ItemClass.Service.PlayerIndustry)
+            {
+                return CategoryTab.Industry;
+            }
+            else if (service == ItemClass.Service.Residential)
+            {
+                return CategoryTab.Residential;
             }
             else
             {
@@ -644,6 +847,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         REG_SHIP,
         CARG_SHIP,
         CARG_TRAIN,
+        CARG_PLANE,
         BEAU_CAR,
         POST_CAR,
         POST_TRK,
@@ -654,6 +858,34 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         OUT_SHIP,
         OUT_ROAD,
         OUT_BUS,
+
+        BICYCLE_ADULT,
+        BICYCLE_CHILD,
+        FISH_TRK,
+        FISH_GEN,
+        FISH_SLM,
+        FISH_SHF,
+        FISH_TNA,
+        FISH_ACH,
+        INDCMN_FRM_TRAILER,
+        INDCMN_TRK,
+        INDCMN_VAN,
+        INDFARM_TRK,
+        INDFRST_TRK,
+        INDGNRC_TRK,
+        INDOIL_TRK,
+        INDORE_TRK,
+        WASTCOL_CAR,
+        WASTTRN_CAR,
+        AIR_CLB,
+        BALLOON
+
+
+
+
+
+
+
     }
     public interface IVMCSysDef
     {
@@ -697,4 +929,26 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
     public sealed class VMCSysDefBeaCar : VMCSysDef<VMCSysDefBeaCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.BEAU_CAR; }
     public sealed class VMCSysDefPstCar : VMCSysDef<VMCSysDefPstCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_CAR; }
     public sealed class VMCSysDefPstTrk : VMCSysDef<VMCSysDefPstTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_TRK; }
+    public sealed class VMCSysDefTouBal : VMCSysDef<VMCSysDefTouBal> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.BALLOON; }
+    public sealed class VMCSysDefClbPln : VMCSysDef<VMCSysDefClbPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.AIR_CLB; }
+    public sealed class VMCSysDefAdtBcc : VMCSysDef<VMCSysDefAdtBcc> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.BICYCLE_ADULT; }
+    public sealed class VMCSysDefChdBcc : VMCSysDef<VMCSysDefChdBcc> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.BICYCLE_CHILD; }
+    public sealed class VMCSysDefCrgPln : VMCSysDef<VMCSysDefCrgPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.CARG_PLANE; }
+    public sealed class VMCSysDefFshTrk : VMCSysDef<VMCSysDefFshTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FISH_TRK; }
+    public sealed class VMCSysDefFshGen : VMCSysDef<VMCSysDefFshGen> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FISH_GEN; }
+    public sealed class VMCSysDefFshSlm : VMCSysDef<VMCSysDefFshSlm> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FISH_SLM; }
+    public sealed class VMCSysDefFshShf : VMCSysDef<VMCSysDefFshShf> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FISH_SHF; }
+    public sealed class VMCSysDefFshTna : VMCSysDef<VMCSysDefFshTna> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FISH_TNA; }
+    public sealed class VMCSysDefFshAch : VMCSysDef<VMCSysDefFshAch> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.FISH_ACH; }
+    public sealed class VMCSysDefIfmTrl : VMCSysDef<VMCSysDefIfmTrl> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.INDCMN_FRM_TRAILER; }
+    public sealed class VMCSysDefIndTrk : VMCSysDef<VMCSysDefIndTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.INDCMN_TRK; }
+    public sealed class VMCSysDefIndVan : VMCSysDef<VMCSysDefIndVan> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.INDCMN_VAN; }
+    public sealed class VMCSysDefIfmTrk : VMCSysDef<VMCSysDefIfmTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.INDFARM_TRK; }
+    public sealed class VMCSysDefIfrTrk : VMCSysDef<VMCSysDefIfrTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.INDFRST_TRK; }
+    public sealed class VMCSysDefIgnTrk : VMCSysDef<VMCSysDefIgnTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.INDGNRC_TRK; }
+    public sealed class VMCSysDefIolTrk : VMCSysDef<VMCSysDefIolTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.INDOIL_TRK; }
+    public sealed class VMCSysDefIorTrk : VMCSysDef<VMCSysDefIorTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.INDORE_TRK; }
+    public sealed class VMCSysDefWstCol : VMCSysDef<VMCSysDefWstCol> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.WASTCOL_CAR; }
+    public sealed class VMCSysDefWstTrn : VMCSysDef<VMCSysDefWstTrn> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.WASTTRN_CAR; }
+
 }

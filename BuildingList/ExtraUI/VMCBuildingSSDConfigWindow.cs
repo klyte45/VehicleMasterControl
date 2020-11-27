@@ -351,4 +351,25 @@ namespace Klyte.VehiclesMasterControl.UI.ExtraUI
     internal sealed class VMCBuildingSSDConfigWindowBeaCar : VMCBuildingSSDConfigWindow<VMCSysDefBeaCar> { }
     internal sealed class VMCBuildingSSDConfigWindowPstCar : VMCBuildingSSDConfigWindow<VMCSysDefPstCar> { }
     internal sealed class VMCBuildingSSDConfigWindowPstTrk : VMCBuildingSSDConfigWindow<VMCSysDefPstTrk> { }
+    internal sealed class VMCBuildingSSDConfigWindowTouBal : VMCBuildingSSDConfigWindow<VMCSysDefTouBal> { }
+    internal sealed class VMCBuildingSSDConfigWindowClbPln : VMCBuildingSSDConfigWindow<VMCSysDefClbPln> { }
+    internal sealed class VMCBuildingSSDConfigWindowAdtBcc : VMCBuildingSSDConfigWindow<VMCSysDefAdtBcc> { }
+    internal sealed class VMCBuildingSSDConfigWindowChdBcc : VMCBuildingSSDConfigWindow<VMCSysDefChdBcc> { }
+    internal sealed class VMCBuildingSSDConfigWindowCrgPln : VMCBuildingSSDConfigWindow<VMCSysDefCrgPln> { }
+    internal sealed class VMCBuildingSSDConfigWindowFshTrk : VMCBuildingSSDConfigWindow<VMCSysDefFshTrk> { }
+    internal sealed class VMCBuildingSSDConfigWindowFshGen : VMCBuildingSSDConfigWindow<VMCSysDefFshGen> { }
+    internal sealed class VMCBuildingSSDConfigWindowFshSlm : VMCBuildingSSDConfigWindow<VMCSysDefFshSlm> { }
+    internal sealed class VMCBuildingSSDConfigWindowFshShf : VMCBuildingSSDConfigWindow<VMCSysDefFshShf> { }
+    internal sealed class VMCBuildingSSDConfigWindowFshTna : VMCBuildingSSDConfigWindow<VMCSysDefFshTna> { }
+    internal sealed class VMCBuildingSSDConfigWindowFshAch : VMCBuildingSSDConfigWindow<VMCSysDefFshAch> { }
+    internal sealed class VMCBuildingSSDConfigWindowIfmTrl : VMCBuildingSSDConfigWindow<VMCSysDefIfmTrl> { }
+    internal sealed class VMCBuildingSSDConfigWindowIndTrk : VMCBuildingSSDConfigWindow<VMCSysDefIndTrk> { }
+    internal sealed class VMCBuildingSSDConfigWindowIndVan : VMCBuildingSSDConfigWindow<VMCSysDefIndVan> { }
+    internal sealed class VMCBuildingSSDConfigWindowIfmTrk : VMCBuildingSSDConfigWindow<VMCSysDefIfmTrk> { }
+    internal sealed class VMCBuildingSSDConfigWindowIfrTrk : VMCBuildingSSDConfigWindow<VMCSysDefIfrTrk> { }
+    internal sealed class VMCBuildingSSDConfigWindowIgnTrk : VMCBuildingSSDConfigWindow<VMCSysDefIgnTrk> { }
+    internal sealed class VMCBuildingSSDConfigWindowIolTrk : VMCBuildingSSDConfigWindow<VMCSysDefIolTrk> { }
+    internal sealed class VMCBuildingSSDConfigWindowIorTrk : VMCBuildingSSDConfigWindow<VMCSysDefIorTrk> { }
+    internal sealed class VMCBuildingSSDConfigWindowWstCol : VMCBuildingSSDConfigWindow<VMCSysDefWstCol> { }
+    internal sealed class VMCBuildingSSDConfigWindowWstTrn : VMCBuildingSSDConfigWindow<VMCSysDefWstTrn> { }
 }

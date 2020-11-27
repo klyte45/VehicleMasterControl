@@ -403,7 +403,10 @@ namespace Klyte.VehiclesMasterControl.UI
         SecurityVehicles,
         HealthcareVehicles,
         Fish,
-        OtherServices
+        Garbage,
+        Industry,
+        Residential,
+        OtherServices,
     }
 
     public static class CategoryTabExtension
@@ -425,7 +428,13 @@ namespace Klyte.VehiclesMasterControl.UI
                 case CategoryTab.OtherServices:
                     return Locale.Get("ROUTECHECKBOX6");
                 case CategoryTab.Fish:
-                    return Locale.Get("ASSETIMPORTER_CATEGORY","Fishing");
+                    return Locale.Get("MAIN_CATEGORY", "IndustryFishing");
+                case CategoryTab.Garbage:
+                    return Locale.Get("MAIN_TOOL", "Garbage");
+                case CategoryTab.Industry:
+                    return Locale.Get("TUTORIAL_ADVISER_TITLE", "InfoViewIndustry");
+                case CategoryTab.Residential:
+                    return Locale.Get("STATS_16");
                 default:
                     throw new Exception($"Not supported: {tab}");
             }
@@ -449,6 +458,12 @@ namespace Klyte.VehiclesMasterControl.UI
                     return "ToolbarIconHelp";
                 case CategoryTab.Fish:
                     return "InfoIconFishing";
+                case CategoryTab.Garbage:
+                    return "InfoIconGarbage";
+                case CategoryTab.Industry:
+                    return "ToolbarIconGarbage";
+                case CategoryTab.Residential:
+                    return "SubBarDistrictSpecializationResidential";
                 default:
                     throw new Exception($"Not supported: {tab}");
             }

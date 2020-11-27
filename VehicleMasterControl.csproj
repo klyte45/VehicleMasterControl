@@ -307,6 +307,8 @@
     <EmbeddedResource Include="UI\VersionNotes.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI\Images\%25K45_VMC_AIndicator.png" />
+    <EmbeddedResource Include="UI\Images\%25K45_VMC_DIndicator.png" />
     <EmbeddedResource Include="UI\Images\%25K45_VMCIcon.png" />
     <EmbeddedResource Include="UI\Images\%25K45_VMC_BioIndicator.png" />
     <EmbeddedResource Include="UI\Images\%25K45_VMC_CargoIndicator.png" />
