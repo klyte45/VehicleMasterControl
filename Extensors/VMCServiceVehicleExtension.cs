@@ -1,11 +1,8 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Globalization;
-using ColossalFramework.Threading;
 using Klyte.Commons.Interfaces;
 using Klyte.Commons.Utils;
 using Klyte.VehiclesMasterControl.Utils;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
@@ -107,7 +104,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         [XmlIgnore]
         private Color m_cachedColor;
         [XmlAttribute("color")]
-        public string PropColorStr { get => m_cachedColor == default ? null : ColorExtensions.ToRGB(Color); set => m_cachedColor = value.IsNullOrWhiteSpace() ? default : (Color) ColorExtensions.FromRGB(value); }
+        public string PropColorStr { get => m_cachedColor == default ? null : ColorExtensions.ToRGB(Color); set => m_cachedColor = value.IsNullOrWhiteSpace() ? default : (Color)ColorExtensions.FromRGB(value); }
     }
 
     [XmlRoot("BuildingInstanceConfig")]
@@ -123,7 +120,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         [XmlIgnore]
         private Color m_cachedColor;
         [XmlAttribute("color")]
-        public string PropColorStr { get => m_cachedColor == default ? null : ColorExtensions.ToRGB(Color); set => m_cachedColor = value.IsNullOrWhiteSpace() ? default : (Color) ColorExtensions.FromRGB(value); }
+        public string PropColorStr { get => m_cachedColor == default ? null : ColorExtensions.ToRGB(Color); set => m_cachedColor = value.IsNullOrWhiteSpace() ? default : (Color)ColorExtensions.FromRGB(value); }
     }
 
     public interface IVMCIgnorableDistrictExtensionValue : ISafeGettable<IVMCIgnorableDistrictStorage>
@@ -201,20 +198,27 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         }
         public static void UseDefaultAssets<T>(this T it, uint idx) where T : IAssetSelectorExtension => it.GetAssetList(idx).Clear();
 
-        private static List<string> GetEffectiveAssetList(uint buildingId, ref ServiceSystemDefinition ssd)
+        internal static List<string> GetEffectiveAssetList(uint buildingId, ref ServiceSystemDefinition ssd)
         {
             IVMCBuildingExtension buildingExtension = ssd.GetBuildingExtension();
-
-            List<string> assetList = buildingExtension.GetSelectedBasicAssets(buildingId);
-            if (assetList.Count == 0)
+            List<string> assetList = ssd.GetBuildingExtension().GetSelectedBasicAssets(buildingId);
+            if (assetList == null || assetList.Count == 0)
             {
-                IVMCDistrictExtension districtExtension = ssd.GetDistrictExtension();
-                assetList = districtExtension.GetSelectedBasicAssets(buildingId);
+                var district = BuildingUtils.GetBuildingDistrict(buildingId);
+                assetList = ssd.GetDistrictExtension().GetSelectedBasicAssets(BuildingUtils.GetBuildingDistrict(buildingId));
+                if (district != 0 && (assetList == null || assetList.Count == 0))
+                {
+                    assetList = ssd.GetDistrictExtension().GetSelectedBasicAssets(0);
+                }
             }
             return assetList;
         }
 
-        public static bool IsModelCompatible(uint buildingId, VehicleInfo vehicleInfo, ref ServiceSystemDefinition ssd) => GetEffectiveAssetList(buildingId, ref ssd).Contains(vehicleInfo.name);
+        public static bool IsModelCompatible(uint buildingId, VehicleInfo vehicleInfo, ref ServiceSystemDefinition ssd)
+        {
+            var effList = GetEffectiveAssetList(buildingId, ref ssd);
+            return !ssd.GetBuildingExtension().GetAllBasicAssets().ContainsKey(vehicleInfo.name) || effList.Count == 0 || effList.Contains(vehicleInfo.name);
+        }
         #endregion
 
         #region Color
@@ -340,42 +344,6 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
 
         //public void CleanAllowGoOutside(uint district) => SafeCleanProperty(district | DISTRICT_FLAG, BuildingConfig.DISTRICT_ALLOW_GO_OTHERS);
         //#endregion
-    }
-
-
-    public sealed class VMCTransportExtensionUtils
-    {
-
-        public static void RemoveAllUnwantedVehicles() => new EnumerableActionThread(new Func<ThreadBase, IEnumerator>(VMCTransportExtensionUtils.RemoveAllUnwantedVehicles));
-        public static IEnumerator RemoveAllUnwantedVehicles(ThreadBase t)
-        {
-            ushort num = 0;
-            while (num < Singleton<VehicleManager>.instance.m_vehicles.m_size)
-            {
-                Vehicle vehicle = Singleton<VehicleManager>.instance.m_vehicles.m_buffer[num];
-                VehicleInfo vehicleInfo = vehicle.Info;
-                if (vehicleInfo != null && !VehicleUtils.IsTrailer(vehicleInfo) && vehicle.m_transportLine == 0 && vehicle.m_sourceBuilding > 0)
-                {
-                    BuildingInfo buildingInfo = Singleton<BuildingManager>.instance.m_buildings.m_buffer[vehicle.m_sourceBuilding].Info;
-                    var buildingSsd = ServiceSystemDefinition.from(buildingInfo, vehicleInfo.m_vehicleType);
-                    if (buildingSsd != null)
-                    {
-                        if (!ExtensionStaticExtensionMethods.IsModelCompatible(vehicle.m_sourceBuilding, vehicleInfo, ref buildingSsd))
-                        {
-                            Singleton<VehicleManager>.instance.ReleaseVehicle(num);
-                        }
-                    }
-
-                }
-                if (num % 256 == 255)
-                {
-                    yield return num;
-                }
-                num++;
-            }
-            yield break;
-        }
-
     }
 
     public interface IAssetSelectorExtension : ISafeGettable<IAssetSelectorStorage>

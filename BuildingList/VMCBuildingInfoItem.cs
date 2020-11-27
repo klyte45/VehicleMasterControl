@@ -277,6 +277,7 @@
     internal sealed class VMCBuildingInfoItemOutShp : VMCBuildingInfoItem<VMCSysDefOutShp> { }
     internal sealed class VMCBuildingInfoItemOutPln : VMCBuildingInfoItem<VMCSysDefOutPln> { }
     internal sealed class VMCBuildingInfoItemOutCar : VMCBuildingInfoItem<VMCSysDefOutCar> { }
+    internal sealed class VMCBuildingInfoItemOutBus : VMCBuildingInfoItem<VMCSysDefOutBus> { }
     internal sealed class VMCBuildingInfoItemBeaCar : VMCBuildingInfoItem<VMCSysDefBeaCar> { }
     internal sealed class VMCBuildingInfoItemPstCar : VMCBuildingInfoItem<VMCSysDefPstCar> { }
     internal sealed class VMCBuildingInfoItemPstTrk : VMCBuildingInfoItem<VMCSysDefPstTrk> { }

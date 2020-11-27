@@ -187,5 +187,6 @@ namespace Klyte.VehiclesMasterControl.UI
     internal sealed class VMCTabControllerDistrictListBeaCar : VMCTabControllerDistrictList<VMCSysDefBeaCar> { }
     internal sealed class VMCTabControllerDistrictListPstCar : VMCTabControllerDistrictList<VMCSysDefPstCar> { }
     internal sealed class VMCTabControllerDistrictListPstTrk : VMCTabControllerDistrictList<VMCSysDefPstTrk> { }
+    internal sealed class VMCTabControllerDistrictListOutBus : VMCTabControllerDistrictList<VMCSysDefOutBus> { }
 
 }

@@ -347,6 +347,7 @@ namespace Klyte.VehiclesMasterControl.UI.ExtraUI
     internal sealed class VMCBuildingSSDConfigWindowOutShp : VMCBuildingSSDConfigWindow<VMCSysDefOutShp> { }
     internal sealed class VMCBuildingSSDConfigWindowOutPln : VMCBuildingSSDConfigWindow<VMCSysDefOutPln> { }
     internal sealed class VMCBuildingSSDConfigWindowOutCar : VMCBuildingSSDConfigWindow<VMCSysDefOutCar> { }
+    internal sealed class VMCBuildingSSDConfigWindowOutBus : VMCBuildingSSDConfigWindow<VMCSysDefOutBus> { }
     internal sealed class VMCBuildingSSDConfigWindowBeaCar : VMCBuildingSSDConfigWindow<VMCSysDefBeaCar> { }
     internal sealed class VMCBuildingSSDConfigWindowPstCar : VMCBuildingSSDConfigWindow<VMCSysDefPstCar> { }
     internal sealed class VMCBuildingSSDConfigWindowPstTrk : VMCBuildingSSDConfigWindow<VMCSysDefPstTrk> { }

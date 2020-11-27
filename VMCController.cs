@@ -19,6 +19,7 @@ namespace Klyte.VehiclesMasterControl
         public static readonly string FOLDER_NAME = "VehiclesMasterControl";
         public static readonly string FOLDER_PATH = FileUtils.BASE_FOLDER_PATH + FOLDER_NAME;
 
+        internal readonly Dictionary<ServiceSystemDefinition, IVMCSysDef> m_sysDefinitions = new Dictionary<ServiceSystemDefinition, IVMCSysDef>();
         protected override void StartActions()
         {
             KlyteMonoUtils.CreateUIElement(out UIPanel buildingInfoParent, FindObjectOfType<UIView>().transform, "VMCBuildingInfoPanel", new Vector4(0, 0, 0, 1));

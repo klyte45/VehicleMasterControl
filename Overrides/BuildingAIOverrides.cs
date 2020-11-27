@@ -20,7 +20,7 @@ namespace Klyte.VehiclesMasterControl.Overrides
             var ssds = ServiceSystemDefinition.from(service, subService, level, building.Info.m_buildingAI is OutsideConnectionAI).FirstOrDefault();
             if (ssds != default)
             {
-                var vehicleInfo = ssds.GetAModel(buildingId);
+                var vehicleInfo = ssds.GetAModel(ref randomizer, buildingId);
                 if (vehicleInfo != default)
                 {
                     return vehicleInfo;
@@ -35,7 +35,7 @@ namespace Klyte.VehiclesMasterControl.Overrides
             var ssds = ServiceSystemDefinition.from(service, subService, level, vehicleType, building.Info.m_buildingAI is OutsideConnectionAI);
             if (ssds != default)
             {
-                var vehicleInfo = ssds.GetAModel(buildingId);
+                var vehicleInfo = ssds.GetAModel(ref randomizer, buildingId);
                 if (vehicleInfo != default)
                 {
                     return vehicleInfo;

@@ -5,7 +5,6 @@ using Klyte.Commons.Extensors;
 using Klyte.Commons.Interfaces;
 using Klyte.Commons.Utils;
 using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
-using Klyte.VehiclesMasterControl.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,6 +162,10 @@ namespace Klyte.VehiclesMasterControl.UI
             m_cachedDistricts = DistrictUtils.GetValidDistricts();
             m_selectDistrict.items = m_cachedDistricts.Keys.OrderBy(x => x).ToArray();
             m_selectDistrict.selectedValue = m_lastSelectedItem;
+            if (m_selectDistrict.selectedIndex < 0)
+            {
+                m_selectDistrict.selectedIndex = 0;
+            }
 
             eventOnDistrictSelectionChanged?.Invoke();
         }
@@ -228,8 +231,15 @@ namespace Klyte.VehiclesMasterControl.UI
                 Type targetType;
                 if (buildings)
                 {
-                    targetType = ReflectionUtils.GetImplementationForGenericType(typeof(VMCTabControllerBuildingList<>), kv.Value.GetType());
-                    components = new Type[] { targetType };
+                    try
+                    {
+                        targetType = ReflectionUtils.GetImplementationForGenericType(typeof(VMCTabControllerBuildingList<>), kv.Value.GetType());
+                        components = new Type[] { targetType };
+                    }
+                    catch
+                    {
+                        continue;
+                    }
                 }
                 else
                 {
@@ -305,7 +315,7 @@ namespace Klyte.VehiclesMasterControl.UI
         {
             KlyteMonoUtils.CreateUIElement(out UILabel titlebar, mainPanel.transform, "VMCListPanel", new Vector4(75, 10, mainPanel.width - 150, 20));
             titlebar.autoSize = false;
-            titlebar.text = VehiclesMasterControlMod.Instance.Name ;
+            titlebar.text = VehiclesMasterControlMod.Instance.Name;
             titlebar.textAlignment = UIHorizontalAlignment.Center;
 
             KlyteMonoUtils.CreateUIElement(out UIButton closeButton, mainPanel.transform, "CloseButton", new Vector4(mainPanel.width - 37, 5, 32, 32));
@@ -392,6 +402,7 @@ namespace Klyte.VehiclesMasterControl.UI
         EmergencyVehicles,
         SecurityVehicles,
         HealthcareVehicles,
+        Fish,
         OtherServices
     }
 
@@ -413,6 +424,8 @@ namespace Klyte.VehiclesMasterControl.UI
                     return Locale.Get("ASSETIMPORTER_CATEGORY", "Healthcare");
                 case CategoryTab.OtherServices:
                     return Locale.Get("ROUTECHECKBOX6");
+                case CategoryTab.Fish:
+                    return Locale.Get("ASSETIMPORTER_CATEGORY","Fishing");
                 default:
                     throw new Exception($"Not supported: {tab}");
             }
@@ -434,6 +447,8 @@ namespace Klyte.VehiclesMasterControl.UI
                     return "ToolbarIconHealthcare";
                 case CategoryTab.OtherServices:
                     return "ToolbarIconHelp";
+                case CategoryTab.Fish:
+                    return "InfoIconFishing";
                 default:
                     throw new Exception($"Not supported: {tab}");
             }

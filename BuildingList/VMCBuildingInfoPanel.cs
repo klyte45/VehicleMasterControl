@@ -307,8 +307,15 @@ namespace Klyte.VehiclesMasterControl.UI
                     break;
                 }
             }
-
-            workerChart.SetValues(new int[] { unskill, oneSchool, twoSchool, threeSchool }, new int[] { ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount0"), ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount1"), ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount2"), ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount3") });
+            if (basicAI is OutsideConnectionAI)
+            {
+                workerChart.component.isVisible = false;
+            }
+            else
+            {
+                workerChart.component.isVisible = true;
+                workerChart.SetValues(new int[] { unskill, oneSchool, twoSchool, threeSchool }, new int[] { ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount0"), ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount1"), ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount2"), ReflectionUtils.GetPrivateField<int>(basicAI, "m_workPlaceCount3") });
+            }
         }
 
 
@@ -326,7 +333,7 @@ namespace Klyte.VehiclesMasterControl.UI
             m_buildingIdSelecionado = default;
             m_ignoreDistrict.isChecked = ext.GetIgnoreDistrict(buildingID);
             m_buildingIdSelecionado.Building = buildingID;
-            buildingNameField.text = Singleton<BuildingManager>.instance.GetBuildingName(buildingID, default(InstanceID));
+            buildingNameField.text = Singleton<BuildingManager>.instance.GetBuildingName(buildingID, default);
 
 
 

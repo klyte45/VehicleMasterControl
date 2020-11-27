@@ -1,5 +1,6 @@
 ﻿using ColossalFramework;
 using ColossalFramework.Globalization;
+using ColossalFramework.Math;
 using Klyte.Commons.Utils;
 using Klyte.VehiclesMasterControl.UI;
 using System;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
 {
-    public struct ServiceSystemDefinition
+    public class ServiceSystemDefinition
     {
         public static readonly ServiceSystemDefinition DISASTER_CAR = new ServiceSystemDefinition(ItemClass.Service.Disaster, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level2);
         public static readonly ServiceSystemDefinition DISASTER_HELICOPTER = new ServiceSystemDefinition(ItemClass.Service.Disaster, ItemClass.SubService.None, VehicleInfo.VehicleType.Helicopter, ItemClass.Level.Level2);
@@ -48,6 +49,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         public static readonly ServiceSystemDefinition OUT_PLANE = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportPlane, VehicleInfo.VehicleType.Plane, ItemClass.Level.Level1, true);
         public static readonly ServiceSystemDefinition OUT_SHIP = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportShip, VehicleInfo.VehicleType.Ship, ItemClass.Level.Level1, true);
         public static readonly ServiceSystemDefinition OUT_ROAD = new ServiceSystemDefinition(ItemClass.Service.Road, ItemClass.SubService.None, VehicleInfo.VehicleType.Car, ItemClass.Level.Level5, true);
+        public static readonly ServiceSystemDefinition OUT_BUS = new ServiceSystemDefinition(ItemClass.Service.PublicTransport, ItemClass.SubService.PublicTransportBus, VehicleInfo.VehicleType.Car, ItemClass.Level.Level3, true);
 
         public bool AllowRestrictions { get; private set; }
 
@@ -92,72 +94,74 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
             [OUT_PLANE] = SSD.OUT_PLANE,
             [OUT_SHIP] = SSD.OUT_SHIP,
             [OUT_ROAD] = SSD.OUT_ROAD,
+            [OUT_BUS] = SSD.OUT_BUS,
         };
 
         public static Dictionary<ServiceSystemDefinition, IVMCSysDef> sysDefinitions
         {
             get {
-                if (m_sysDefinitions.Count == 0)
+                if (VehiclesMasterControlMod.Controller.m_sysDefinitions.Count == 0)
                 {
-                    m_sysDefinitions[GARBAGE_CAR] = SingletonLite<VMCSysDefGarCar>.instance;
-                    m_sysDefinitions[DEATHCARE_CAR] = SingletonLite<VMCSysDefDcrCar>.instance;
-                    m_sysDefinitions[REG_PLANE] = SingletonLite<VMCSysDefRegPln>.instance;
-                    m_sysDefinitions[REG_TRAIN] = SingletonLite<VMCSysDefRegTra>.instance;
-                    m_sysDefinitions[REG_SHIP] = SingletonLite<VMCSysDefRegShp>.instance;
-                    m_sysDefinitions[FIRE_CAR] = SingletonLite<VMCSysDefFirCar>.instance;
-                    m_sysDefinitions[HEALTHCARE_CAR] = SingletonLite<VMCSysDefHcrCar>.instance;
-                    m_sysDefinitions[POLICE_CAR] = SingletonLite<VMCSysDefPolCar>.instance;
-                    m_sysDefinitions[CARG_TRAIN] = SingletonLite<VMCSysDefCrgTra>.instance;
-                    m_sysDefinitions[CARG_SHIP] = SingletonLite<VMCSysDefCrgShp>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[GARBAGE_CAR] = SingletonLite<VMCSysDefGarCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[DEATHCARE_CAR] = SingletonLite<VMCSysDefDcrCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[REG_PLANE] = SingletonLite<VMCSysDefRegPln>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[REG_TRAIN] = SingletonLite<VMCSysDefRegTra>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[REG_SHIP] = SingletonLite<VMCSysDefRegShp>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FIRE_CAR] = SingletonLite<VMCSysDefFirCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[HEALTHCARE_CAR] = SingletonLite<VMCSysDefHcrCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[POLICE_CAR] = SingletonLite<VMCSysDefPolCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[CARG_TRAIN] = SingletonLite<VMCSysDefCrgTra>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[CARG_SHIP] = SingletonLite<VMCSysDefCrgShp>.instance;
 
-                    m_sysDefinitions[OUT_PLANE] = SingletonLite<VMCSysDefOutPln>.instance;
-                    m_sysDefinitions[OUT_TRAIN] = SingletonLite<VMCSysDefOutTra>.instance;
-                    m_sysDefinitions[OUT_SHIP] = SingletonLite<VMCSysDefOutShp>.instance;
-                    m_sysDefinitions[OUT_ROAD] = SingletonLite<VMCSysDefOutCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_PLANE] = SingletonLite<VMCSysDefOutPln>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_TRAIN] = SingletonLite<VMCSysDefOutTra>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_SHIP] = SingletonLite<VMCSysDefOutShp>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_ROAD] = SingletonLite<VMCSysDefOutCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_BUS] = SingletonLite<VMCSysDefOutBus>.instance;
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
                     //{
-                    m_sysDefinitions[PRISION_CAR] = SingletonLite<VMCSysDefPriCar>.instance;
-                    m_sysDefinitions[TAXI_CAR] = SingletonLite<VMCSysDefTaxCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[PRISION_CAR] = SingletonLite<VMCSysDefPriCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[TAXI_CAR] = SingletonLite<VMCSysDefTaxCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
                     //{
-                    m_sysDefinitions[ROAD_CAR] = SingletonLite<VMCSysDefRoaCar>.instance;
-                    m_sysDefinitions[SNOW_CAR] = SingletonLite<VMCSysDefSnwCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[ROAD_CAR] = SingletonLite<VMCSysDefRoaCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[SNOW_CAR] = SingletonLite<VMCSysDefSnwCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
                     //{
-                    m_sysDefinitions[WATER_CAR] = SingletonLite<VMCSysDefWatCar>.instance;
-                    m_sysDefinitions[DISASTER_CAR] = SingletonLite<VMCSysDefDisCar>.instance;
-                    m_sysDefinitions[DISASTER_HELICOPTER] = SingletonLite<VMCSysDefDisHel>.instance;
-                    m_sysDefinitions[FIRE_HELICOPTER] = SingletonLite<VMCSysDefFirHel>.instance;
-                    m_sysDefinitions[HEALTHCARE_HELICOPTER] = SingletonLite<VMCSysDefHcrHel>.instance;
-                    m_sysDefinitions[POLICE_HELICOPTER] = SingletonLite<VMCSysDefPolHel>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[WATER_CAR] = SingletonLite<VMCSysDefWatCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[DISASTER_CAR] = SingletonLite<VMCSysDefDisCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[DISASTER_HELICOPTER] = SingletonLite<VMCSysDefDisHel>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FIRE_HELICOPTER] = SingletonLite<VMCSysDefFirHel>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[HEALTHCARE_HELICOPTER] = SingletonLite<VMCSysDefHcrHel>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[POLICE_HELICOPTER] = SingletonLite<VMCSysDefPolHel>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
                     //{
-                    m_sysDefinitions[CABLECAR_CABLECAR] = SingletonLite<VMCSysDefCcrCcr>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[CABLECAR_CABLECAR] = SingletonLite<VMCSysDefCcrCcr>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
                     //{
-                    m_sysDefinitions[GARBBIO_CAR] = SingletonLite<VMCSysDefGbcCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[GARBBIO_CAR] = SingletonLite<VMCSysDefGbcCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
                     //{
-                    m_sysDefinitions[BEAU_CAR] = SingletonLite<VMCSysDefBeaCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[BEAU_CAR] = SingletonLite<VMCSysDefBeaCar>.instance;
                     //}
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Industry))
                     //{
-                    m_sysDefinitions[POST_CAR] = SingletonLite<VMCSysDefPstCar>.instance;
-                    m_sysDefinitions[POST_TRK] = SingletonLite<VMCSysDefPstTrk>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[POST_CAR] = SingletonLite<VMCSysDefPstCar>.instance;
+                    VehiclesMasterControlMod.Controller.m_sysDefinitions[POST_TRK] = SingletonLite<VMCSysDefPstTrk>.instance;
                     //}
                 }
-                return m_sysDefinitions;
+                return VehiclesMasterControlMod.Controller.m_sysDefinitions;
             }
         }
 
@@ -168,7 +172,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         public string FgIconServiceSystem { get; }
         public string IconServiceSystem { get; }
 
-        private static readonly Dictionary<ServiceSystemDefinition, IVMCSysDef> m_sysDefinitions = new Dictionary<ServiceSystemDefinition, IVMCSysDef>();
+
 
         public ItemClass.Service service
         {
@@ -295,6 +299,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                 ItemClass.Service.Beautification => "ToolbarIconBeautification",
                 ItemClass.Service.PublicTransport => subService switch
                 {
+                    ItemClass.SubService.PublicTransportBus => "SubBarPublicTransportBus",
                     ItemClass.SubService.PublicTransportPost => level switch
                     {
                         ItemClass.Level.Level2 => "InfoIconPost",
@@ -409,6 +414,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     },
                     ItemClass.SubService.PublicTransportTaxi => Locale.Get("VEHICLE_TITLE", "Taxi"),
                     ItemClass.SubService.PublicTransportCableCar => Locale.Get("VEHICLE_TITLE", "Cable Car"),
+                    ItemClass.SubService.PublicTransportBus => Locale.Get("VEHICLE_TITLE", "Intercity Bus"),
                     ItemClass.SubService.PublicTransportTrain => level switch
                     {
                         ItemClass.Level.Level1 => outsideConnection switch
@@ -467,6 +473,10 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
             else if (service == ItemClass.Service.PublicTransport)
             {
                 return CategoryTab.PublicTransport;
+            }
+            else if (service == ItemClass.Service.Fishing)
+            {
+                return CategoryTab.Fish;
             }
             else
             {
@@ -550,17 +560,15 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         }
 
 
-        public VehicleInfo GetAModel(ushort buildingId)
+        public VehicleInfo GetAModel(ref Randomizer rand, ushort buildingId)
         {
             VehicleInfo info = null;
-            List<string> assetList = GetBuildingExtension().GetSelectedBasicAssets(buildingId);
-            if (assetList == null || assetList.Count == 0)
-            {
-                assetList = GetDistrictExtension().GetSelectedBasicAssets(BuildingUtils.GetBuildingDistrict(buildingId));
-            }
+            var ssd = this;
+            var assetList = ExtensionStaticExtensionMethods.GetEffectiveAssetList(buildingId, ref ssd);
+            //LogUtils.DoLog($"assetList.Count = {assetList.Count} | buildingId= {buildingId} | GetBuildingExtension() {GetBuildingExtension()} | GetDistrictExtension() {GetDistrictExtension()} ");
             while (info == null && assetList != null && assetList.Count > 0)
             {
-                info = VehicleUtils.GetRandomModel(assetList, out string modelName);
+                info = VehicleUtils.GetRandomModel(ref rand, assetList, out string modelName);
                 if (info == null)
                 {
                     GetBuildingExtension().RemoveAsset(buildingId, modelName);
@@ -575,7 +583,12 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
             Color color = GetBuildingExtension().GetColor(buildingId);
             if (color == default)
             {
-                color = GetDistrictExtension().GetColor(BuildingUtils.GetBuildingDistrict(buildingId));
+                var districtId = BuildingUtils.GetBuildingDistrict(buildingId);
+                color = GetDistrictExtension().GetColor(districtId);
+                if (color == default && districtId != 0)
+                {
+                    color = GetDistrictExtension().GetColor(0);
+                }
             }
             return color;
         }
@@ -640,6 +653,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         OUT_PLANE,
         OUT_SHIP,
         OUT_ROAD,
+        OUT_BUS,
     }
     public interface IVMCSysDef
     {
@@ -679,6 +693,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
     public sealed class VMCSysDefOutTra : VMCSysDef<VMCSysDefOutTra> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_TRAIN; }
     public sealed class VMCSysDefOutPln : VMCSysDef<VMCSysDefOutPln> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_PLANE; }
     public sealed class VMCSysDefOutCar : VMCSysDef<VMCSysDefOutCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_ROAD; }
+    public sealed class VMCSysDefOutBus : VMCSysDef<VMCSysDefOutBus> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.OUT_BUS; }
     public sealed class VMCSysDefBeaCar : VMCSysDef<VMCSysDefBeaCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.BEAU_CAR; }
     public sealed class VMCSysDefPstCar : VMCSysDef<VMCSysDefPstCar> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_CAR; }
     public sealed class VMCSysDefPstTrk : VMCSysDef<VMCSysDefPstTrk> { public override ServiceSystemDefinition GetSSD() => ServiceSystemDefinition.POST_TRK; }
