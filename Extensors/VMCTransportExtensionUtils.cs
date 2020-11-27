@@ -49,8 +49,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
                     VehicleInfo vehicleInfo = vehicle.Info;
                     if (vehicleInfo != null && !VehicleUtils.IsTrailer(vehicleInfo) && vehicle.m_transportLine == 0 && vehicle.m_sourceBuilding > 0)
                     {
-                        BuildingInfo buildingInfo = Singleton<BuildingManager>.instance.m_buildings.m_buffer[vehicle.m_sourceBuilding].Info;
-                        var buildingSsd = ServiceSystemDefinition.from(buildingInfo, vehicleInfo.m_vehicleType);
+                        var buildingSsd = ServiceSystemDefinition.from(vehicleInfo);
                         if (buildingSsd != null)
                         {
                             if (!ExtensionStaticExtensionMethods.IsModelCompatible(vehicle.m_sourceBuilding, vehicleInfo, ref buildingSsd))
