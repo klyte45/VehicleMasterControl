@@ -341,11 +341,11 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy /Y "$(TargetDir)0Harmony.dll" "$(ProjectDir)\_requiredDLLs\"
 xcopy /Y "$(TargetPath)" "$(ProjectDir)\_requiredDLLs\"
-rem xcopy /Y "$(ProjectDir)\_requiredDLLs\*" "S:\Steam\steamapps\workshop\content\255710\????\"
+xcopy /Y "$(ProjectDir)\_requiredDLLs\*" "S:\Steam\steamapps\workshop\content\255710\2299901014\"
 xcopy /Y "$(ProjectDir)\_requiredDLLs\*" "C:\Users\Leandro\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\VMC\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>rem del /Q "S:\Steam\steamapps\workshop\content\255710\?????\*"
+    <PreBuildEvent>del /Q "S:\Steam\steamapps\workshop\content\255710\2299901014\*"
 del /Q  "C:\Users\Leandro\AppData\Local\Colossal Order\Cities_Skylines\Addons\Mods\VMC\*"</PreBuildEvent>
   </PropertyGroup>
 </Project>
