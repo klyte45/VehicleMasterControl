@@ -148,7 +148,13 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
 
         public static Dictionary<ServiceSystemDefinition, IVMCSysDef> sysDefinitions
         {
-            get {
+            get
+            {
+                if (VehiclesMasterControlMod.Controller is null)
+                {
+                    LogUtils.DoErrorLog("ERROR: The mod controller wasn't properly loaded! This may be caused by a mod conflict or a unsupported game loading mode.");
+                    return null;
+                }
                 if (VehiclesMasterControlMod.Controller.m_sysDefinitions.Count == 0)
                 {
                     VehiclesMasterControlMod.Controller.m_sysDefinitions[GARBAGE_CAR] = SingletonLite<VMCSysDefGarCar>.instance;
@@ -287,362 +293,352 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
             FgIconServiceSystem = SetFgIcon(service, subService, vehicleType, level, outsideConnection);
         }
 
-        private static string SetFgIcon(ItemClass.Service service, ItemClass.SubService subService, VehicleInfo.VehicleType vehicleType, ItemClass.Level level, bool outsideConnection)
+        private static string SetFgIcon(ItemClass.Service service, ItemClass.SubService subService, VehicleInfo.VehicleType vehicleType, ItemClass.Level level, bool outsideConnection) => "K45_VMC_" + outsideConnection switch
         {
-            return "K45_VMC_" + outsideConnection switch
+            true => "OutsideIndicator",
+            false => vehicleType switch
             {
-                true => "OutsideIndicator",
-                false => vehicleType switch
+                VehicleInfo.VehicleType.Helicopter => "HelicopterIndicator",
+                _ => service switch
                 {
-                    VehicleInfo.VehicleType.Helicopter => "HelicopterIndicator",
-                    _ => service switch
+                    ItemClass.Service.Garbage => level switch
                     {
-                        ItemClass.Service.Garbage => level switch
-                        {
-                            ItemClass.Level.Level3 => "CargoIndicator",
-                            ItemClass.Level.Level4 => "OutsideIndicator",
-                            _ => ""
-                        },
-                        ItemClass.Service.PublicTransport => vehicleType switch
-                        {
-                            VehicleInfo.VehicleType.Balloon => "",
-                            _ => level switch
-                            {
-                                ItemClass.Level.Level4 => "CargoIndicator",
-                                ItemClass.Level.Level5 => "CargoIndicator",
-                                _ => ""
-                            }
-                        },
-                        ItemClass.Service.Fishing => level switch
-                        {
-                            ItemClass.Level.Level2 => "AIndicator",
-                            ItemClass.Level.Level3 => "BioIndicator",
-                            ItemClass.Level.Level4 => "CargoIndicator",
-                            ItemClass.Level.Level5 => "DIndicator",
-                            _ => ""
-                        },
-                        ItemClass.Service.Residential => level switch
-                        {
-                            ItemClass.Level.Level2 => "AIndicator",
-                            ItemClass.Level.Level1 => "CargoIndicator",
-                            _ => ""
-                        },
+                        ItemClass.Level.Level3 => "CargoIndicator",
+                        ItemClass.Level.Level4 => "OutsideIndicator",
                         _ => ""
                     },
-                }
-            };
-        }
+                    ItemClass.Service.PublicTransport => vehicleType switch
+                    {
+                        VehicleInfo.VehicleType.Balloon => "",
+                        _ => level switch
+                        {
+                            ItemClass.Level.Level4 => "CargoIndicator",
+                            ItemClass.Level.Level5 => "CargoIndicator",
+                            _ => ""
+                        }
+                    },
+                    ItemClass.Service.Fishing => level switch
+                    {
+                        ItemClass.Level.Level2 => "AIndicator",
+                        ItemClass.Level.Level3 => "BioIndicator",
+                        ItemClass.Level.Level4 => "CargoIndicator",
+                        ItemClass.Level.Level5 => "DIndicator",
+                        _ => ""
+                    },
+                    ItemClass.Service.Residential => level switch
+                    {
+                        ItemClass.Level.Level2 => "AIndicator",
+                        ItemClass.Level.Level1 => "CargoIndicator",
+                        _ => ""
+                    },
+                    _ => ""
+                },
+            }
+        };
 
-        private static string SetIcon(ItemClass.Service service, ItemClass.SubService subService, VehicleInfo.VehicleType vehicleType, ItemClass.Level level, bool outsideConnection)
+        private static string SetIcon(ItemClass.Service service, ItemClass.SubService subService, VehicleInfo.VehicleType vehicleType, ItemClass.Level level, bool outsideConnection) => service switch
         {
-            return service switch
+            ItemClass.Service.Beautification => "ToolbarIconBeautification",
+            ItemClass.Service.Disaster => vehicleType switch
             {
-                ItemClass.Service.Beautification => "ToolbarIconBeautification",
-                ItemClass.Service.Disaster => vehicleType switch
-                {
-                    VehicleInfo.VehicleType.Car => "SubBarFireDepartmentDisaster",
-                    VehicleInfo.VehicleType.Helicopter => "SubBarFireDepartmentDisaster",
-                    _ => "UNKNOWN DISASTER",
-                },
-                ItemClass.Service.FireDepartment => vehicleType switch
-                {
-                    VehicleInfo.VehicleType.Car => "InfoIconFireSafety",
-                    VehicleInfo.VehicleType.Helicopter => "InfoIconFireSafety",
-                    _ => "UNKNOWN FIRE",
-                },
-                ItemClass.Service.Fishing => vehicleType switch
-                {
-                    VehicleInfo.VehicleType.Car => "IconServiceVehicle",
-                    VehicleInfo.VehicleType.Ship => "IconCargoShip",
-                    _ => "UNKNOWN FISH",
-                },
-                ItemClass.Service.Garbage => level switch
-                {
-                    ItemClass.Level.Level1 => "InfoIconGarbage",
-                    ItemClass.Level.Level2 => "IconPolicyRecycling",
-                    ItemClass.Level.Level3 => "InfoIconGarbage",
-                    ItemClass.Level.Level4 => "InfoIconGarbage",
-                    _ => "UNKNOWN GARBAGE",
-                },
-                ItemClass.Service.HealthCare => level switch
-                {
-                    ItemClass.Level.Level1 => "ToolbarIconHealthcare",
-                    ItemClass.Level.Level2 => "ToolbarIconHealthcareHovered",
-                    ItemClass.Level.Level3 => "ToolbarIconHealthcare",
-                    _ => "UNKNOWN HEALTHCARE",
-                },
-                ItemClass.Service.Industrial => subService switch
-                {
-                    ItemClass.SubService.IndustrialFarming => "IconPolicyFarming",
-                    ItemClass.SubService.IndustrialForestry => "IconPolicyForest",
-                    ItemClass.SubService.IndustrialGeneric => "ToolbarIconGarbage",
-                    ItemClass.SubService.IndustrialOil => "IconPolicyOil",
-                    ItemClass.SubService.IndustrialOre => "IconPolicyOre",
+                VehicleInfo.VehicleType.Car => "SubBarFireDepartmentDisaster",
+                VehicleInfo.VehicleType.Helicopter => "SubBarFireDepartmentDisaster",
+                _ => "UNKNOWN DISASTER",
+            },
+            ItemClass.Service.FireDepartment => vehicleType switch
+            {
+                VehicleInfo.VehicleType.Car => "InfoIconFireSafety",
+                VehicleInfo.VehicleType.Helicopter => "InfoIconFireSafety",
+                _ => "UNKNOWN FIRE",
+            },
+            ItemClass.Service.Fishing => vehicleType switch
+            {
+                VehicleInfo.VehicleType.Car => "IconServiceVehicle",
+                VehicleInfo.VehicleType.Ship => "IconCargoShip",
+                _ => "UNKNOWN FISH",
+            },
+            ItemClass.Service.Garbage => level switch
+            {
+                ItemClass.Level.Level1 => "InfoIconGarbage",
+                ItemClass.Level.Level2 => "IconPolicyRecycling",
+                ItemClass.Level.Level3 => "InfoIconGarbage",
+                ItemClass.Level.Level4 => "InfoIconGarbage",
+                _ => "UNKNOWN GARBAGE",
+            },
+            ItemClass.Service.HealthCare => level switch
+            {
+                ItemClass.Level.Level1 => "ToolbarIconHealthcare",
+                ItemClass.Level.Level2 => "ToolbarIconHealthcareHovered",
+                ItemClass.Level.Level3 => "ToolbarIconHealthcare",
+                _ => "UNKNOWN HEALTHCARE",
+            },
+            ItemClass.Service.Industrial => subService switch
+            {
+                ItemClass.SubService.IndustrialFarming => "IconPolicyFarming",
+                ItemClass.SubService.IndustrialForestry => "IconPolicyForest",
+                ItemClass.SubService.IndustrialGeneric => "ToolbarIconGarbage",
+                ItemClass.SubService.IndustrialOil => "IconPolicyOil",
+                ItemClass.SubService.IndustrialOre => "IconPolicyOre",
 
-                    _ => "UNKNOWN INDUSTRIAL",
-                },
-                ItemClass.Service.Monument => vehicleType switch
+                _ => "UNKNOWN INDUSTRIAL",
+            },
+            ItemClass.Service.Monument => vehicleType switch
+            {
+                VehicleInfo.VehicleType.Rocket => "ParkLevelStar",
+                VehicleInfo.VehicleType.Plane => "SubBarPublicTransportPlane",
+                _ => "UNKNOWN MONUMENT",
+            },
+            ItemClass.Service.PlayerIndustry => subService switch
+            {
+                ItemClass.SubService.PlayerIndustryFarming => "SubBarIndustryFarming",
+                ItemClass.SubService.None => level switch
                 {
-                    VehicleInfo.VehicleType.Rocket => "ParkLevelStar",
-                    VehicleInfo.VehicleType.Plane => "SubBarPublicTransportPlane",
-                    _ => "UNKNOWN MONUMENT",
+                    ItemClass.Level.Level1 => "SubBarDistrictSpecializationIndustrial",
+                    ItemClass.Level.Level2 => "resourceIconLuxuryProducts",
+                    _ => "UNKNOWN PLAYERINDUSTRY NONE LEVEL",
                 },
-                ItemClass.Service.PlayerIndustry => subService switch
-                {
-                    ItemClass.SubService.PlayerIndustryFarming => "SubBarIndustryFarming",
-                    ItemClass.SubService.None => level switch
-                    {
-                        ItemClass.Level.Level1 => "SubBarDistrictSpecializationIndustrial",
-                        ItemClass.Level.Level2 => "resourceIconLuxuryProducts",
-                        _ => "UNKNOWN PLAYERINDUSTRY NONE LEVEL",
-                    },
 
-                    _ => "UNKNOWN PLAYERINDUSTRY",
-                },
-                ItemClass.Service.PoliceDepartment => level switch
+                _ => "UNKNOWN PLAYERINDUSTRY",
+            },
+            ItemClass.Service.PoliceDepartment => level switch
+            {
+                ItemClass.Level.Level1 => "ToolbarIconPolice",
+                ItemClass.Level.Level3 => "ToolbarIconPolice",
+                ItemClass.Level.Level4 => "IconPolicyDoubleSentences",
+                _ => "UNKNOWN POLICE",
+            },
+            ItemClass.Service.Road => level switch
+            {
+                ItemClass.Level.Level2 => "ToolbarIconRoads",
+                ItemClass.Level.Level4 => "InfoIconSnow",
+                ItemClass.Level.Level5 => outsideConnection switch
                 {
-                    ItemClass.Level.Level1 => "ToolbarIconPolice",
-                    ItemClass.Level.Level3 => "ToolbarIconPolice",
-                    ItemClass.Level.Level4 => "IconPolicyDoubleSentences",
-                    _ => "UNKNOWN POLICE",
+                    true => "ToolbarIconRoads",
+                    _ => "UNKNOWN ROAD 5"
                 },
-                ItemClass.Service.Road => level switch
+                _ => "UNKNOWN ROAD",
+            },
+            ItemClass.Service.Water => level switch
+            {
+                ItemClass.Level.Level1 => "ToolbarIconWaterAndSewage",
+                _ => "UNKNOWN WATER",
+            },
+            ItemClass.Service.PublicTransport => subService switch
+            {
+                ItemClass.SubService.PublicTransportTours => vehicleType switch
                 {
-                    ItemClass.Level.Level2 => "ToolbarIconRoads",
-                    ItemClass.Level.Level4 => "InfoIconSnow",
-                    ItemClass.Level.Level5 => outsideConnection switch
-                    {
-                        true => "ToolbarIconRoads",
-                        _ => "UNKNOWN ROAD 5"
-                    },
-                    _ => "UNKNOWN ROAD",
+                    VehicleInfo.VehicleType.Balloon => "IconBalloonTours",
+                    _ => "UNKNOWN PUBLICTRANSPORTTOURS"
                 },
-                ItemClass.Service.Water => level switch
+                ItemClass.SubService.PublicTransportBus => "SubBarPublicTransportBus",
+                ItemClass.SubService.PublicTransportPost => level switch
                 {
-                    ItemClass.Level.Level1 => "ToolbarIconWaterAndSewage",
-                    _ => "UNKNOWN WATER",
+                    ItemClass.Level.Level2 => "InfoIconPost",
+                    ItemClass.Level.Level5 => "InfoIconPost",
+                    _ => $"UNKNOWN POST {level}",
                 },
-                ItemClass.Service.PublicTransport => subService switch
+                ItemClass.SubService.PublicTransportTaxi => "SubBarPublicTransportTaxi",
+                ItemClass.SubService.PublicTransportCableCar => "SubBarPublicTransportCableCar",
+                ItemClass.SubService.PublicTransportTrain => level switch
                 {
-                    ItemClass.SubService.PublicTransportTours => vehicleType switch
+                    ItemClass.Level.Level1 => outsideConnection switch
                     {
-                        VehicleInfo.VehicleType.Balloon => "IconBalloonTours",
-                        _ => "UNKNOWN PUBLICTRANSPORTTOURS"
+                        true => "SubBarPublicTransportTrain",
+                        false => "SubBarPublicTransportTrain"
                     },
-                    ItemClass.SubService.PublicTransportBus => "SubBarPublicTransportBus",
-                    ItemClass.SubService.PublicTransportPost => level switch
-                    {
-                        ItemClass.Level.Level2 => "InfoIconPost",
-                        ItemClass.Level.Level5 => "InfoIconPost",
-                        _ => $"UNKNOWN POST {level}",
-                    },
-                    ItemClass.SubService.PublicTransportTaxi => "SubBarPublicTransportTaxi",
-                    ItemClass.SubService.PublicTransportCableCar => "SubBarPublicTransportCableCar",
-                    ItemClass.SubService.PublicTransportTrain => level switch
-                    {
-                        ItemClass.Level.Level1 => outsideConnection switch
-                        {
-                            true => "SubBarPublicTransportTrain",
-                            false => "SubBarPublicTransportTrain"
-                        },
-                        ItemClass.Level.Level4 => "SubBarPublicTransportTrain",
-                        _ => $"UNKNOWN TRAIN {level}",
-                    },
+                    ItemClass.Level.Level4 => "SubBarPublicTransportTrain",
+                    _ => $"UNKNOWN TRAIN {level}",
+                },
 
-                    ItemClass.SubService.PublicTransportShip => level switch
-                    {
-                        ItemClass.Level.Level1 => outsideConnection switch
-                        {
-                            true => "SubBarPublicTransportShip",
-                            false => "SubBarPublicTransportShip",
-                        },
-                        ItemClass.Level.Level4 => "SubBarPublicTransportShip",
-                        _ => $"UNKNOWN SHIP {level}",
-                    },
-                    ItemClass.SubService.PublicTransportPlane => level switch
-                    {
-                        ItemClass.Level.Level1 => outsideConnection switch
-                        {
-                            true => "SubBarPublicTransportPlane",
-                            false => "SubBarPublicTransportPlane",
-                        },
-                        ItemClass.Level.Level4 => "SubBarPublicTransportPlane",
-                        _ => $"UNKNOWN AIRCRAFT {level}",
-                    },
-                    _ => $"UNKNOWN PUBLIC TRANSPORT {subService}",
-                },
-                ItemClass.Service.Residential => vehicleType switch
+                ItemClass.SubService.PublicTransportShip => level switch
                 {
-                    VehicleInfo.VehicleType.Bicycle => "IconPolicyEncourageBiking",
-                    _ => "UNKNOWN RESIDENTIAL"
+                    ItemClass.Level.Level1 => outsideConnection switch
+                    {
+                        true => "SubBarPublicTransportShip",
+                        false => "SubBarPublicTransportShip",
+                    },
+                    ItemClass.Level.Level4 => "SubBarPublicTransportShip",
+                    _ => $"UNKNOWN SHIP {level}",
                 },
-                _ => $"??? {service}",
-            };
-
-        }
+                ItemClass.SubService.PublicTransportPlane => level switch
+                {
+                    ItemClass.Level.Level1 => outsideConnection switch
+                    {
+                        true => "SubBarPublicTransportPlane",
+                        false => "SubBarPublicTransportPlane",
+                    },
+                    ItemClass.Level.Level4 => "SubBarPublicTransportPlane",
+                    _ => $"UNKNOWN AIRCRAFT {level}",
+                },
+                _ => $"UNKNOWN PUBLIC TRANSPORT {subService}",
+            },
+            ItemClass.Service.Residential => vehicleType switch
+            {
+                VehicleInfo.VehicleType.Bicycle => "IconPolicyEncourageBiking",
+                _ => "UNKNOWN RESIDENTIAL"
+            },
+            _ => $"??? {service}",
+        };
 
         private static string SetNameForServiceSystem(
             ItemClass.Service service,
         ItemClass.SubService subService,
         VehicleInfo.VehicleType vehicleType,
         ItemClass.Level level,
-        bool outsideConnection)
+        bool outsideConnection) => service switch
         {
-            return service switch
+            ItemClass.Service.Beautification => Locale.Get("VEHICLE_TITLE", "Park Staff Vehicle 01"),
+            ItemClass.Service.Disaster => vehicleType switch
             {
-                ItemClass.Service.Beautification => Locale.Get("VEHICLE_TITLE", "Park Staff Vehicle 01"),
-                ItemClass.Service.Disaster => vehicleType switch
+                VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Disaster Response Vehicle"),
+                VehicleInfo.VehicleType.Helicopter => Locale.Get("VEHICLE_TITLE", "Disaster Response Helicopter"),
+                _ => "UNKNOWN DISASTER",
+            },
+            ItemClass.Service.FireDepartment => vehicleType switch
+            {
+                VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Fire Truck"),
+                VehicleInfo.VehicleType.Helicopter => Locale.Get("VEHICLE_TITLE", "Fire Helicopter"),
+                _ => "UNKNOWN FIRE",
+            },
+            ItemClass.Service.Fishing => vehicleType switch
+            {
+                VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Fish Truck 01"),
+                VehicleInfo.VehicleType.Ship => level switch
                 {
-                    VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Disaster Response Vehicle"),
-                    VehicleInfo.VehicleType.Helicopter => Locale.Get("VEHICLE_TITLE", "Disaster Response Helicopter"),
-                    _ => "UNKNOWN DISASTER",
+                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 01"),
+                    ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 02"),
+                    ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 03"),
+                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 04"),
+                    ItemClass.Level.Level5 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 05"),
+                    _ => "UNKNOWN FISH BOAT"
                 },
-                ItemClass.Service.FireDepartment => vehicleType switch
+                _ => "UNKNOWN FISH",
+            },
+            ItemClass.Service.Garbage => level switch
+            {
+                ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Garbage Truck"),
+                ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Biofuel Garbage Truck 01"),
+                ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Waste Collection Truck"),
+                ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Waste Transfer Truck"),
+                _ => "UNKNOWN GARBAGE",
+            },
+            ItemClass.Service.HealthCare => level switch
+            {
+                ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Ambulance"),
+                ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Hearse"),
+                ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Medical Helicopter"),
+                _ => "UNKNOWN HEALTHCARE",
+            },
+            ItemClass.Service.Industrial => subService switch
+            {
+                ItemClass.SubService.IndustrialFarming => Locale.Get("VEHICLE_TITLE", "Farm Truck 01"),
+                ItemClass.SubService.IndustrialForestry => Locale.Get("VEHICLE_TITLE", "Forestry Truck"),
+                ItemClass.SubService.IndustrialGeneric => Locale.Get("VEHICLE_TITLE", "Lorry"),
+                ItemClass.SubService.IndustrialOil => Locale.Get("VEHICLE_TITLE", "Oil Truck"),
+                ItemClass.SubService.IndustrialOre => Locale.Get("VEHICLE_TITLE", "Ore Truck"),
+                _ => "UNKNOWN INDUSTRIAL",
+            },
+            ItemClass.Service.Monument => vehicleType switch
+            {
+                VehicleInfo.VehicleType.Plane => Locale.Get("VEHICLE_TITLE", "Aviation Club Plane 01"),
+                _ => "UNKNOWN MONUMENT",
+            },
+            ItemClass.Service.PlayerIndustry => subService switch
+            {
+                ItemClass.SubService.PlayerIndustryFarming => Locale.Get("VEHICLE_TITLE", "Truck Animal"),
+                ItemClass.SubService.None => level switch
                 {
-                    VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Fire Truck"),
-                    VehicleInfo.VehicleType.Helicopter => Locale.Get("VEHICLE_TITLE", "Fire Helicopter"),
-                    _ => "UNKNOWN FIRE",
+                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Delivery Van 01"),
+                    ItemClass.Level.Level2 => Locale.Get("WAREHOUSEPANEL_RESOURCE", "LuxuryProducts"),
+                    _ => "UNKNOWN PLAYERINDUSTRY NONE LEVEL",
                 },
-                ItemClass.Service.Fishing => vehicleType switch
-                {
-                    VehicleInfo.VehicleType.Car => Locale.Get("VEHICLE_TITLE", "Fish Truck 01"),
-                    VehicleInfo.VehicleType.Ship => level switch
-                    {
-                        ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 01"),
-                        ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 02"),
-                        ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 03"),
-                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 04"),
-                        ItemClass.Level.Level5 => Locale.Get("VEHICLE_TITLE", "Fishing Boat 05"),
-                        _ => "UNKNOWN FISH BOAT"
-                    },
-                    _ => "UNKNOWN FISH",
-                },
-                ItemClass.Service.Garbage => level switch
-                {
-                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Garbage Truck"),
-                    ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Biofuel Garbage Truck 01"),
-                    ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Waste Collection Truck"),
-                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Waste Transfer Truck"),
-                    _ => "UNKNOWN GARBAGE",
-                },
-                ItemClass.Service.HealthCare => level switch
-                {
-                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Ambulance"),
-                    ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Hearse"),
-                    ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Medical Helicopter"),
-                    _ => "UNKNOWN HEALTHCARE",
-                },
-                ItemClass.Service.Industrial => subService switch
-                {
-                    ItemClass.SubService.IndustrialFarming => Locale.Get("VEHICLE_TITLE", "Farm Truck 01"),
-                    ItemClass.SubService.IndustrialForestry => Locale.Get("VEHICLE_TITLE", "Forestry Truck"),
-                    ItemClass.SubService.IndustrialGeneric => Locale.Get("VEHICLE_TITLE", "Lorry"),
-                    ItemClass.SubService.IndustrialOil => Locale.Get("VEHICLE_TITLE", "Oil Truck"),
-                    ItemClass.SubService.IndustrialOre => Locale.Get("VEHICLE_TITLE", "Ore Truck"),
-                    _ => "UNKNOWN INDUSTRIAL",
-                },
-                ItemClass.Service.Monument => vehicleType switch
-                {
-                    VehicleInfo.VehicleType.Plane => Locale.Get("VEHICLE_TITLE", "Aviation Club Plane 01"),
-                    _ => "UNKNOWN MONUMENT",
-                },
-                ItemClass.Service.PlayerIndustry => subService switch
-                {
-                    ItemClass.SubService.PlayerIndustryFarming => Locale.Get("VEHICLE_TITLE", "Truck Animal"),
-                    ItemClass.SubService.None => level switch
-                    {
-                        ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Delivery Van 01"),
-                        ItemClass.Level.Level2 => Locale.Get("WAREHOUSEPANEL_RESOURCE", "LuxuryProducts"),
-                        _ => "UNKNOWN PLAYERINDUSTRY NONE LEVEL",
-                    },
 
-                    _ => "UNKNOWN PLAYERINDUSTRY",
-                },
-                ItemClass.Service.PoliceDepartment => level switch
+                _ => "UNKNOWN PLAYERINDUSTRY",
+            },
+            ItemClass.Service.PoliceDepartment => level switch
+            {
+                ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Police Car"),
+                ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Police Helicopter"),
+                ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "PoliceVan"),
+                _ => "UNKNOWN POLICE",
+            },
+            ItemClass.Service.Road => level switch
+            {
+                ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Engineering_Truck"),
+                ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Snowplow"),
+                ItemClass.Level.Level5 => outsideConnection switch
                 {
-                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Police Car"),
-                    ItemClass.Level.Level3 => Locale.Get("VEHICLE_TITLE", "Police Helicopter"),
-                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "PoliceVan"),
-                    _ => "UNKNOWN POLICE",
+                    true => Locale.Get("AREA_YES_HIGHWAYCONNECTION"),
+                    _ => "UNKNOWN ROAD 5"
                 },
-                ItemClass.Service.Road => level switch
+                _ => "UNKNOWN ROAD",
+            },
+            ItemClass.Service.PublicTransport => subService switch
+            {
+                ItemClass.SubService.PublicTransportTours => vehicleType switch
                 {
-                    ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Engineering_Truck"),
-                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Snowplow"),
-                    ItemClass.Level.Level5 => outsideConnection switch
-                    {
-                        true => Locale.Get("AREA_YES_HIGHWAYCONNECTION"),
-                        _ => "UNKNOWN ROAD 5"
-                    },
-                    _ => "UNKNOWN ROAD",
+                    VehicleInfo.VehicleType.Balloon => Locale.Get("VEHICLE_TITLE", "Hot Air Balloon 01"),
+                    _ => "UNKNOWN PUBLICTRANSPORTTOURS"
                 },
-                ItemClass.Service.PublicTransport => subService switch
+                ItemClass.SubService.PublicTransportPost => level switch
                 {
-                    ItemClass.SubService.PublicTransportTours => vehicleType switch
+                    ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Post Vehicle 01"),
+                    ItemClass.Level.Level5 => Locale.Get("VEHICLE_TITLE", "Post Truck 01"),
+                    _ => $"UNKNOWN POST {level}",
+                },
+                ItemClass.SubService.PublicTransportTaxi => Locale.Get("VEHICLE_TITLE", "Taxi"),
+                ItemClass.SubService.PublicTransportCableCar => Locale.Get("VEHICLE_TITLE", "Cable Car"),
+                ItemClass.SubService.PublicTransportBus => Locale.Get("VEHICLE_TITLE", "Intercity Bus"),
+                ItemClass.SubService.PublicTransportTrain => level switch
+                {
+                    ItemClass.Level.Level1 => outsideConnection switch
                     {
-                        VehicleInfo.VehicleType.Balloon => Locale.Get("VEHICLE_TITLE", "Hot Air Balloon 01"),
-                        _ => "UNKNOWN PUBLICTRANSPORTTOURS"
+                        true => Locale.Get("AREA_YES_TRAINCONNECTION"),
+                        false => Locale.Get("VEHICLE_TITLE", "Train Engine")
                     },
-                    ItemClass.SubService.PublicTransportPost => level switch
-                    {
-                        ItemClass.Level.Level2 => Locale.Get("VEHICLE_TITLE", "Post Vehicle 01"),
-                        ItemClass.Level.Level5 => Locale.Get("VEHICLE_TITLE", "Post Truck 01"),
-                        _ => $"UNKNOWN POST {level}",
-                    },
-                    ItemClass.SubService.PublicTransportTaxi => Locale.Get("VEHICLE_TITLE", "Taxi"),
-                    ItemClass.SubService.PublicTransportCableCar => Locale.Get("VEHICLE_TITLE", "Cable Car"),
-                    ItemClass.SubService.PublicTransportBus => Locale.Get("VEHICLE_TITLE", "Intercity Bus"),
-                    ItemClass.SubService.PublicTransportTrain => level switch
-                    {
-                        ItemClass.Level.Level1 => outsideConnection switch
-                        {
-                            true => Locale.Get("AREA_YES_TRAINCONNECTION"),
-                            false => Locale.Get("VEHICLE_TITLE", "Train Engine")
-                        },
-                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Train Cargo Engine"),
-                        _ => $"UNKNOWN TRAIN {level}",
-                    },
+                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Train Cargo Engine"),
+                    _ => $"UNKNOWN TRAIN {level}",
+                },
 
-                    ItemClass.SubService.PublicTransportShip => level switch
-                    {
-                        ItemClass.Level.Level1 => outsideConnection switch
-                        {
-                            true => Locale.Get("AREA_YES_SHIPCONNECTION"),
-                            false => Locale.Get("VEHICLE_TITLE", "Ship Passenger"),
-                        },
-                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Ship Cargo"),
-                        _ => $"UNKNOWN SHIP {level}",
-                    },
-                    ItemClass.SubService.PublicTransportPlane => level switch
-                    {
-                        ItemClass.Level.Level1 => outsideConnection switch
-                        {
-                            true => Locale.Get("AREA_YES_SHIPCONNECTION"),
-                            false => Locale.Get("VEHICLE_TITLE", "Aircraft Passenger"),
-                        },
-                        ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Cargo Airplane 01"),
-                        _ => $"UNKNOWN AIRCRAFT {level}",
-                    },
-                    _ => $"UNKNOWN PUBLIC TRANSPORT {subService}",
-                },
-                ItemClass.Service.Residential => vehicleType switch
+                ItemClass.SubService.PublicTransportShip => level switch
                 {
-                    VehicleInfo.VehicleType.Bicycle => level switch
+                    ItemClass.Level.Level1 => outsideConnection switch
                     {
-                        ItemClass.Level.Level1 => $"{Locale.Get("VEHICLE_TITLE", "Bicycle Child")} ({Locale.Get("ZONEDBUILDING_CHILDREN")})",
-                        ItemClass.Level.Level2 => $"{Locale.Get("VEHICLE_TITLE", "Bicycle")} ({Locale.Get("ZONEDBUILDING_ADULTS")})",
-                        _ => "UNK BICYCLE LVL RESIDENTIAL"
+                        true => Locale.Get("AREA_YES_SHIPCONNECTION"),
+                        false => Locale.Get("VEHICLE_TITLE", "Ship Passenger"),
                     },
-                    _ => "UNKNOWN RESIDENTIAL"
+                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Ship Cargo"),
+                    _ => $"UNKNOWN SHIP {level}",
                 },
-                ItemClass.Service.Water => level switch
+                ItemClass.SubService.PublicTransportPlane => level switch
                 {
-                    ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Water Pumping Truck"),
-                    _ => "UNKNOWN WATER",
+                    ItemClass.Level.Level1 => outsideConnection switch
+                    {
+                        true => Locale.Get("AREA_YES_SHIPCONNECTION"),
+                        false => Locale.Get("VEHICLE_TITLE", "Aircraft Passenger"),
+                    },
+                    ItemClass.Level.Level4 => Locale.Get("VEHICLE_TITLE", "Cargo Airplane 01"),
+                    _ => $"UNKNOWN AIRCRAFT {level}",
                 },
-                _ => $"??? {service}",
-            };
-        }
+                _ => $"UNKNOWN PUBLIC TRANSPORT {subService}",
+            },
+            ItemClass.Service.Residential => vehicleType switch
+            {
+                VehicleInfo.VehicleType.Bicycle => level switch
+                {
+                    ItemClass.Level.Level1 => $"{Locale.Get("VEHICLE_TITLE", "Bicycle Child")} ({Locale.Get("ZONEDBUILDING_CHILDREN")})",
+                    ItemClass.Level.Level2 => $"{Locale.Get("VEHICLE_TITLE", "Bicycle")} ({Locale.Get("ZONEDBUILDING_ADULTS")})",
+                    _ => "UNK BICYCLE LVL RESIDENTIAL"
+                },
+                _ => "UNKNOWN RESIDENTIAL"
+            },
+            ItemClass.Service.Water => level switch
+            {
+                ItemClass.Level.Level1 => Locale.Get("VEHICLE_TITLE", "Water Pumping Truck"),
+                _ => "UNKNOWN WATER",
+            },
+            _ => $"??? {service}",
+        };
         private static CategoryTab SetCategory(ItemClass.Service service, bool outsideConnection)
         {
             if (outsideConnection)

@@ -11,3 +11,6 @@ Of course, this mod have support to latest updates of CS, including <sprite Suns
 Use this along with <color #4444FF>Transport Lines Manager</color> and <color red>Vehicle Wealthizer</color> to have full control over the game vehicles, once this mod changes all but the city public transport and citizen vehicles (except bikes, that VW can't handle).
 
 Enjoy!
+
+<color yellow>r2 (06/MAR/21)</color> 
+Applied some mod common behaviour fixes (disabling in editors modes)
