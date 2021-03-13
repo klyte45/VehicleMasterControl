@@ -2,6 +2,7 @@
 using Klyte.Commons.Utils;
 using Klyte.VehiclesMasterControl.Extensors.VehicleExt;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -9,6 +10,11 @@ namespace Klyte.VehiclesMasterControl.Overrides
 {
     internal class VehicleAIOverrides : Redirector, IRedirectable
     {
+        public static VehicleAIOverrides Instance { get; private set; }
+
+
+        internal readonly Dictionary<ServiceSystemDefinition, IVMCSysDef> m_sysDefinitions = new Dictionary<ServiceSystemDefinition, IVMCSysDef>();
+
         public Redirector RedirectorInstance => this;
 
         public static bool PreGetColor(ref Color __result, ushort vehicleID, ref Vehicle data, InfoManager.InfoMode infoMode)
@@ -44,6 +50,7 @@ namespace Klyte.VehiclesMasterControl.Overrides
 
         public void Awake()
         {
+            Instance = this;
             #region Release Line Hooks
             MethodInfo preGetColor = typeof(VehicleAIOverrides).GetMethod("PreGetColor", RedirectorUtils.allFlags);
             MethodInfo origMethod = typeof(VehicleAI).GetMethod("GetColor", new Type[] { typeof(ushort), typeof(Vehicle).MakeByRefType(), typeof(InfoManager.InfoMode) });

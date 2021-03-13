@@ -14,3 +14,6 @@ Enjoy!
 
 <color yellow>r2 (06/MAR/21)</color> 
 Applied some mod common behaviour fixes (disabling in editors modes)
+
+<color yellow>r3 (13/MAR/21)</color> 
+Fixed loading errors when creating a new city

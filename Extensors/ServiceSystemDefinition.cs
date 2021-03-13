@@ -2,6 +2,7 @@
 using ColossalFramework.Globalization;
 using ColossalFramework.Math;
 using Klyte.Commons.Utils;
+using Klyte.VehiclesMasterControl.Overrides;
 using Klyte.VehiclesMasterControl.UI;
 using System;
 using System.Collections.Generic;
@@ -150,94 +151,89 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
         {
             get
             {
-                if (VehiclesMasterControlMod.Controller is null)
+                if (VehicleAIOverrides.Instance.m_sysDefinitions.Count == 0)
                 {
-                    LogUtils.DoErrorLog("ERROR: The mod controller wasn't properly loaded! This may be caused by a mod conflict or a unsupported game loading mode.");
-                    return null;
-                }
-                if (VehiclesMasterControlMod.Controller.m_sysDefinitions.Count == 0)
-                {
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[GARBAGE_CAR] = SingletonLite<VMCSysDefGarCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[DEATHCARE_CAR] = SingletonLite<VMCSysDefDcrCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[REG_PLANE] = SingletonLite<VMCSysDefRegPln>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[REG_TRAIN] = SingletonLite<VMCSysDefRegTra>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[REG_SHIP] = SingletonLite<VMCSysDefRegShp>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FIRE_CAR] = SingletonLite<VMCSysDefFirCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[HEALTHCARE_CAR] = SingletonLite<VMCSysDefHcrCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[POLICE_CAR] = SingletonLite<VMCSysDefPolCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[CARG_TRAIN] = SingletonLite<VMCSysDefCrgTra>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[CARG_SHIP] = SingletonLite<VMCSysDefCrgShp>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[GARBAGE_CAR] = SingletonLite<VMCSysDefGarCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[DEATHCARE_CAR] = SingletonLite<VMCSysDefDcrCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[REG_PLANE] = SingletonLite<VMCSysDefRegPln>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[REG_TRAIN] = SingletonLite<VMCSysDefRegTra>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[REG_SHIP] = SingletonLite<VMCSysDefRegShp>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[FIRE_CAR] = SingletonLite<VMCSysDefFirCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[HEALTHCARE_CAR] = SingletonLite<VMCSysDefHcrCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[POLICE_CAR] = SingletonLite<VMCSysDefPolCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[CARG_TRAIN] = SingletonLite<VMCSysDefCrgTra>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[CARG_SHIP] = SingletonLite<VMCSysDefCrgShp>.instance;
 
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_PLANE] = SingletonLite<VMCSysDefOutPln>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_TRAIN] = SingletonLite<VMCSysDefOutTra>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_SHIP] = SingletonLite<VMCSysDefOutShp>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_ROAD] = SingletonLite<VMCSysDefOutCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[OUT_BUS] = SingletonLite<VMCSysDefOutBus>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[OUT_PLANE] = SingletonLite<VMCSysDefOutPln>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[OUT_TRAIN] = SingletonLite<VMCSysDefOutTra>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[OUT_SHIP] = SingletonLite<VMCSysDefOutShp>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[OUT_ROAD] = SingletonLite<VMCSysDefOutCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[OUT_BUS] = SingletonLite<VMCSysDefOutBus>.instance;
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.AfterDark))
                     //{
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[PRISION_CAR] = SingletonLite<VMCSysDefPriCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[TAXI_CAR] = SingletonLite<VMCSysDefTaxCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[PRISION_CAR] = SingletonLite<VMCSysDefPriCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[TAXI_CAR] = SingletonLite<VMCSysDefTaxCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Snowfall))
                     //{
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[ROAD_CAR] = SingletonLite<VMCSysDefRoaCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[SNOW_CAR] = SingletonLite<VMCSysDefSnwCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[ROAD_CAR] = SingletonLite<VMCSysDefRoaCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[SNOW_CAR] = SingletonLite<VMCSysDefSnwCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.NaturalDisasters))
                     //{
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[WATER_CAR] = SingletonLite<VMCSysDefWatCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[DISASTER_CAR] = SingletonLite<VMCSysDefDisCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[DISASTER_HELICOPTER] = SingletonLite<VMCSysDefDisHel>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FIRE_HELICOPTER] = SingletonLite<VMCSysDefFirHel>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[HEALTHCARE_HELICOPTER] = SingletonLite<VMCSysDefHcrHel>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[POLICE_HELICOPTER] = SingletonLite<VMCSysDefPolHel>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[WATER_CAR] = SingletonLite<VMCSysDefWatCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[DISASTER_CAR] = SingletonLite<VMCSysDefDisCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[DISASTER_HELICOPTER] = SingletonLite<VMCSysDefDisHel>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[FIRE_HELICOPTER] = SingletonLite<VMCSysDefFirHel>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[HEALTHCARE_HELICOPTER] = SingletonLite<VMCSysDefHcrHel>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[POLICE_HELICOPTER] = SingletonLite<VMCSysDefPolHel>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.InMotion))
                     //{
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[CABLECAR_CABLECAR] = SingletonLite<VMCSysDefCcrCcr>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[CABLECAR_CABLECAR] = SingletonLite<VMCSysDefCcrCcr>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.GreenCities))
                     //{
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[GARBBIO_CAR] = SingletonLite<VMCSysDefGbcCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[GARBBIO_CAR] = SingletonLite<VMCSysDefGbcCar>.instance;
                     //}
 
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Parks))
                     //{
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[BEAU_CAR] = SingletonLite<VMCSysDefBeaCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[BEAU_CAR] = SingletonLite<VMCSysDefBeaCar>.instance;
                     //}
                     //if (Singleton<LoadingManager>.instance.SupportsExpansion(ICities.Expansion.Industry))
                     //{
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[POST_CAR] = SingletonLite<VMCSysDefPstCar>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[POST_TRK] = SingletonLite<VMCSysDefPstTrk>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[POST_CAR] = SingletonLite<VMCSysDefPstCar>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[POST_TRK] = SingletonLite<VMCSysDefPstTrk>.instance;
                     //}
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[BALLOON] = SingletonLite<VMCSysDefTouBal>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[AIR_CLB] = SingletonLite<VMCSysDefClbPln>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[BICYCLE_ADULT] = SingletonLite<VMCSysDefAdtBcc>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[BICYCLE_CHILD] = SingletonLite<VMCSysDefChdBcc>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[CARG_PLANE] = SingletonLite<VMCSysDefCrgPln>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_TRK] = SingletonLite<VMCSysDefFshTrk>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_GEN] = SingletonLite<VMCSysDefFshGen>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_SLM] = SingletonLite<VMCSysDefFshSlm>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_SHF] = SingletonLite<VMCSysDefFshShf>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_TNA] = SingletonLite<VMCSysDefFshTna>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[FISH_ACH] = SingletonLite<VMCSysDefFshAch>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDCMN_FRM_TRAILER] = SingletonLite<VMCSysDefIfmTrl>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDCMN_TRK] = SingletonLite<VMCSysDefIndTrk>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDCMN_VAN] = SingletonLite<VMCSysDefIndVan>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDFARM_TRK] = SingletonLite<VMCSysDefIfmTrk>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDFRST_TRK] = SingletonLite<VMCSysDefIfrTrk>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDGNRC_TRK] = SingletonLite<VMCSysDefIgnTrk>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDOIL_TRK] = SingletonLite<VMCSysDefIolTrk>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[INDORE_TRK] = SingletonLite<VMCSysDefIorTrk>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[WASTCOL_CAR] = SingletonLite<VMCSysDefWstCol>.instance;
-                    VehiclesMasterControlMod.Controller.m_sysDefinitions[WASTTRN_CAR] = SingletonLite<VMCSysDefWstTrn>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[BALLOON] = SingletonLite<VMCSysDefTouBal>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[AIR_CLB] = SingletonLite<VMCSysDefClbPln>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[BICYCLE_ADULT] = SingletonLite<VMCSysDefAdtBcc>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[BICYCLE_CHILD] = SingletonLite<VMCSysDefChdBcc>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[CARG_PLANE] = SingletonLite<VMCSysDefCrgPln>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[FISH_TRK] = SingletonLite<VMCSysDefFshTrk>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[FISH_GEN] = SingletonLite<VMCSysDefFshGen>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[FISH_SLM] = SingletonLite<VMCSysDefFshSlm>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[FISH_SHF] = SingletonLite<VMCSysDefFshShf>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[FISH_TNA] = SingletonLite<VMCSysDefFshTna>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[FISH_ACH] = SingletonLite<VMCSysDefFshAch>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[INDCMN_FRM_TRAILER] = SingletonLite<VMCSysDefIfmTrl>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[INDCMN_TRK] = SingletonLite<VMCSysDefIndTrk>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[INDCMN_VAN] = SingletonLite<VMCSysDefIndVan>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[INDFARM_TRK] = SingletonLite<VMCSysDefIfmTrk>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[INDFRST_TRK] = SingletonLite<VMCSysDefIfrTrk>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[INDGNRC_TRK] = SingletonLite<VMCSysDefIgnTrk>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[INDOIL_TRK] = SingletonLite<VMCSysDefIolTrk>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[INDORE_TRK] = SingletonLite<VMCSysDefIorTrk>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[WASTCOL_CAR] = SingletonLite<VMCSysDefWstCol>.instance;
+                    VehicleAIOverrides.Instance.m_sysDefinitions[WASTTRN_CAR] = SingletonLite<VMCSysDefWstTrn>.instance;
                 }
-                return VehiclesMasterControlMod.Controller.m_sysDefinitions;
+                return VehicleAIOverrides.Instance.m_sysDefinitions;
             }
         }
 
@@ -740,7 +736,7 @@ namespace Klyte.VehiclesMasterControl.Extensors.VehicleExt
             return from(info.GetService(), info.GetSubService(), info.GetClassLevel(), info.m_buildingAI is OutsideConnectionAI);
         }
 
-        public static IEnumerable<ServiceSystemDefinition> from(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, bool isOutsideConnection) => sysDefinitions.Keys.Where(x => x.service == service && x.subService == subService && x.level == level && x.outsideConnection == isOutsideConnection);
+        public static IEnumerable<ServiceSystemDefinition> from(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, bool isOutsideConnection) => sysDefinitions?.Keys?.Where(x => x.service == service && x.subService == subService && x.level == level && x.outsideConnection == isOutsideConnection);
         public static ServiceSystemDefinition from(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, VehicleInfo.VehicleType type, bool isOutsideConnection) => sysDefinitions.Keys.Where(x => x.service == service && x.subService == subService && x.level == level && x.vehicleType == type && x.outsideConnection == isOutsideConnection).FirstOrDefault();
 
         public static ServiceSystemDefinition from(SSD index) => m_indexMap.Where(x => x.Value == index).FirstOrDefault().Key;
