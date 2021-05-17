@@ -17,3 +17,6 @@ Applied some mod common behaviour fixes (disabling in editors modes)
 
 <color yellow>r3 (13/MAR/21)</color> 
 Fixed loading errors when creating a new city
+
+<color yellow>r4 (17/MAY/21):</color>
+Fixing garbled text issues when loading the city.
