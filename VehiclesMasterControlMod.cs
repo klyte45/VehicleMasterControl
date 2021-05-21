@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.0.0.4")]
+[assembly: AssemblyVersion("1.0.0.5")]
 
 namespace Klyte.VehiclesMasterControl
 {
